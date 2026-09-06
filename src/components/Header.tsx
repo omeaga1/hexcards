@@ -19,6 +19,7 @@ interface HeaderProps {
   onSyncPatch?: () => void;
   onOpenExportModal?: () => void;
   onOpenDownloadModal?: () => void;
+  onOpenLanding?: () => void;
   isBridgeConnected?: boolean;
   isSelectorExpanded?: boolean;
   onToggleSelector?: () => void;
@@ -39,6 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSyncPatch,
   onOpenExportModal,
   onOpenDownloadModal,
+  onOpenLanding,
   isBridgeConnected = false,
   isSelectorExpanded = false,
   onToggleSelector
@@ -357,16 +359,30 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               )}
             </div>
-          ) : onOpenDownloadModal ? (
-            <button
-              onClick={onOpenDownloadModal}
-              className="px-2 sm:px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
-              title="Download standalone Windows desktop executable (.exe)"
-            >
-              <Download className="w-3 h-3" />
-              <span>{isMobile ? 'App' : 'Download .exe'}</span>
-            </button>
-          ) : null}
+          ) : (
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              {onOpenLanding && (
+                <button
+                  onClick={onOpenLanding}
+                  className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-300 text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-2xs active:scale-95"
+                  title="Return to HexCards Desktop App Landing Page"
+                >
+                  <Shield className="w-3 h-3 text-emerald-600" />
+                  <span>Overview</span>
+                </button>
+              )}
+              {onOpenDownloadModal ? (
+                <button
+                  onClick={onOpenDownloadModal}
+                  className="px-2 sm:px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                  title="Download standalone Windows desktop executable (.exe)"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>{isMobile ? 'App' : 'Download .exe'}</span>
+                </button>
+              ) : null}
+            </div>
+          )}
         </div>
 
       </div>

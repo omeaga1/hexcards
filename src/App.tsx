@@ -19,12 +19,13 @@ import { RunesDemystified } from './components/ChampionCard/RunesDemystified';
 import { GlossaryModal } from './components/Glossary/GlossaryModal';
 import { ExportModal } from './components/LeagueExport/ExportModal';
 import { DownloadModal } from './components/DownloadModal';
+import { LandingPage } from './components/Landing/LandingPage';
 import { checkBridgeStatus } from './services/leagueExportService';
 import { GameSessionBanner } from './components/GameSessionBanner';
 import { PinnedCardProvider } from './context/PinnedCardContext';
 import { PinnedWindowManager } from './components/FloatingWindows/PinnedWindowManager';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { Loader2, AlertCircle, ShoppingBag, Sparkles, Compass, Layers } from 'lucide-react';
+import { Loader2, AlertCircle, ShoppingBag, Sparkles, Compass, Layers, Download, Globe } from 'lucide-react';
 import { useDevice } from './hooks/useDevice';
 
 const DEFAULT_FAVORITES = ['Darius', 'Garen', 'Jinx', 'Ahri', 'Warwick', 'Thresh'];
@@ -41,6 +42,18 @@ const AppContent: React.FC = () => {
   const [currentChampion, setCurrentChampion] = useState<ChampionDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
   const { isMobile } = useDevice();
+  const isDesktop = typeof window !== 'undefined' && Boolean(window.electronAPI?.isDesktop);
+
+  const [viewMode, setViewMode] = useState<'landing' | 'app'>(() => {
+    if (isDesktop) return 'app';
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view') === 'app' || params.get('app') === 'true') {
+        return 'app';
+      }
+    }
+    return 'landing';
+  });
 
   // App State
   const [selectedChampionId, setSelectedChampionId] = useState<string>('Darius');
@@ -230,6 +243,18 @@ const AppContent: React.FC = () => {
     return getTacticsForChampion(currentChampion.id, currentChampion.tags, currentChampion.name);
   }, [currentChampion]);
 
+  if (viewMode === 'landing' && !isDesktop) {
+    return (
+      <LandingPage
+        version={version}
+        onLaunchWeb={() => {
+          setViewMode('app');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f8fafc] deadlock-hatched flex flex-col items-center justify-center text-slate-600 gap-3 font-['Barlow_Condensed']">
@@ -262,6 +287,39 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] deadlock-hatched text-slate-900 flex flex-col">
+      {/* Web Version Active Indicator Banner (Web only) */}
+      {!isDesktop && (
+        <div className="w-full bg-slate-900 text-slate-200 border-b border-slate-800 px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 shadow-xs font-['Barlow_Condensed'] text-xs sm:text-sm z-30">
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 text-[11px] uppercase tracking-wider">
+              <Globe className="w-3 h-3" />
+              <span>Web Version Active</span>
+            </span>
+            <span className="text-slate-400 text-xs hidden md:inline">
+              Manual Deck Reference Mode. 1-Click Riot Client in-game shop & rune export requires the Desktop App.
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setViewMode('landing');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-xs text-slate-300 hover:text-white underline underline-offset-2 transition-colors cursor-pointer"
+            >
+              Overview & Download
+            </button>
+            <button
+              onClick={() => setIsDownloadModalOpen(true)}
+              className="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs transition-all cursor-pointer"
+            >
+              <Download className="w-3 h-3" />
+              <span>Get Desktop .exe</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Header */}
       <Header
         version={version}
@@ -290,6 +348,7 @@ const AppContent: React.FC = () => {
         onSyncPatch={handleSyncPatch}
         onOpenExportModal={() => setIsExportModalOpen(true)}
         onOpenDownloadModal={() => setIsDownloadModalOpen(true)}
+        onOpenLanding={!isDesktop ? () => setViewMode('landing') : undefined}
         isBridgeConnected={isBridgeConnected}
         isSelectorExpanded={isSelectorExpanded}
         onToggleSelector={() => setIsSelectorExpanded(!isSelectorExpanded)}

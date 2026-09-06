@@ -70,7 +70,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
           <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 flex flex-col gap-3">
             <div>
               <span className="text-xs font-black uppercase text-emerald-800 font-['Barlow_Condensed'] tracking-wider block">
-                Official Release v1.0.0
+                Official Release v1.0.4
               </span>
               <p className="text-xs text-slate-700 mt-0.5 leading-relaxed">
                 Includes the embedded Riot LCU connector. No terminal commands, no Node.js required—just launch and play.
@@ -78,8 +78,8 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
             </div>
 
             <a
-              href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe"
-              download="HexCards-Setup-1.0.0.exe"
+              href="https://github.com/omeaga1/hexcards/releases/download/v1.0.4/HexCards-Setup-1.0.4.exe"
+              download="HexCards-Setup-1.0.4.exe"
               className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-sm sm:text-base tracking-wider flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
             >
               <Download className="w-5 h-5" />
