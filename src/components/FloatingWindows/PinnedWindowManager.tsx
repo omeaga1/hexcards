@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 import { PinnedCardWindow } from './PinnedCardWindow';
 import { ActiveHoverCardWindow } from './ActiveHoverCardWindow';
@@ -10,10 +10,27 @@ export const PinnedWindowManager: React.FC = () => {
 
   if (frozenCards.length === 0 && (!activeHoverTarget || isMobile || isTouch)) return null;
 
+  const isTargetAlreadyPinned = Boolean(
+    activeHoverTarget &&
+      frozenCards.some((c) => {
+        // 1. Check ID inclusion
+        if (c.id.includes(activeHoverTarget.id) || activeHoverTarget.id.includes(c.id)) return true;
+        // 2. Check Item ID match
+        const activeItemId = activeHoverTarget.data?.card?.id || activeHoverTarget.id;
+        const pinnedItemId = c.data?.card?.id || c.id;
+        if (activeItemId && pinnedItemId && (activeItemId === pinnedItemId || String(pinnedItemId).includes(String(activeItemId)))) {
+          return true;
+        }
+        // 3. Check Title & Type match (e.g. same ability or glossary term)
+        if (c.type === activeHoverTarget.type && c.title === activeHoverTarget.title) return true;
+        return false;
+      })
+  );
+
   return (
     <div className="fixed inset-0 pointer-events-none z-50">
       {/* 1. Live Floating Hover Card Preview (desktop only - touch devices use bottom sheet) */}
-      {!isMobile && !isTouch && activeHoverTarget && !frozenCards.some((c) => c.id.includes(activeHoverTarget.id)) && (
+      {!isMobile && !isTouch && activeHoverTarget && !isTargetAlreadyPinned && (
         <ActiveHoverCardWindow target={activeHoverTarget} />
       )}
 

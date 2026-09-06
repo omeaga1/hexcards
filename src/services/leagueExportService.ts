@@ -218,6 +218,7 @@ declare global {
       close: () => void;
       toggleAlwaysOnTop: () => Promise<boolean>;
       onUpdateStatus?: (callback: (data: { status: 'checking' | 'available' | 'downloading' | 'downloaded' | 'error'; version?: string; percent?: number }) => void) => () => void;
+      getUpdateStatus?: () => Promise<{ status: 'idle' | 'checking' | 'available' | 'downloading' | 'downloaded' | 'error'; version?: string; percent?: number; message?: string }>;
       checkForUpdates?: () => Promise<{ status: string; isNewer?: boolean; version?: string; currentVersion?: string; message?: string }>;
       installUpdate?: () => void;
     };

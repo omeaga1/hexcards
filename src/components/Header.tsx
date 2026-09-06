@@ -55,7 +55,18 @@ export const Header: React.FC<HeaderProps> = ({
   }>({ status: 'idle' });
 
   useEffect(() => {
-    if (!isDesktop || !window.electronAPI?.onUpdateStatus) return;
+    if (!isDesktop) return;
+
+    // Check existing update status on mount
+    if (window.electronAPI?.getUpdateStatus) {
+      window.electronAPI.getUpdateStatus().then((status) => {
+        if (status && (status.status === 'downloaded' || status.status === 'downloading' || status.status === 'available')) {
+          setUpdateInfo(status as any);
+        }
+      }).catch(() => {});
+    }
+
+    if (!window.electronAPI?.onUpdateStatus) return;
     const unsubscribe = window.electronAPI.onUpdateStatus((data) => {
       setUpdateInfo(data);
     });
@@ -71,17 +82,24 @@ export const Header: React.FC<HeaderProps> = ({
       const res = await window.electronAPI.checkForUpdates();
       if (res.status === 'ok') {
         if (res.isNewer) {
-          setUpdateInfo({ status: 'downloading', percent: 0, version: res.version });
+          // Keep update button active persistently - do NOT reset to idle!
+          setUpdateInfo({ status: 'available', percent: 0, version: res.version });
         } else {
           setUpdateInfo({ status: 'idle', message: `Up to date (v${res.currentVersion || ''}) ✓` });
-          setTimeout(() => setUpdateInfo({ status: 'idle' }), 3500);
+          setTimeout(() => {
+            setUpdateInfo((prev) => (prev.status === 'idle' ? { status: 'idle' } : prev));
+          }, 3500);
         }
       } else if (res.status === 'dev') {
         setUpdateInfo({ status: 'idle', message: 'Dev Mode' });
-        setTimeout(() => setUpdateInfo({ status: 'idle' }), 3000);
+        setTimeout(() => {
+          setUpdateInfo((prev) => (prev.status === 'idle' ? { status: 'idle' } : prev));
+        }, 3000);
       } else {
         setUpdateInfo({ status: 'idle', message: 'Check Failed' });
-        setTimeout(() => setUpdateInfo({ status: 'idle' }), 3000);
+        setTimeout(() => {
+          setUpdateInfo((prev) => (prev.status === 'idle' ? { status: 'idle' } : prev));
+        }, 3000);
       }
     } catch {
       setUpdateInfo({ status: 'idle' });
@@ -314,9 +332,14 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>Update Ready • Restart</span>
                 </button>
               ) : updateInfo.status === 'downloading' ? (
-                <div className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold flex items-center gap-1 font-mono">
+                <div className="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold flex items-center gap-1.5 font-mono shadow-2xs">
                   <RefreshCw className="w-3 h-3 text-emerald-600 animate-spin" />
                   <span>Updating {updateInfo.percent || 0}%</span>
+                </div>
+              ) : updateInfo.status === 'available' ? (
+                <div className="px-2.5 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-300 text-[10px] font-bold flex items-center gap-1.5 shadow-2xs">
+                  <RefreshCw className="w-3 h-3 text-amber-600 animate-spin" />
+                  <span>Update Found • Downloading...</span>
                 </div>
               ) : updateInfo.status === 'checking' ? (
                 <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold flex items-center gap-1">

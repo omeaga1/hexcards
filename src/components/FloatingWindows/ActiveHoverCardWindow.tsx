@@ -12,6 +12,7 @@ export const ActiveHoverCardWindow: React.FC<ActiveHoverCardWindowProps> = ({ ta
   const coords = target.getCoords();
 
   const getBorderColor = () => {
+    if (target.type === 'glossary') return 'border-amber-400 shadow-md';
     const cat = (target.category || '').toLowerCase();
     if (cat.includes('weapon') || cat.includes('ad')) return 'border-orange-500 shadow-md';
     if (cat.includes('spirit') || cat.includes('ap') || cat.includes('magic')) return 'border-purple-500 shadow-md';
@@ -261,6 +262,15 @@ export const ActiveHoverCardWindow: React.FC<ActiveHoverCardWindowProps> = ({ ta
             <p className="text-xs sm:text-[12.5px] text-slate-700 leading-relaxed font-sans">
               {termData?.fullExplanation}
             </p>
+
+            {termData?.whyItMatters && (
+              <div className="p-2 rounded-lg bg-amber-50/60 border border-amber-200 text-xs sm:text-[12px] text-slate-700 font-sans mt-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 font-['Barlow_Condensed'] block mb-0.5">
+                  Why It Matters:
+                </span>
+                <p className="leading-snug">{termData.whyItMatters}</p>
+              </div>
+            )}
           </div>
         );
       })()}

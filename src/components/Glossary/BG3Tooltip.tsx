@@ -1,7 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { GLOSSARY_TERMS, findGlossaryTerm } from '../../data/glossary';
-import { GlossaryTerm } from '../../types';
-import { BookOpen } from 'lucide-react';
+import React, { useRef } from 'react';
+import { findGlossaryTerm } from '../../data/glossary';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 
 interface BG3TooltipProps {
@@ -11,18 +9,12 @@ interface BG3TooltipProps {
 }
 
 export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, children }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [openBelow, setOpenBelow] = useState(false);
   const anchorRef = useRef<HTMLSpanElement>(null);
   const termData = findGlossaryTerm(termId);
   const { registerHover, unregisterHover, freezeGlossaryTerm } = usePinnedCards();
 
   const handleMouseEnter = () => {
     if (anchorRef.current && termData) {
-      const rect = anchorRef.current.getBoundingClientRect();
-      const isBelow = rect.top < 260;
-      setOpenBelow(isBelow);
-
       registerHover({
         id: termId,
         type: 'glossary',
@@ -35,17 +27,12 @@ export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, chi
           const y = curBelow ? (r?.bottom || 0) + 8 : (r?.top || 0) - 270;
           const x = Math.min(Math.max(20, (r?.left || 0) - 100), window.innerWidth - 340);
           return { x, y: Math.max(40, y) };
-        },
-        onFreeze: () => {
-          setIsHovered(false);
         }
       });
     }
-    setIsHovered(true);
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
     unregisterHover(termId);
   };
 
@@ -71,59 +58,6 @@ export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, chi
       className="relative inline-block cursor-pointer group font-semibold text-emerald-700 hover:text-emerald-800 transition-colors border-b border-dotted border-emerald-500 hover:border-emerald-700 px-0.5"
     >
       <span>{children || displayText || termData.term}</span>
-
-      {/* Baldur's Gate 3 Style Nested Subpanel Tooltip */}
-      {isHovered && (
-        <span
-          className={`absolute z-50 left-1/2 -translate-x-1/2 w-72 sm:w-80 p-3 rounded-lg bg-white border-2 border-emerald-500 shadow-xl text-left pointer-events-none transition-all duration-100 animate-in fade-in zoom-in-95 block font-sans ${
-            openBelow ? 'top-full mt-2' : 'bottom-full mb-2'
-          }`}
-        >
-          {/* Subpanel Header */}
-          <span className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-200 block">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-900 font-['Barlow_Condensed'] flex items-center gap-1">
-              <BookOpen className="w-3 h-3 text-emerald-600" />
-              {termData.term}
-            </span>
-            <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 font-bold uppercase tracking-wider border border-emerald-200">
-              {termData.category}
-            </span>
-          </span>
-
-          {/* Definition */}
-          <span className="text-xs text-emerald-700 font-bold mb-1.5 block leading-snug">
-            {termData.shortDef}
-          </span>
-
-          {/* Full explanation */}
-          <span className="text-[11px] text-slate-700 mb-2 block leading-relaxed">
-            {termData.fullExplanation}
-          </span>
-
-          {/* Why It Matters */}
-          <span className="p-2 rounded bg-amber-50/60 border border-amber-200 text-[11px] block">
-            <span className="font-bold text-amber-900 block mb-0.5">
-              Why you care:
-            </span>
-            <span className="text-slate-700 leading-snug block">
-              {termData.whyItMatters}
-            </span>
-          </span>
-
-          {/* Tab to Pin / Click Hint */}
-          <span className="flex items-center justify-between pt-1.5 mt-1.5 border-t border-slate-200 text-[9.5px] text-slate-500 block font-sans">
-            <span className="text-emerald-700 font-medium">Click or hit <strong>[Tab]</strong> to Pin</span>
-            <span className="text-slate-400">Draggable window</span>
-          </span>
-
-          {/* Arrow */}
-          {openBelow ? (
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 -mb-[1px] border-4 border-transparent border-b-emerald-500 block" />
-          ) : (
-            <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent border-t-emerald-500 block" />
-          )}
-        </span>
-      )}
     </span>
   );
 };

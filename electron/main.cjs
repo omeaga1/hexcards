@@ -422,6 +422,12 @@ ipcMain.handle("window:toggleAlwaysOnTop", () => {
   mainWindow.setAlwaysOnTop(!isTop);
   return !isTop;
 });
+let currentUpdateState = { status: "idle" };
+
+ipcMain.handle("update:getStatus", () => {
+  return currentUpdateState;
+});
+
 ipcMain.on("update:installNow", () => {
   // isSilent = true, isForceRunAfter = true (Seamless update with zero wizard prompts)
   autoUpdater.quitAndInstall(true, true);
@@ -433,6 +439,13 @@ ipcMain.handle("update:checkForUpdates", async () => {
   try {
     const res = await autoUpdater.checkForUpdates();
     const isNewer = Boolean(res?.updateInfo && res.updateInfo.version !== app.getVersion());
+    if (isNewer) {
+      currentUpdateState = {
+        status: "available",
+        version: res?.updateInfo?.version,
+        percent: 0
+      };
+    }
     return {
       status: "ok",
       isNewer,
@@ -453,20 +466,24 @@ function setupAutoUpdater() {
 
   autoUpdater.on("update-available", (info) => {
     console.log("[AutoUpdater] New update available:", info.version);
-    mainWindow?.webContents.send("update:status", { status: "available", version: info.version });
+    currentUpdateState = { status: "available", version: info.version, percent: 0 };
+    mainWindow?.webContents.send("update:status", currentUpdateState);
   });
 
   autoUpdater.on("update-not-available", () => {
     console.log("[AutoUpdater] App is on latest version.");
+    currentUpdateState = { status: "idle", message: `Up to date (v${app.getVersion()}) ✓` };
   });
 
   autoUpdater.on("download-progress", (progress) => {
-    mainWindow?.webContents.send("update:status", { status: "downloading", percent: Math.round(progress.percent) });
+    currentUpdateState = { status: "downloading", percent: Math.round(progress.percent) };
+    mainWindow?.webContents.send("update:status", currentUpdateState);
   });
 
   autoUpdater.on("update-downloaded", (info) => {
-    console.log("[AutoUpdater] Update downloaded; will install automatically on app close.", info.version);
-    mainWindow?.webContents.send("update:status", { status: "downloaded", version: info.version });
+    console.log("[AutoUpdater] Update downloaded; ready to install.", info.version);
+    currentUpdateState = { status: "downloaded", version: info.version };
+    mainWindow?.webContents.send("update:status", currentUpdateState);
   });
 
   autoUpdater.on("error", (err) => {
