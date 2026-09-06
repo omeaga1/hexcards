@@ -1,4 +1,4 @@
-﻿const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const https = require("https");
 const http = require("http");
@@ -305,13 +305,18 @@ function createWindow() {
     minWidth: 1040,
     minHeight: 700,
     title: "HexCards • Tactical LoL Companion",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#182319",
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      webSecurity: false
     }
+  });
+
+  mainWindow.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
+    console.error(`[HexCards Load Error] ${validatedURL}: [${errorCode}] ${errorDescription}`);
   });
 
   // Load from local Vite dev server in development, or dist/index.html in production
@@ -319,15 +324,32 @@ function createWindow() {
 
   if (devServerUrl) {
     mainWindow.loadURL(devServerUrl).catch(() => {
-      mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
+      loadProductionIndex();
     });
   } else {
-    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
+    loadProductionIndex();
   }
 
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
+}
+
+function loadProductionIndex() {
+  const possiblePaths = [
+    path.join(app.getAppPath(), "dist/index.html"),
+    path.join(__dirname, "../dist/index.html"),
+    path.join(__dirname, "dist/index.html")
+  ];
+
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      mainWindow.loadFile(p);
+      return;
+    }
+  }
+
+  mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
 }
 
 // IPC Handlers

@@ -42,7 +42,9 @@ export async function loadMetaBuilds(): Promise<Record<string, ChampionMetaBuild
 
   loadPromise = (async () => {
     try {
-      const res = await fetch('/data/meta-builds-latest.json');
+      const baseUrl = import.meta.env.BASE_URL || './';
+      const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+      const res = await fetch(`${cleanBase}data/meta-builds-latest.json`);
       if (!res.ok) {
         console.warn('[MetaBuildService] Failed to load meta builds:', res.statusText);
         return {};
