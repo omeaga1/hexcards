@@ -29,6 +29,14 @@ export interface TacticalCard {
   whatItDoes: string;
   whenToBuy: string;
   timing?: string;
+  // Item Build Lineage & Progression Fields
+  buildsIntoId?: string;
+  buildsIntoName?: string;
+  buildsFromId?: string;
+  buildsFromName?: string;
+  finalSwapSlot?: 'Core #1' | 'Core #2' | 'Core #3' | '1st Back' | 'Boots';
+  finalSwapItemName?: string;
+  lineageType?: 'component' | 'upgrade';
 }
 
 export interface ChronoStage {
@@ -254,37 +262,72 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     name: 'Boots',
     category: 'utility',
     buyOrderBadge: 'T1 BOOTS',
+    lineageType: 'component',
+    buildsIntoId: bootsRec.defaultId,
+    buildsIntoName: bootsRec.defaultName,
     whatItDoes: '+25 Flat Movement Speed.',
     whenToBuy: 'Pick up on 1st or 2nd back (300g) to dodge skillshots and contest objectives.',
     timing: 'Early Recall (~5:00)'
-  }), []);
+  }), [bootsRec.defaultId, bootsRec.defaultName]);
 
   // Situational Counter Pods (Realistic Meta Targets: 1st Back, Core #2, Core #3)
-  const antiHeal800g: TacticalCard = useMemo(() => ({
-    id: isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3916' : '3076') : isMage ? '3916' : isTank ? '3076' : '3123',
-    name: isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Oblivion Orb' : 'Bramble Vest') : isMage ? 'Oblivion Orb' : isTank ? 'Bramble Vest' : "Executioner's Calling",
-    category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
-    buyOrderBadge: '800G COMP',
-    replacesSlot: '1st Back',
-    replacesItemName: firstBackCard.name,
-    swapReason: 'Sit on this 800g component on 1st back against high sustain / healing laners (Aatrox, Warwick, Vlad, Soraka).',
-    whatItDoes: 'Applies 40% Grievous Wounds on hit or spell damage to cut enemy healing.',
-    whenToBuy: 'Crucial vs heavy healing picks. Buy on 1st recall and sit on it in inventory.',
-    timing: 'CRITICAL: Sit on this 800g component early! Do not rush full upgrade.'
-  }), [isSupport, tactics?.damageType, isMage, isTank, firstBackCard.name]);
+  const antiHeal800g: TacticalCard = useMemo(() => {
+    const id = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3916' : '3076') : isMage ? '3916' : isTank ? '3076' : '3123';
+    const name = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Oblivion Orb' : 'Bramble Vest') : isMage ? 'Oblivion Orb' : isTank ? 'Bramble Vest' : "Executioner's Calling";
+    const upgradeId = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3165' : '3075') : isMage ? '3165' : isTank ? '3075' : isADC ? '3033' : '6609';
+    const upgradeName = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Morellonomicon' : 'Thornmail') : isMage ? 'Morellonomicon' : isTank ? 'Thornmail' : isADC ? 'Mortal Reminder' : 'Chempunk Chainsword';
 
-  const antiHealFull: TacticalCard = useMemo(() => ({
-    id: isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3165' : '3075') : isMage ? '3165' : isTank ? '3075' : isADC ? '3033' : '6609',
-    name: isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Morellonomicon' : 'Thornmail') : isMage ? 'Morellonomicon' : isTank ? 'Thornmail' : isADC ? 'Mortal Reminder' : 'Chempunk Chainsword',
-    category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
-    buyOrderBadge: 'CORE #3',
-    replacesSlot: 'Core #3',
-    replacesItemName: core3Card.name,
-    swapReason: 'Finish 800g component into full legendary item when enemy healing dominates teamfights.',
-    whatItDoes: 'Permanent 40% Grievous Wounds with high combat stats and penetration.',
-    whenToBuy: 'Complete as 3rd or 4th item after core damage engine is online.',
-    timing: 'Complete after 2nd Core'
-  }), [isSupport, tactics?.damageType, isMage, isTank, isADC, core3Card.name]);
+    const isCore2IE = core2Card.name.toLowerCase().includes('infinity edge');
+    const finalSwapSlot: 'Core #2' | 'Core #3' = isADC ? (isCore2IE ? 'Core #2' : 'Core #3') : 'Core #3';
+    const finalSwapItemName = isADC ? (isCore2IE ? core2Card.name : core3Card.name) : core3Card.name;
+
+    return {
+      id,
+      name,
+      category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
+      buyOrderBadge: '800G COMP',
+      lineageType: 'component',
+      buildsIntoId: upgradeId,
+      buildsIntoName: upgradeName,
+      finalSwapSlot,
+      finalSwapItemName,
+      replacesSlot: '1st Back',
+      replacesItemName: firstBackCard.name,
+      swapReason: `Sit on 800g ${name} on early recall against high sustain / healing laners. Later in teamfights, upgrade to ${upgradeName} to swap out ${finalSwapItemName} (${finalSwapSlot}).`,
+      whatItDoes: 'Applies 40% Grievous Wounds on hit or spell damage to cut enemy healing.',
+      whenToBuy: 'Crucial vs heavy healing picks. Buy on 1st recall and sit on it in inventory.',
+      timing: `Buy 800g early ➔ Upgrade to ${upgradeName} late (swaps ${finalSwapItemName})`
+    };
+  }, [isSupport, tactics?.damageType, isMage, isTank, isADC, firstBackCard.name, core2Card.name, core3Card.name]);
+
+  const antiHealFull: TacticalCard = useMemo(() => {
+    const id = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3165' : '3075') : isMage ? '3165' : isTank ? '3075' : isADC ? '3033' : '6609';
+    const name = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Morellonomicon' : 'Thornmail') : isMage ? 'Morellonomicon' : isTank ? 'Thornmail' : isADC ? 'Mortal Reminder' : 'Chempunk Chainsword';
+    const componentId = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3916' : '3076') : isMage ? '3916' : isTank ? '3076' : '3123';
+    const componentName = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Oblivion Orb' : 'Bramble Vest') : isMage ? 'Oblivion Orb' : isTank ? 'Bramble Vest' : "Executioner's Calling";
+
+    const isCore2IE = core2Card.name.toLowerCase().includes('infinity edge');
+    const targetSlot: 'Core #2' | 'Core #3' = isADC ? (isCore2IE ? 'Core #2' : 'Core #3') : 'Core #3';
+    const targetItemName = isADC ? (isCore2IE ? core2Card.name : core3Card.name) : core3Card.name;
+
+    return {
+      id,
+      name,
+      category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
+      buyOrderBadge: 'FULL UPGRADE',
+      lineageType: 'upgrade',
+      buildsFromId: componentId,
+      buildsFromName: componentName,
+      replacesSlot: targetSlot,
+      replacesItemName: targetItemName,
+      swapReason: `Upgraded from 800g ${componentName}. Swaps out ${targetItemName} (${targetSlot}) to retain Grievous Wounds while providing high combat stats and % penetration.`,
+      whatItDoes: isADC
+        ? 'Permanent 40% Grievous Wounds + 35% Armor Penetration & 25% Critical Strike.'
+        : 'Permanent 40% Grievous Wounds with high combat stats and penetration.',
+      whenToBuy: `Complete from ${componentName} as ${targetSlot} when enemy healing dominates teamfights.`,
+      timing: `Completed Upgrade (Swaps ${targetItemName})`
+    };
+  }, [isSupport, tactics?.damageType, isMage, isTank, isADC, core2Card.name, core3Card.name]);
 
   const antiBurst1: TacticalCard = useMemo(() => ({
     id: isSupport ? '3222' : '2504',
@@ -364,46 +407,69 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: '3rd or 4th slot vs tanks'
   }), [isSupport, isMage, isADC, isBruiser, isTank, core3Card.name]);
 
-  const shred2: TacticalCard = useMemo(() => ({
-    id: isMage ? '3137' : '3072',
-    name: isMage ? 'Cryptbloom' : 'Bloodthirster',
-    category: isMage ? 'spirit' : 'weapon',
-    buyOrderBadge: 'CAPSTONE',
-    replacesSlot: 'Core #3',
-    replacesItemName: core3Card.name,
-    swapReason: 'Alternative % penetration with teamfight healing or sustain.',
-    whatItDoes: isMage
+  const shred2: TacticalCard = useMemo(() => {
+    const id = isSupport ? '3001' : isMage ? '3137' : isADC ? '3302' : isBruiser ? '6694' : '8020';
+    const name = isSupport ? 'Trailblazer' : isMage ? 'Cryptbloom' : isADC ? 'Terminus' : isBruiser ? "Serylda's Grudge" : 'Abyssal Mask';
+    const category: ItemCategory = isMage ? 'spirit' : isSupport ? 'utility' : isTank ? 'vitality' : 'weapon';
+    const whatItDoes = isMage
       ? '30% Magic Pen + releases healing nova for allies on champion takedowns.'
-      : 'High AD, 18% Lifesteal, and an overshield up to 400 HP.',
-    whenToBuy: 'Alternative % pen or sustained fighting multiplier.',
-    timing: '4th or 5th slot'
-  }), [isMage, core3Card.name]);
+      : isADC
+      ? 'Attacks alternate between +30% Armor & Magic Pen and granting up to 25 Armor & MR.'
+      : isBruiser
+      ? '30% Armor Pen + slows enemies below 50% health.'
+      : isSupport
+      ? 'Grants movespeed aura to allies and slows enemies on attack.'
+      : 'Aura reduces nearby enemy Magic Resistance by up to 25.';
+
+    return {
+      id,
+      name,
+      category,
+      buyOrderBadge: 'ALT SHRED',
+      replacesSlot: 'Core #3',
+      replacesItemName: core3Card.name,
+      swapReason: isADC
+        ? 'Dual % Armor and Magic Penetration with stacking hybrid resistances for extended auto-attack teamfights.'
+        : 'Alternative % penetration or resistance shred for extended teamfights.',
+      whatItDoes,
+      whenToBuy: 'Alternative % resistance shred vs durable tank compositions.',
+      timing: '3rd or 4th item slot'
+    };
+  }, [isSupport, isMage, isADC, isBruiser, isTank, core3Card.name]);
 
   const antiCC1: TacticalCard = useMemo(() => ({
     id: '3140',
     name: 'Quicksilver Sash',
     category: 'weapon',
     buyOrderBadge: '1300G QSS',
+    lineageType: 'component',
+    buildsIntoId: '3139',
+    buildsIntoName: 'Mercurial Scimitar',
+    finalSwapSlot: 'Core #3',
+    finalSwapItemName: core3Card.name,
     replacesSlot: '1st Back',
     replacesItemName: firstBackCard.name,
-    swapReason: 'Buy 1300g QSS on early recall vs suppression (Malzahar, Warwick, Skarner). Sit on it.',
+    swapReason: 'Buy 1300g QSS on early recall vs suppression (Malzahar, Warwick, Skarner). Sit on it, then upgrade to Mercurial Scimitar late.',
     isActive: true,
     whatItDoes: 'Active cleanses all crowd control (including Suppression) immediately.',
     whenToBuy: 'Enemy has point-and-click Suppression (Malzahar, Warwick, Skarner).',
     timing: 'Buy 1300g component early, sit on it!'
-  }), [firstBackCard.name]);
+  }), [firstBackCard.name, core3Card.name]);
 
   const antiCC2: TacticalCard = useMemo(() => ({
     id: '3139',
     name: 'Mercurial Scimitar',
     category: 'weapon',
     buyOrderBadge: 'CORE #3',
+    lineageType: 'upgrade',
+    buildsFromId: '3140',
+    buildsFromName: 'Quicksilver Sash',
     replacesSlot: 'Core #3',
     replacesItemName: core3Card.name,
-    swapReason: 'Finish QSS into full item to retain CC cleanse while gaining offensive stats.',
+    swapReason: 'Finish QSS into full item to retain CC cleanse while gaining +50 AD and +50% move speed burst.',
     isActive: true,
     whatItDoes: 'Active cleanses all CC and grants +50% move speed for 1.5 seconds.',
-    whenToBuy: 'Complete after your core damage is built.',
+    whenToBuy: 'Complete from Quicksilver Sash after your core damage is built.',
     timing: '4th or 5th completed item'
   }), [core3Card.name]);
 
@@ -475,10 +541,13 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   const situationalPods = useMemo(() => [
     {
       title: 'Anti-Heal (Grievous)',
-      subtitle: 'vs Sustain & Drain Healers',
+      subtitle: isADC 
+        ? "Sit on Executioner's (800g) ➔ Upgrade late to swap Infinity Edge"
+        : 'Sit on 800g component early ➔ Finish full upgrade late',
       accent: 'border-rose-400 bg-rose-50/20 text-rose-800',
       badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
       icon: '🩸',
+      hasBuildLineage: true,
       cards: [antiHeal800g, antiHealFull]
     },
     {
@@ -514,6 +583,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       cards: [antiCC1, flex1]
     }
   ], [
+    isADC,
     antiHeal800g, antiHealFull,
     antiBurst3, flex2,
     antiBurst1, antiBurst2,
@@ -623,9 +693,69 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     return false;
   };
 
+  // Lineage relationship check: Is this candidateCard the direct upgrade of hovered component?
+  const isCardUpgradeOf = (candidate: TacticalCard, hovered: TacticalCard | null): boolean => {
+    if (!hovered) return false;
+    if (hovered.id === candidate.id) return false;
+    if (hovered.buildsIntoId && (hovered.buildsIntoId === candidate.id || hovered.buildsIntoName?.toLowerCase() === candidate.name.toLowerCase())) {
+      return true;
+    }
+    if (hovered.id === '1001' && (candidate.id === defaultBootsCard.id || candidate.id === altBootsCard.id)) {
+      return true;
+    }
+    return false;
+  };
+
+  // Lineage relationship check: Is this candidateCard the early component that builds into hovered item?
+  const isCardComponentOf = (candidate: TacticalCard, hovered: TacticalCard | null): boolean => {
+    if (!hovered) return false;
+    if (hovered.id === candidate.id) return false;
+    if (hovered.buildsFromId && (hovered.buildsFromId === candidate.id || hovered.buildsFromName?.toLowerCase() === candidate.name.toLowerCase())) {
+      return true;
+    }
+    if ((hovered.id === defaultBootsCard.id || hovered.id === altBootsCard.id) && candidate.id === '1001') {
+      return true;
+    }
+    return false;
+  };
+
+  // Hovering an early component (like Executioner's Calling): Is targetCard the item being replaced by its final upgrade?
+  const isComponentFinalSwapTarget = (targetCard: TacticalCard, hovered: TacticalCard | null): boolean => {
+    if (!hovered || (!hovered.finalSwapItemName && !hovered.finalSwapSlot)) return false;
+    if (hovered.id === targetCard.id) return false;
+
+    if (hovered.finalSwapItemName && targetCard.name.toLowerCase() === hovered.finalSwapItemName.toLowerCase()) {
+      return true;
+    }
+    if (hovered.finalSwapSlot) {
+      if (hovered.finalSwapSlot === 'Core #1' && targetCard.coreOrder === 1) return true;
+      if (hovered.finalSwapSlot === 'Core #2' && targetCard.coreOrder === 2) return true;
+      if (hovered.finalSwapSlot === 'Core #3' && targetCard.coreOrder === 3) return true;
+    }
+    return false;
+  };
+
+  // Hovering a core target item (like Infinity Edge): Is candidateCard an early component whose upgrade swaps this item?
+  const isComponentOfHoveredTarget = (candidateCard: TacticalCard, hovered: TacticalCard | null): boolean => {
+    if (!hovered) return false;
+    if (candidateCard.id === hovered.id) return false;
+
+    if (candidateCard.finalSwapItemName && candidateCard.finalSwapItemName.toLowerCase() === hovered.name.toLowerCase()) {
+      return true;
+    }
+    if (candidateCard.finalSwapSlot) {
+      if (candidateCard.finalSwapSlot === 'Core #1' && hovered.isCore && hovered.coreOrder === 1) return true;
+      if (candidateCard.finalSwapSlot === 'Core #2' && hovered.isCore && hovered.coreOrder === 2) return true;
+      if (candidateCard.finalSwapSlot === 'Core #3' && hovered.isCore && hovered.coreOrder === 3) return true;
+    }
+    return false;
+  };
+
   const cardHasSwapConnection = (card: TacticalCard): boolean => {
     if (card.replacesSlot || card.replacesItemName) return true;
-    if (card.id === defaultBootsCard.id || card.id === altBootsCard.id) return true;
+    if (card.buildsIntoId || card.buildsIntoName || card.buildsFromId || card.buildsFromName) return true;
+    if (card.finalSwapSlot || card.finalSwapItemName) return true;
+    if (card.id === defaultBootsCard.id || card.id === altBootsCard.id || card.id === '1001') return true;
     if (card.buyOrderBadge === 'RECALL' || card.buyOrderBadge === '1ST BACK') return true;
     if (card.isCore && (card.coreOrder === 1 || card.coreOrder === 2 || card.coreOrder === 3)) return true;
     return false;
@@ -639,9 +769,37 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     const isSelected = selectedCard ? selectedCard.id === card.id : (!hoveredCard && card.isCore && card.coreOrder === 1);
 
     const isTarget = isCardReplacementTarget(card, hoveredCard);
+    const isFinalSwapTarget = isComponentFinalSwapTarget(card, hoveredCard);
+    const isUpgrade = isCardUpgradeOf(card, hoveredCard);
+    const isComponent = isCardComponentOf(card, hoveredCard);
+    const isSeedComponent = isComponentOfHoveredTarget(card, hoveredCard);
     const isCandidate = isCardSwapCandidate(card, hoveredCard);
-    const isConnected = isHovered || isTarget || isCandidate;
+
+    const isConnected = isHovered || isTarget || isFinalSwapTarget || isUpgrade || isComponent || isSeedComponent || isCandidate;
     const isDimmed = Boolean(hoveredCard && cardHasSwapConnection(hoveredCard) && !isConnected);
+
+    let connectionRing = '';
+    if (isFinalSwapTarget) {
+      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.6)] z-30 animate-pulse';
+    } else if (isTarget) {
+      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)] z-30 animate-pulse';
+    } else if (isUpgrade) {
+      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-emerald-500 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.6)] z-30 animate-pulse';
+    } else if (isComponent || isSeedComponent) {
+      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-amber-500 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.6)] z-30 animate-pulse';
+    } else if (isCandidate) {
+      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.5)] z-30 animate-pulse';
+    } else if (isHovered) {
+      connectionRing = isDarkTier
+        ? 'scale-105 -translate-y-1 border-[#34d399] shadow-[0_0_14px_rgba(52,211,153,0.4)] z-25 ring-2 ring-[#34d399]'
+        : 'scale-105 -translate-y-1 shadow-md z-25 ring-2 ring-emerald-600 border-emerald-600';
+    } else if (isSelected) {
+      connectionRing = 'ring-2 ring-emerald-500 shadow-sm';
+    } else if (isDimmed) {
+      connectionRing = 'opacity-30 grayscale-[50%] transition-opacity duration-200';
+    } else {
+      connectionRing = 'hover:-translate-y-0.5 hover:shadow-xs';
+    }
 
     return (
       <div
@@ -703,21 +861,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           isDarkTier
             ? 'bg-[#15201a] border-[#2a3c30]'
             : 'bg-[#faf9f4] border-[#c4ccbe]'
-        } ${
-          isTarget
-            ? 'scale-105 -translate-y-1 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)] z-30 animate-pulse'
-            : isCandidate
-            ? 'scale-105 -translate-y-1 ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.5)] z-30 animate-pulse'
-            : isHovered
-            ? isDarkTier
-              ? 'scale-105 -translate-y-1 border-[#34d399] shadow-[0_0_14px_rgba(52,211,153,0.4)] z-25 ring-2 ring-[#34d399]'
-              : 'scale-105 -translate-y-1 shadow-md z-25 ring-2 ring-emerald-600 border-emerald-600'
-            : isSelected
-            ? 'ring-2 ring-emerald-500 shadow-sm'
-            : isDimmed
-            ? 'opacity-30 grayscale-[50%] transition-opacity duration-200'
-            : 'hover:-translate-y-0.5 hover:shadow-xs'
-        }`}
+        } ${connectionRing}`}
       >
         {/* Top Order / Role Strip */}
         <div className="w-full flex items-center justify-between px-1.5 py-0.5 bg-[#eae8de] border-b border-[#dad9cd] text-[9px] sm:text-[9.5px] font-black font-mono leading-none flex-shrink-0">
@@ -750,17 +894,57 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             />
           </div>
 
-          {/* High-Contrast Swap Badge over icon on hover connection */}
-          {isTarget && (
-            <div className="absolute inset-0 bg-rose-600/90 flex items-center justify-center p-0.5 z-10">
-              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight">
+          {/* High-Contrast Badges over icon on hover connection */}
+          {isFinalSwapTarget && (
+            <div className="absolute inset-0 bg-rose-700/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
+              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-rose-200 leading-none mb-0.5 font-['Barlow_Condensed']">
+                SWAP OUT FOR
+              </span>
+              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                UPGRADE
+              </span>
+            </div>
+          )}
+          {!isFinalSwapTarget && isTarget && (
+            <div className="absolute inset-0 bg-rose-600/90 flex items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                 SWAP OUT
               </span>
             </div>
           )}
-          {isCandidate && (
-            <div className="absolute inset-0 bg-sky-600/90 flex items-center justify-center p-0.5 z-10">
-              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight">
+          {isUpgrade && (
+            <div className="absolute inset-0 bg-emerald-600/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
+              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-emerald-200 leading-none mb-0.5 font-['Barlow_Condensed']">
+                BUILDS INTO
+              </span>
+              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                UPGRADE
+              </span>
+            </div>
+          )}
+          {isComponent && (
+            <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
+              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
+                BUILDS FROM
+              </span>
+              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                800G COMP
+              </span>
+            </div>
+          )}
+          {isSeedComponent && (
+            <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
+              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
+                EARLY SEED
+              </span>
+              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                800G COMP
+              </span>
+            </div>
+          )}
+          {!isUpgrade && !isSeedComponent && isCandidate && (
+            <div className="absolute inset-0 bg-sky-600/90 flex items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                 SWAP IN
               </span>
             </div>
@@ -1088,8 +1272,21 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   </div>
 
                   {/* Centered Symmetrical 2-Card Row */}
-                  <div className="flex items-center justify-center gap-1.5 py-0.5">
-                    {pod.cards.map((card) => renderCardNode(card, false))}
+                  <div className="flex items-center justify-center gap-1 sm:gap-1.5 py-0.5">
+                    {pod.hasBuildLineage && pod.cards.length === 2 ? (
+                      <>
+                        {renderCardNode(pod.cards[0], false)}
+                        <div className="flex flex-col items-center justify-center px-0.5 flex-shrink-0">
+                          <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-rose-700 bg-rose-50 border border-rose-200 px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed']">
+                            BUILDS
+                          </span>
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 animate-pulse" />
+                        </div>
+                        {renderCardNode(pod.cards[1], false)}
+                      </>
+                    ) : (
+                      pod.cards.map((card) => renderCardNode(card, false))
+                    )}
                   </div>
 
                   {/* Threat Subtitle Footer */}
@@ -1182,6 +1379,55 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   <GlossaryText text={activeInspectorCard.whatItDoes} />
                 </p>
               </div>
+
+              {/* Build Lineage & Progression Plan */}
+              {(activeInspectorCard.buildsIntoName || activeInspectorCard.buildsFromName || activeInspectorCard.finalSwapItemName) && (
+                <div className="p-3 rounded-lg bg-emerald-50/80 border border-emerald-300">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <ArrowLeftRight className="w-3.5 h-3.5 text-emerald-700" />
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-900 font-['Barlow_Condensed']">
+                      Build Lineage & Swap Plan
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap text-xs bg-white p-2 rounded border border-emerald-200 font-sans">
+                    {activeInspectorCard.buildsIntoName && (
+                      <>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase text-amber-700 font-mono">1. Early Buy</span>
+                          <span className="font-bold text-slate-900">{activeInspectorCard.name}</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase text-emerald-700 font-mono">2. Late Upgrade</span>
+                          <span className="font-bold text-slate-900">{activeInspectorCard.buildsIntoName}</span>
+                        </div>
+                      </>
+                    )}
+                    {activeInspectorCard.buildsFromName && (
+                      <>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase text-amber-700 font-mono">1. Built From</span>
+                          <span className="font-bold text-slate-900">{activeInspectorCard.buildsFromName}</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase text-emerald-700 font-mono">2. Full Upgrade</span>
+                          <span className="font-bold text-slate-900">{activeInspectorCard.name}</span>
+                        </div>
+                      </>
+                    )}
+                    {activeInspectorCard.finalSwapItemName && (
+                      <>
+                        <ArrowRight className="w-3.5 h-3.5 text-rose-500" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase text-rose-700 font-mono">3. Swaps Out</span>
+                          <span className="font-bold text-rose-800">{activeInspectorCard.finalSwapItemName} ({activeInspectorCard.finalSwapSlot || 'Core'})</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
                 <div className="flex items-center justify-between gap-1 mb-1">

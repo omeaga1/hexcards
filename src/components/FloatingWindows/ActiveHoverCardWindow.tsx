@@ -2,7 +2,7 @@ import React from 'react';
 import { ActiveHoverTarget } from '../../context/PinnedCardContext';
 import { getItemIconUrl } from '../../services/ddragon';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
-import { BookOpen, Sparkles, ArrowLeftRight } from 'lucide-react';
+import { BookOpen, Sparkles, ArrowLeftRight, ArrowRight } from 'lucide-react';
 
 interface ActiveHoverCardWindowProps {
   target: ActiveHoverTarget;
@@ -101,6 +101,56 @@ export const ActiveHoverCardWindow: React.FC<ActiveHoverCardWindowProps> = ({ ta
                 <p className="text-xs sm:text-[12.5px] text-slate-800 leading-relaxed">
                   <GlossaryText text={itemCard.swapReason || itemCard.whenToBuy} />
                 </p>
+              </div>
+            )}
+
+            {/* Build Lineage & Upgrade Plan */}
+            {(itemCard.buildsIntoName || itemCard.buildsFromName || itemCard.finalSwapItemName) && (
+              <div className="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-300 mb-2 font-sans">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <ArrowLeftRight className="w-3.5 h-3.5 text-emerald-700" />
+                  <span className="text-xs font-black text-emerald-900 uppercase tracking-wider font-['Barlow_Condensed']">
+                    Build Lineage & Swap Plan
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-1.5 flex-wrap text-xs bg-white p-2 rounded border border-emerald-200 font-sans">
+                  {itemCard.buildsIntoName && (
+                    <>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold uppercase text-amber-700 font-mono">1. Early Buy</span>
+                        <span className="font-bold text-slate-900">{itemCard.name}</span>
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold uppercase text-emerald-700 font-mono">2. Late Upgrade</span>
+                        <span className="font-bold text-slate-900">{itemCard.buildsIntoName}</span>
+                      </div>
+                    </>
+                  )}
+                  {itemCard.buildsFromName && (
+                    <>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold uppercase text-amber-700 font-mono">1. Built From</span>
+                        <span className="font-bold text-slate-900">{itemCard.buildsFromName}</span>
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold uppercase text-emerald-700 font-mono">2. Full Upgrade</span>
+                        <span className="font-bold text-slate-900">{itemCard.name}</span>
+                      </div>
+                    </>
+                  )}
+                  {itemCard.finalSwapItemName && (
+                    <>
+                      <ArrowRight className="w-3.5 h-3.5 text-rose-500" />
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold uppercase text-rose-700 font-mono">3. Swaps Out</span>
+                        <span className="font-bold text-rose-800">{itemCard.finalSwapItemName} ({itemCard.finalSwapSlot || 'Core'})</span>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             )}
 
