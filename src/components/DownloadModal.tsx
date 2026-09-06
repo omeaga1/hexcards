@@ -77,25 +77,14 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <a
-                href={import.meta.env.VITE_DOWNLOAD_INSTALLER_URL || 'https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe'}
-                download="HexCards-Setup-1.0.0.exe"
-                className="py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
-              >
-                <Download className="w-4 h-4" />
-                <span>Installer (.exe)</span>
-              </a>
-
-              <a
-                href={import.meta.env.VITE_DOWNLOAD_PORTABLE_URL || 'https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-1.0.0-portable.exe'}
-                download="HexCards-1.0.0-portable.exe"
-                className="py-2.5 px-3 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95"
-              >
-                <Zap className="w-4 h-4 text-emerald-600" />
-                <span>Portable (No Install)</span>
-              </a>
-            </div>
+            <a
+              href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe"
+              download="HexCards-Setup-1.0.0.exe"
+              className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-sm sm:text-base tracking-wider flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
+            >
+              <Download className="w-5 h-5" />
+              <span>Download HexCards for Windows (.exe)</span>
+            </a>
 
             <div className="flex items-center justify-between text-[10.5px] text-slate-500 pt-1 border-t border-emerald-200/60 font-mono">
               <span>Size: ~117 MB</span>

@@ -1,9 +1,14 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const https = require("https");
 const http = require("http");
 const fs = require("fs");
 const { execSync } = require("child_process");
+
+// Configure automatic background updates
+autoUpdater.autoDownload = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 // Allow local LCU self-signed TLS certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -417,11 +422,54 @@ ipcMain.handle("window:toggleAlwaysOnTop", () => {
   mainWindow.setAlwaysOnTop(!isTop);
   return !isTop;
 });
+ipcMain.on("update:installNow", () => {
+  autoUpdater.quitAndInstall();
+});
+
+function setupAutoUpdater() {
+  if (!app.isPackaged) return;
+
+  autoUpdater.on("checking-for-update", () => {
+    console.log("[AutoUpdater] Checking GitHub Releases for updates...");
+  });
+
+  autoUpdater.on("update-available", (info) => {
+    console.log("[AutoUpdater] New update available:", info.version);
+    mainWindow?.webContents.send("update:status", { status: "available", version: info.version });
+  });
+
+  autoUpdater.on("update-not-available", () => {
+    console.log("[AutoUpdater] App is on latest version.");
+  });
+
+  autoUpdater.on("download-progress", (progress) => {
+    mainWindow?.webContents.send("update:status", { status: "downloading", percent: Math.round(progress.percent) });
+  });
+
+  autoUpdater.on("update-downloaded", (info) => {
+    console.log("[AutoUpdater] Update downloaded; will install automatically on app close.", info.version);
+    mainWindow?.webContents.send("update:status", { status: "downloaded", version: info.version });
+  });
+
+  autoUpdater.on("error", (err) => {
+    console.warn("[AutoUpdater] Update check failed:", err.message);
+  });
+
+  // Check 3 seconds after launch, then check periodically
+  setTimeout(() => {
+    autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  }, 3000);
+
+  setInterval(() => {
+    autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  }, 30 * 60 * 1000);
+}
 
 // App Lifecycle
 app.whenReady().then(() => {
   startLocalBridgeServer();
   createWindow();
+  setupAutoUpdater();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

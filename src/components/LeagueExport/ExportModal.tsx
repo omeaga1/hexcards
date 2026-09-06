@@ -269,25 +269,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     Web browsers cannot directly inspect local game client processes. Download the standalone <strong>HexCards Windows Companion (.exe)</strong> to enable <strong>1-click in-game shop injection</strong>, <strong>automatic Champion Select detection</strong>, and <strong>live lane opponent intelligence</strong>.
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                    <a
-                      href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe"
-                      download="HexCards-Setup-1.0.0.exe"
-                      className="py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span>Download Installer (.exe)</span>
-                    </a>
-
-                    <a
-                      href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-1.0.0-portable.exe"
-                      download="HexCards-1.0.0-portable.exe"
-                      className="py-2.5 px-3 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95"
-                    >
-                      <Zap className="w-4 h-4 text-emerald-600" />
-                      <span>Portable (No Install)</span>
-                    </a>
-                  </div>
+                  <a
+                    href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe"
+                    download="HexCards-Setup-1.0.0.exe"
+                    className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-sm tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer active:scale-95"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download HexCards Companion for Windows (.exe)</span>
+                  </a>
 
                   <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 font-sans">
                     <span>100% Vanguard Safe • Zero Ads • Riot LCU Loopback</span>

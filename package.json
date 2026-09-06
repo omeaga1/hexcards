@@ -23,25 +23,31 @@
     "directories": {
       "output": "dist-electron"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "omeaga1",
+        "repo": "hexcards"
+      }
+    ],
     "files": [
       "dist/**/*",
       "electron/**/*"
     ],
     "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ]
+      "target": "nsis"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "shortcutName": "HexCards"
+      "shortcutName": "HexCards",
+      "artifactName": "HexCards-Setup-${version}.${ext}"
     }
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "clsx": "^2.1.1",
+    "electron-updater": "^6.8.9",
     "lucide-react": "^1.41.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
