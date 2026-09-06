@@ -133,13 +133,13 @@ export const PivotSwapGuide: React.FC<PivotSwapGuideProps> = ({
                     )}
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-rose-600 block tracking-wider">
+                    <span className="text-[10px] uppercase font-black text-rose-700 block tracking-wider">
                       REPLACE:
                     </span>
-                    <span className="text-xs sm:text-sm font-black text-slate-600 line-through block leading-tight">
+                    <span className="text-sm sm:text-base font-black text-slate-600 line-through block leading-tight font-['Barlow_Condensed']">
                       {rule.standardItem.name}
                     </span>
-                    <span className="text-[10px] text-slate-400 block font-sans">
+                    <span className="text-xs text-slate-500 block font-sans">
                       {rule.standardItem.slot}
                     </span>
                   </div>
@@ -147,8 +147,8 @@ export const PivotSwapGuide: React.FC<PivotSwapGuideProps> = ({
 
                 {/* Arrow Icon */}
                 <div className="flex items-center justify-center text-emerald-700 font-black px-2">
-                  <span className="deadlock-badge px-2 py-0.5 text-[10px] text-emerald-800 bg-emerald-50 border-emerald-300">
-                    <ArrowRight className="w-3 h-3 inline mr-1" />
+                  <span className="deadlock-badge px-2.5 py-1 text-xs text-emerald-800 bg-emerald-50 border-emerald-300">
+                    <ArrowRight className="w-3.5 h-3.5 inline mr-1" />
                     <span>SWAP FOR</span>
                   </span>
                 </div>
@@ -188,18 +188,18 @@ export const PivotSwapGuide: React.FC<PivotSwapGuideProps> = ({
                         components: pivotComponents
                       },
                       getCoords: () => ({
-                        x: Math.min(window.innerWidth - 340, Math.max(20, mouseX + 16)),
+                        x: Math.min(window.innerWidth - 360, Math.max(20, mouseX + 16)),
                         y: Math.min(window.innerHeight - 260, Math.max(20, mouseY - 20))
                       })
                     });
                   }}
                   onMouseLeave={() => unregisterHover(`pivot-${rule.threatId}-${rule.replacementItem.id}`)}
-                  className="flex items-center gap-2.5 flex-1 p-1 rounded hover:bg-white transition-colors relative group cursor-pointer border border-transparent hover:border-slate-200"
+                  className="flex items-center gap-2.5 flex-1 p-1.5 rounded-lg hover:bg-white transition-colors relative group cursor-pointer border border-transparent hover:border-slate-200"
                 >
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[8.5px] px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold border border-slate-800 font-sans absolute top-1 right-1 shadow-xs">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold border border-slate-800 font-sans absolute top-1 right-1 shadow-xs">
                     [Tab] to Pin
                   </span>
-                  <div className="w-10 h-10 rounded border-2 border-emerald-600 bg-white overflow-hidden flex-shrink-0 shadow-xs">
+                  <div className="w-11 h-11 rounded-lg border-2 border-emerald-600 bg-white overflow-hidden flex-shrink-0 shadow-xs">
                     <img
                       src={getItemIconUrl(version, rule.replacementItem.id)}
                       alt={rule.replacementItem.name}
@@ -207,14 +207,11 @@ export const PivotSwapGuide: React.FC<PivotSwapGuideProps> = ({
                     />
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase font-bold text-emerald-700 block tracking-wider">
+                    <span className="text-[10px] uppercase font-black text-emerald-800 block tracking-wider">
                       BUY INSTEAD:
                     </span>
-                    <span className="text-xs sm:text-sm font-black text-slate-900 block leading-tight">
+                    <span className="text-sm sm:text-base font-black text-slate-900 block leading-tight font-['Barlow_Condensed']">
                       {rule.replacementItem.name}
-                    </span>
-                    <span className="text-[10px] text-amber-800 font-bold block font-sans">
-                      {repItem?.gold?.total || rule.replacementItem.cost} Gold
                     </span>
                   </div>
                 </div>
@@ -222,20 +219,20 @@ export const PivotSwapGuide: React.FC<PivotSwapGuideProps> = ({
               </div>
 
               {/* Early Component Window & Rationale */}
-              <div className="flex flex-col sm:flex-row gap-2.5 items-start text-xs font-sans">
+              <div className="flex flex-col sm:flex-row gap-2.5 items-start text-xs sm:text-[13px] font-sans">
                 {rule.earlyComponent && (
-                  <div className="p-2 rounded bg-emerald-50/50 border border-emerald-200 text-[11px] sm:w-64 flex-shrink-0">
-                    <span className="text-emerald-800 font-bold block mb-0.5 font-['Barlow_Condensed'] uppercase tracking-wide">
+                  <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-200 text-xs sm:text-[12.5px] sm:w-64 flex-shrink-0">
+                    <span className="text-emerald-900 font-bold block mb-0.5 font-['Barlow_Condensed'] uppercase tracking-wide">
                       Early Buy: {rule.earlyComponent.name} ({rule.earlyComponent.cost}g)
                     </span>
-                    <span className="text-slate-700 leading-snug block">
+                    <span className="text-slate-800 leading-snug block">
                       {rule.earlyComponent.buyWindow}
                     </span>
                   </div>
                 )}
 
-                <div className="flex-1 p-2 rounded bg-slate-50 border border-slate-200 text-[11px] text-slate-700 leading-relaxed">
-                  <span className="font-bold text-emerald-800 block mb-0.5 font-['Barlow_Condensed'] uppercase tracking-wider">
+                <div className="flex-1 p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs sm:text-[12.5px] text-slate-800 leading-relaxed">
+                  <span className="font-bold text-emerald-900 block mb-0.5 font-['Barlow_Condensed'] uppercase tracking-wider">
                     Why this swap works:
                   </span>
                   <GlossaryText text={rule.swapRationale} />

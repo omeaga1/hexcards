@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { ChampionDetail, TacticalGuide } from '../../types';
 import { getPassiveIconUrl, getSpellIconUrl, cleanDDragonText } from '../../services/ddragon';
 import { Sparkles, Swords, Info } from 'lucide-react';
@@ -148,8 +148,8 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
               </span>
             )}
             {/* Ability Icon with Key Tag */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded border border-emerald-500 overflow-hidden bg-slate-100 flex-shrink-0 shadow-2xs">
+            <div className="flex items-center gap-2.5 flex-shrink-0">
+              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-lg border-2 border-emerald-500 overflow-hidden bg-slate-100 flex-shrink-0 shadow-2xs">
                 <img
                   src={ability.iconUrl}
                   alt={ability.name}
@@ -157,23 +157,23 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                 />
               </div>
               <div>
-                <span className="deadlock-badge px-1 py-0 text-[8.5px] text-emerald-700">
+                <span className="deadlock-badge px-1.5 py-0.2 text-[10.5px] font-black text-emerald-800 bg-emerald-50 border-emerald-300">
                   <span>{ability.key}</span>
                 </span>
-                <h3 className="text-xs sm:text-sm font-black uppercase text-slate-900 block leading-tight mt-0.5">
+                <h3 className="text-sm sm:text-base font-black uppercase text-slate-900 block leading-tight mt-0.5 font-['Barlow_Condensed']">
                   {ability.name}
                 </h3>
               </div>
             </div>
 
             {/* Description & When to Press */}
-            <div className="flex-1 space-y-1 w-full text-xs font-sans">
-              <p className="text-slate-800 leading-snug">
-                <strong className="text-emerald-700 font-bold">What it does: </strong>
+            <div className="flex-1 space-y-1.5 w-full text-xs sm:text-[13px] font-sans">
+              <p className="text-slate-800 leading-relaxed">
+                <strong className="text-emerald-800 font-bold">What it does: </strong>
                 <GlossaryText text={ability.tldr} />
               </p>
 
-              <p className="text-slate-700 leading-snug bg-emerald-50/60 p-1.5 rounded border border-emerald-100">
+              <p className="text-slate-800 leading-relaxed bg-emerald-50/70 p-2 rounded-lg border border-emerald-100">
                 <strong className="text-emerald-900 font-bold">When to press: </strong>
                 <GlossaryText text={ability.whenToUse} />
               </p>
@@ -184,20 +184,20 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 
       {/* Combos */}
       {tactics.combos.length > 0 && (
-        <div className="pt-2 border-t border-slate-200">
-          <span className="text-xs font-black uppercase text-emerald-700 tracking-wider block mb-1 flex items-center gap-1.5">
-            <Swords className="w-3.5 h-3.5" />
+        <div className="pt-2.5 border-t border-slate-200">
+          <span className="text-xs sm:text-sm font-black uppercase text-emerald-800 tracking-wider block mb-1.5 flex items-center gap-1.5 font-['Barlow_Condensed']">
+            <Swords className="w-4 h-4" />
             Bread & Butter Combos:
           </span>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {tactics.combos.map((combo, idx) => (
-              <div key={idx} className="p-2 rounded bg-slate-50 border border-slate-200 text-xs">
-                <span className="font-black uppercase text-slate-900 block mb-0.5">{combo.name}:</span>
-                <div className="flex flex-wrap items-center gap-1 mb-1 font-['Barlow_Condensed']">
+              <div key={idx} className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs sm:text-[13px]">
+                <span className="font-black uppercase text-slate-900 block mb-1 font-['Barlow_Condensed'] text-xs sm:text-sm">{combo.name}:</span>
+                <div className="flex flex-wrap items-center gap-1.5 mb-1.5 font-['Barlow_Condensed']">
                   {combo.sequence.map((step, sIdx) => (
                     <React.Fragment key={sIdx}>
-                      <span className="px-1.5 py-0.2 rounded bg-white text-slate-900 font-bold text-xs border border-slate-200 shadow-2xs">
+                      <span className="px-2 py-0.5 rounded bg-white text-slate-900 font-bold text-xs border border-slate-200 shadow-2xs">
                         {step}
                       </span>
                       {sIdx < combo.sequence.length - 1 && (
@@ -206,8 +206,8 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                     </React.Fragment>
                   ))}
                 </div>
-                <p className="text-[10.5px] text-slate-600 font-sans">
-                  <strong className="text-emerald-700">Tip:</strong> {combo.tip}
+                <p className="text-xs text-slate-700 font-sans leading-relaxed">
+                  <strong className="text-emerald-800 font-bold">Tip:</strong> {combo.tip}
                 </p>
               </div>
             ))}

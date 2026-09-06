@@ -154,29 +154,38 @@ export const PinnedCardWindow: React.FC<PinnedCardWindowProps> = ({ card }) => {
             </div>
 
             {/* WHAT IT DOES */}
-            <div className="mb-2">
-              <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block mb-0.5 font-['Barlow_Condensed']">
+            <div className="mb-2.5">
+              <span className="text-xs font-black text-emerald-800 uppercase tracking-wider block mb-1 font-['Barlow_Condensed']">
                 What It Does:
               </span>
-              <p className="text-[11px] text-slate-800 leading-snug">
+              <p className="text-xs sm:text-[13px] text-slate-800 leading-relaxed font-sans">
                 <GlossaryText text={itemCard.whatItDoes} />
               </p>
             </div>
 
-            {/* WHEN TO BUY IT */}
-            <div className="p-2 rounded bg-slate-50 border border-slate-200 mb-1.5">
-              <span className="text-[10px] font-black text-amber-800 uppercase tracking-wider block mb-0.5 font-['Barlow_Condensed']">
-                When To Buy It:
-              </span>
-              <p className="text-[11px] text-slate-700 leading-snug">
-                <GlossaryText text={itemCard.whenToBuy} />
-              </p>
-            </div>
+            {/* WHEN TO BUY (Unified) */}
+            {(itemCard.whenToBuy || itemCard.swapReason) && (
+              <div className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200 mb-2 font-sans">
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-xs font-black text-amber-900 uppercase tracking-wider font-['Barlow_Condensed']">
+                    When To Buy:
+                  </span>
+                  {itemCard.replacesItemName && (
+                    <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                      Sub for {itemCard.replacesItemName}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs sm:text-[12.5px] text-slate-800 leading-relaxed">
+                  <GlossaryText text={itemCard.swapReason || itemCard.whenToBuy} />
+                </p>
+              </div>
+            )}
 
             {/* TIMING */}
             {itemCard.timing && (
-              <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-100">
-                <strong className="text-slate-900">Timing:</strong> {itemCard.timing}
+              <div className="text-xs text-slate-600 pt-1.5 border-t border-slate-100 font-sans">
+                <strong className="text-slate-900 font-bold">Timing:</strong> {itemCard.timing}
               </div>
             )}
 

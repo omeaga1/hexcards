@@ -671,76 +671,58 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative w-[60px] sm:w-[68px] md:w-[74px] h-[66px] sm:h-[74px] md:h-[80px] rounded-lg flex flex-col justify-between overflow-hidden cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} ${frame.bg} ${
+        className={`group relative w-[72px] sm:w-[80px] md:w-[86px] p-1.5 rounded-xl flex flex-col items-center justify-between cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} bg-white shadow-2xs ${
           isTarget
-            ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)] z-30 animate-pulse'
+            ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.45)] z-30 animate-pulse'
             : isCandidate
-            ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.4)] z-30 animate-pulse'
+            ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.45)] z-30 animate-pulse'
             : isHovered
-            ? `scale-105 sm:scale-110 -translate-y-1 shadow-[0_4px_16px_rgba(0,0,0,0.15),${frame.glowStrong}] z-25 ring-2 sm:ring-3 ${frame.ring}`
+            ? `scale-105 sm:scale-110 -translate-y-1 shadow-lg z-25 ring-2 sm:ring-3 ${frame.ring}`
             : isSelected
-            ? 'shadow-[0_0_10px_rgba(16,185,129,0.4)] ring-2 ring-emerald-500'
+            ? 'shadow-md ring-2 ring-emerald-500'
             : isDimmed
             ? 'opacity-30 grayscale-[50%] transition-opacity duration-200'
-            : `${frame.glow} hover:-translate-y-0.5 hover:shadow-md`
+            : 'hover:-translate-y-0.5 hover:shadow-md'
         }`}
       >
-        {/* Full-Bleed Artwork: Edge-to-Edge Icon Viewport */}
-        <div className="relative w-full flex-1 overflow-hidden bg-slate-100 flex items-center justify-center">
+        {/* Clean, Unobstructed Item Artwork */}
+        <div className="relative w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 group-hover:border-emerald-500 flex-shrink-0 shadow-2xs">
           <img
             src={getItemIconUrl(version, card.id)}
             alt={card.name}
-            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
             loading="lazy"
           />
 
-          {/* Micro Corner Pill: Gold (Top-Left) */}
-          {gold ? (
-            <div className="absolute top-0.5 left-0.5 pointer-events-none z-10">
-              <span className="text-[7.5px] sm:text-[8.5px] font-mono font-black text-amber-950 bg-amber-100/95 backdrop-blur-xs px-1 py-0 rounded border border-amber-400 shadow-2xs leading-none">
-                {gold >= 1000 ? `${(gold / 1000).toFixed(1)}k` : `${gold}g`}
-              </span>
-            </div>
-          ) : null}
+          {/* Active Ability Indicator */}
+          {card.isActive && (
+            <span className="absolute top-0.5 right-0.5 text-[8.5px] font-black text-white bg-slate-900/90 px-1 py-0.2 rounded border border-slate-700 leading-none">
+              ACT
+            </span>
+          )}
 
-          {/* Micro Corner Pill: Milestone / Active (Top-Right) */}
-          <div className="absolute top-0.5 right-0.5 flex items-center gap-0.5 pointer-events-none z-10">
-            {card.isActive && (
-              <span className="text-[6.5px] sm:text-[7.5px] font-black text-white bg-slate-900 border border-slate-700 px-1 py-0 rounded shadow-2xs leading-none">
-                ACT
-              </span>
-            )}
-            {card.isCore && card.coreOrder ? (
-              <span className="text-[7.5px] sm:text-[8.5px] font-black text-white bg-emerald-600 px-1 py-0 rounded shadow-2xs border border-emerald-700 leading-none">
-                {card.coreOrder === 1 ? 'I' : card.coreOrder === 2 ? 'II' : 'III'}
-              </span>
-            ) : card.buyOrderBadge ? (
-              <span className="text-[6.5px] sm:text-[7.5px] font-black uppercase text-slate-800 bg-white/95 px-1 py-0 rounded border border-slate-300 leading-none shadow-2xs">
-                {card.buyOrderBadge}
-              </span>
-            ) : null}
-          </div>
-
-          {/* Bottom Label or High-Contrast Swap Badge */}
-          {isTarget ? (
-            <div className="absolute bottom-0 inset-x-0 bg-rose-600/95 py-0.5 px-0.5 flex items-center justify-center text-center z-20 pointer-events-none shadow-md">
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-white leading-none">
+          {/* High-Contrast Swap Badge over icon on hover connection */}
+          {isTarget && (
+            <div className="absolute inset-0 bg-rose-600/85 flex items-center justify-center p-0.5">
+              <span className="text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight">
                 SWAP OUT
               </span>
             </div>
-          ) : isCandidate ? (
-            <div className="absolute bottom-0 inset-x-0 bg-sky-600/95 py-0.5 px-0.5 flex items-center justify-center text-center z-20 pointer-events-none shadow-md">
-              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-white leading-none">
+          )}
+          {isCandidate && (
+            <div className="absolute inset-0 bg-sky-600/85 flex items-center justify-center p-0.5">
+              <span className="text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight">
                 SWAP IN
               </span>
             </div>
-          ) : (
-            <div className="absolute bottom-0 inset-x-0 h-[17px] bg-slate-950/85 backdrop-blur-xs px-0.5 flex items-center justify-center text-center z-10 pointer-events-none">
-              <span className="text-[8px] sm:text-[8.5px] font-black uppercase text-white line-clamp-1 tracking-tight font-['Barlow_Condensed'] leading-tight">
-                {card.name}
-              </span>
-            </div>
           )}
+        </div>
+
+        {/* Clear, Legible Item Name Underneath Icon */}
+        <div className="w-full mt-1 flex items-center justify-center min-h-[26px]">
+          <span className="text-[11px] sm:text-xs font-bold text-slate-800 group-hover:text-emerald-700 line-clamp-2 text-center leading-tight tracking-tight font-sans">
+            {card.name}
+          </span>
         </div>
       </div>
     );
@@ -828,33 +810,28 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             : 'hover:-translate-y-0.5 hover:shadow-md'
         }`}
       >
-        {/* Top Header Row: Order Badge + Gold */}
+        {/* Top Header Row: Order Badge (No static gold) */}
         <div className="flex items-center justify-between gap-1 pb-1 mb-1 border-b border-slate-100">
-          <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-300">
+          <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
             {orderLabel}
           </span>
-          {gold && (
-            <span className="text-[10px] font-mono font-black text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-300">
-              {gold}g
-            </span>
-          )}
         </div>
 
         {/* Center Artwork & Name */}
-        <div className="flex items-center gap-2 my-1">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 shadow-2xs">
+        <div className="flex items-center gap-2.5 my-1">
+          <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 shadow-2xs">
             <img
               src={getItemIconUrl(version, card.id)}
               alt={card.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
               loading="lazy"
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-xs sm:text-sm font-black uppercase text-slate-900 tracking-wide leading-tight truncate">
+            <h4 className="text-sm sm:text-base font-black uppercase text-slate-900 tracking-wide leading-tight truncate font-['Barlow_Condensed']">
               {card.name}
             </h4>
-            <span className="text-[9.5px] font-bold text-slate-500 uppercase block truncate">
+            <span className="text-[11px] font-bold text-slate-500 uppercase block truncate font-sans">
               {roleSubtitle}
             </span>
           </div>
@@ -862,14 +839,14 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
         {/* Bottom Tag / Swap Signal */}
         {isTarget ? (
-          <div className="w-full bg-rose-600 py-0.5 px-1 rounded text-center shadow-xs">
-            <span className="text-[8.5px] font-black uppercase tracking-wider text-white">
+          <div className="w-full bg-rose-600 py-1 px-1 rounded text-center shadow-xs">
+            <span className="text-[11px] font-black uppercase tracking-wider text-white">
               REPLACE WITH PIVOT
             </span>
           </div>
         ) : (
-          <div className="w-full bg-slate-50 py-0.5 px-1 rounded text-center border border-slate-200">
-            <span className="text-[8.5px] font-bold text-slate-600 line-clamp-1">
+          <div className="w-full bg-slate-50 py-1 px-1.5 rounded text-center border border-slate-200">
+            <span className="text-[11px] font-semibold text-slate-700 line-clamp-1 font-sans">
               {card.whatItDoes}
             </span>
           </div>
@@ -1089,37 +1066,32 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             <div className="flex items-center gap-2 overflow-hidden">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
               {hoveredCard && hoveredCard.replacesSlot ? (
-                <div className="flex items-center gap-2 truncate">
+                <div className="flex items-center gap-2 truncate text-xs sm:text-sm">
                   <span className="text-white font-black uppercase tracking-wide">
                     {hoveredCard.name}
                   </span>
                   <span className="text-amber-400">➔</span>
-                  <span className="text-rose-400 font-black uppercase tracking-wide">
-                    Replaces {hoveredCard.replacesSlot} ({hoveredCard.replacesItemName})
+                  <span className="text-emerald-400 font-bold font-sans">
+                    {hoveredCard.swapReason || `Substitute for ${hoveredCard.replacesItemName || hoveredCard.replacesSlot}`}
                   </span>
-                  {hoveredCard.swapReason && (
-                    <span className="text-slate-300 hidden md:inline truncate">
-                      — {hoveredCard.swapReason}
-                    </span>
-                  )}
                 </div>
               ) : hoveredCard && cardHasSwapConnection(hoveredCard) ? (
-                <div className="flex items-center gap-2 truncate">
+                <div className="flex items-center gap-2 truncate text-xs sm:text-sm">
                   <span className="text-emerald-400 font-black uppercase tracking-wide">
                     {hoveredCard.name}
                   </span>
                   <span className="text-slate-400">➔</span>
-                  <span className="text-slate-200 font-medium">
+                  <span className="text-slate-200 font-medium font-sans">
                     Situational counter alternatives highlighted below
                   </span>
                 </div>
               ) : (
-                <span className="text-slate-300 uppercase tracking-wider text-[11px] font-bold">
+                <span className="text-slate-300 uppercase tracking-wider text-xs font-bold">
                   {isMobile ? 'Tactical Deck • Tap items to view situational swap replacements' : 'Tactical Deck • Hover any item to reveal matchup swap connections'}
                 </span>
               )}
             </div>
-            <span className="text-[9.5px] font-mono text-emerald-400 uppercase tracking-wider hidden sm:inline flex-shrink-0">
+            <span className="text-[11px] font-mono text-emerald-400 uppercase tracking-wider hidden sm:inline flex-shrink-0">
               ZERO-SCROLL TELEMETRY
             </span>
           </div>
@@ -1228,21 +1200,28 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-lg bg-white border border-slate-200">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block mb-1 font-['Barlow_Condensed']">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs sm:text-sm">
+                <div className="p-3 rounded-lg bg-white border border-slate-200">
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-800 block mb-1 font-['Barlow_Condensed']">
                     Kit Synergy & Combat Function
                   </span>
-                  <p className="text-slate-700 leading-relaxed text-[11.5px]">
+                  <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
                     <GlossaryText text={activeInspectorCard.whatItDoes} />
                   </p>
                 </div>
-                <div className="p-2.5 rounded-lg bg-white border border-slate-200">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 block mb-1 font-['Barlow_Condensed']">
-                    Tactical Purchase Trigger & Matchup
-                  </span>
-                  <p className="text-slate-700 leading-relaxed text-[11.5px]">
-                    <GlossaryText text={activeInspectorCard.whenToBuy} />
+                <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-900 font-['Barlow_Condensed']">
+                      Tactical Purchase Trigger
+                    </span>
+                    {activeInspectorCard.replacesItemName && (
+                      <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200 font-sans">
+                        Sub for {activeInspectorCard.replacesItemName}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
+                    <GlossaryText text={activeInspectorCard.swapReason || activeInspectorCard.whenToBuy} />
                   </p>
                 </div>
               </div>
@@ -1325,35 +1304,31 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             </div>
 
             {/* Tactical Content */}
-            <div className="space-y-2.5 text-xs">
-              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                <span className="text-[10.5px] font-black uppercase tracking-wider text-emerald-700 block mb-0.5 font-['Barlow_Condensed']">
+            <div className="space-y-2.5 text-xs sm:text-sm">
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-800 block mb-1 font-['Barlow_Condensed']">
                   Kit Synergy & Combat Role
                 </span>
-                <p className="text-slate-700 leading-relaxed text-[12px]">
+                <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
                   <GlossaryText text={activeInspectorCard.whatItDoes} />
                 </p>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-amber-50/60 border border-amber-200">
-                <span className="text-[10.5px] font-black uppercase tracking-wider text-amber-800 block mb-0.5 font-['Barlow_Condensed']">
-                  When to Purchase / Swap Trigger
-                </span>
-                <p className="text-slate-800 leading-relaxed text-[12px] font-medium">
-                  <GlossaryText text={activeInspectorCard.whenToBuy} />
+              <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-xs font-black uppercase tracking-wider text-amber-900 font-['Barlow_Condensed']">
+                    When to Purchase / Swap Trigger
+                  </span>
+                  {activeInspectorCard.replacesItemName && (
+                    <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200 font-sans">
+                      Sub for {activeInspectorCard.replacesItemName}
+                    </span>
+                  )}
+                </div>
+                <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
+                  <GlossaryText text={activeInspectorCard.swapReason || activeInspectorCard.whenToBuy} />
                 </p>
               </div>
-
-              {activeInspectorCard.replacesSlot && (
-                <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-rose-900 font-['Barlow_Condensed'] uppercase">
-                    Replaces {activeInspectorCard.replacesSlot} ({activeInspectorCard.replacesItemName})
-                  </span>
-                  <span className="text-[10px] font-black uppercase bg-rose-600 text-white px-2 py-0.5 rounded">
-                    PIVOT
-                  </span>
-                </div>
-              )}
             </div>
           </div>
         </div>
