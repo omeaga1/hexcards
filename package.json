@@ -13,7 +13,7 @@
     "electron:build": "tsc -b && vite build && electron-builder",
     "dist": "npm run electron:build",
     "bridge": "node scripts/leagueBridge.mjs",
-    "sync-patch": "node scripts/syncPatchData.mjs",
+    "sync-patch": "node scripts/syncPatchData.mjs && node scripts/generateAllChampionBuilds.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

@@ -41,7 +41,7 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
     id: '3071',
     name: 'Black Cleaver',
     tags: ['ArmorPen', 'MoveSpeed'],
-    defaultWhy: 'Carve shreds up to 28% enemy total armor across multi-hit abilities while granting speed to stick to targets.',
+    defaultWhy: 'Carve shreds up to 30% enemy total armor across multi-hit abilities while granting speed to stick to targets.',
     playstyleOverrides: {
       'Lane Bully': 'Shreds opposing armor rushers and grants maximum ability haste for relentless trading.'
     }
@@ -61,7 +61,7 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '6630': {
     id: '6630',
     name: 'Sundered Sky',
-    tags: ['Lifeline'],
+    tags: ['Execute', 'OnHit'],
     defaultWhy: 'Lightshield Strike guarantees a massive critical strike and missing health heal on your first strike against each champion.'
   },
   '3074': {
@@ -70,11 +70,29 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
     tags: ['Omnivamp'],
     defaultWhy: 'Full area-of-effect lifesteal cleave allowing instant minion wave wipes and sustained skirmish recovery.'
   },
+  '3748': {
+    id: '3748',
+    name: 'Titanic Hydra',
+    tags: ['Execute', 'OnHit'],
+    defaultWhy: 'Cleaves nearby enemies based on max health and provides an active basic attack reset for heavy burst damage.'
+  },
   '6333': {
     id: '6333',
     name: "Death's Dance",
-    tags: ['Lifeline'],
+    tags: ['Omnivamp'],
     defaultWhy: 'Stores 30% of incoming physical damage as bleed, cleansing the bleed upon scoring a takedown and restoring health.'
+  },
+  '3156': {
+    id: '3156',
+    name: 'Maw of Malmortius',
+    tags: ['Lifeline'],
+    defaultWhy: 'Lifeline triggers an immense magic damage absorption shield and lifesteal when burst below 30% health by AP champions.'
+  },
+  '6609': {
+    id: '6609',
+    name: 'Chempunk Chainsword',
+    tags: ['AntiHeal'],
+    defaultWhy: 'Inflicts 40% Grievous Wounds on physical damage, neutralizing enemy lifesteal carries and drain-tank bruisers.'
   },
   '3153': {
     id: '3153',
@@ -123,8 +141,50 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '3072': {
     id: '3072',
     name: 'Bloodthirster',
-    tags: ['Lifeline'],
-    defaultWhy: 'Massive lifesteal with an overheal shield that protects squishy carries from being picked off before fights.'
+    tags: ['Omnivamp'],
+    defaultWhy: 'Massive lifesteal with escalating Attack Damage while healthy, giving hypercarries sustained duel survivability.'
+  },
+  '3033': {
+    id: '3033',
+    name: 'Mortal Reminder',
+    tags: ['ArmorPen', 'AntiHeal'],
+    defaultWhy: 'Combines 35% Armor Penetration, 25% Crit Chance, and 40% Grievous Wounds to eliminate armor stackers and healers simultaneously.'
+  },
+  '3124': {
+    id: '3124',
+    name: "Guinsoo's Rageblade",
+    tags: ['OnHit'],
+    defaultWhy: 'Phantom Hit triggers all on-hit effects twice every 3rd attack while ramping high attack speed and dual penetration.'
+  },
+  '3115': {
+    id: '3115',
+    name: "Nashor's Tooth",
+    tags: ['OnHit'],
+    defaultWhy: 'Icathian Bite infuses basic attacks with high scaling on-hit magic damage, enabling hybrid and AP marksmen to melt targets.'
+  },
+  '3302': {
+    id: '3302',
+    name: 'Terminus',
+    tags: ['ArmorPen', 'MagicPen', 'OnHit'],
+    defaultWhy: 'Alternates attacks between stacking up to 30% dual Armor/Magic Penetration and stacking up to 25 bonus Armor and MR.'
+  },
+  '3026': {
+    id: '3026',
+    name: 'Guardian Angel',
+    tags: ['Execute'],
+    defaultWhy: 'Grants bonus Armor, Attack Damage, and a full revive on lethal damage, forcing enemy assassins to waste their dive cooldowns.'
+  },
+  '3139': {
+    id: '3139',
+    name: 'Mercurial Scimitar',
+    tags: ['MoveSpeed'],
+    defaultWhy: 'Quicksilver active cleanses all crowd control including Suppression and gives a 50% burst of movement speed.'
+  },
+  '3004': {
+    id: '3004',
+    name: 'Manamune',
+    tags: ['ManaSurge'],
+    defaultWhy: 'Grants bonus AD scaling with maximum mana and transforms into Muramana for bonus on-hit physical damage on attacks and abilities.'
   },
 
   // === MAGE / AP ===
@@ -139,6 +199,42 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
     name: "Rabadon's Deathcap",
     tags: ['Execute'],
     defaultWhy: 'Magical Opus multiplies total Ability Power by 35%, elevating every spell ratio to its absolute maximum ceiling.'
+  },
+  '4645': {
+    id: '4645',
+    name: 'Shadowflame',
+    tags: ['MagicPen', 'Execute'],
+    defaultWhy: 'Cinderbloom inflicts bonus critical magic damage on targets below 35% health, converting picks and combos into guaranteed executions.'
+  },
+  '4628': {
+    id: '4628',
+    name: 'Horizon Focus',
+    tags: ['Execute'],
+    defaultWhy: 'Hypershot reveals enemies and amplifies all damage dealt to them by 10% when hitting abilities from long range.'
+  },
+  '3118': {
+    id: '3118',
+    name: 'Malignance',
+    tags: ['ManaSurge', 'Burn'],
+    defaultWhy: 'Hatefog scorches the ground beneath ultimate targets, shredding their Magic Resist and refunding ultimate ability haste.'
+  },
+  '4646': {
+    id: '4646',
+    name: 'Stormsurge',
+    tags: ['MoveSpeed', 'Execute'],
+    defaultWhy: 'Dealing 35% of a champion\'s health within 2.5 seconds unleashes Squall lightning damage and grants surging movement speed.'
+  },
+  '3100': {
+    id: '3100',
+    name: 'Lich Bane',
+    tags: ['Spellblade', 'MoveSpeed'],
+    defaultWhy: 'Spellblade empowers the next attack after casting a spell with heavy bonus AP scaling burst damage.'
+  },
+  '3102': {
+    id: '3102',
+    name: "Banshee's Veil",
+    tags: ['MagicPen'],
+    defaultWhy: 'Annul spell shield blocks the next incoming hostile ability, preventing enemy engagement combos from stopping you.'
   },
   '3157': {
     id: '3157',
@@ -171,7 +267,7 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '3116': {
     id: '3116',
     name: "Rylai's Crystal Scepter",
-    tags: ['TankAura'],
+    tags: ['MoveSpeed'],
     defaultWhy: 'Damaging abilities slow targets by 30% for 1 second, permanently controlling enemy positioning in extended fights.'
   },
   '3165': {
@@ -203,19 +299,19 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '3814': {
     id: '3814',
     name: 'Edge of Night',
-    tags: ['Lifeline'],
+    tags: ['Lethality'],
     defaultWhy: 'Spell shield blocks the first hostile enemy ability, preventing cc-locks from interrupting your dive assassination.'
   },
   '6695': {
     id: '6695',
     name: "Serpent's Fang",
-    tags: ['AntiHeal'],
+    tags: ['Lethality'],
     defaultWhy: 'Shield Reaver cuts newly applied enemy shields by 50%, completely nullifying Sterak\'s, barrier, and enchanter shields.'
   },
   '6692': {
     id: '6692',
     name: 'Eclipse',
-    tags: ['Lifeline'],
+    tags: ['Execute'],
     defaultWhy: 'Hitting a champion with 2 separate attacks or spells within 1.5s grants an instant shield and % max HP burst damage.'
   },
   '6696': {
@@ -235,7 +331,7 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '2504': {
     id: '2504',
     name: 'Kaenic Rookern',
-    tags: ['Lifeline'],
+    tags: ['TankAura'],
     defaultWhy: 'Magebane creates a regenerating magic damage shield equal to 18% max health, nullifying incoming AP burst.'
   },
   '3075': {
@@ -253,7 +349,7 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '3065': {
     id: '3065',
     name: 'Spirit Visage',
-    tags: ['Lifeline'],
+    tags: ['ShieldAmp'],
     defaultWhy: 'Boundless Vitality amplifies all incoming heals and shields by 25%, turning innate sustain tanks unkillable.'
   },
   '3742': {
@@ -268,6 +364,18 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
     tags: ['TankAura'],
     defaultWhy: 'Warmog\'s Heart triggers massive out-of-combat health regeneration when above bonus health thresholds.'
   },
+  '6665': {
+    id: '6665',
+    name: "Jak'Sho, The Protean",
+    tags: ['TankAura'],
+    defaultWhy: 'Voidborn Resilience grants stacking resistances each second in champion combat, increasing bonus Armor and MR by 30% at max stacks.'
+  },
+  '8020': {
+    id: '8020',
+    name: 'Abyssal Mask',
+    tags: ['TankAura', 'MagicPen'],
+    defaultWhy: 'Unmake aura drains surrounding enemies of Magic Resistance and grants bonus Magic Resist for each nearby opponent.'
+  },
 
   // === SUPPORT / ENCHANTER ===
   '3107': {
@@ -279,8 +387,14 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
   '3190': {
     id: '3190',
     name: 'Locket of the Iron Solari',
-    tags: ['Lifeline', 'ShieldAmp'],
+    tags: ['ShieldAmp'],
     defaultWhy: 'Active grants a decaying shield to all nearby allies to absorb lethal area-of-effect combo damage in teamfights.'
+  },
+  '3109': {
+    id: '3109',
+    name: "Knight's Vow",
+    tags: ['TankAura'],
+    defaultWhy: 'Sacrifice designates a Worthy Ally, redirecting 12% of damage they take onto you while healing you for 10% of the damage they deal.'
   },
   '3504': {
     id: '3504',
@@ -294,11 +408,17 @@ export const ITEM_ESSENCE_MAP: Record<string, ItemEssence> = {
     tags: ['ShieldAmp'],
     defaultWhy: 'Starlit Grace chains your heals and shields to the next nearby ally, doubling teamfight protective throughput.'
   },
-  '3011': {
-    id: '3011',
-    name: 'Chemtech Putrifier',
-    tags: ['AntiHeal'],
-    defaultWhy: 'Empowers ally attacks and spells with Grievous Wounds, applying anti-heal across the entire enemy team.'
+  '3222': {
+    id: '3222',
+    name: "Mikael's Blessing",
+    tags: ['ShieldAmp'],
+    defaultWhy: 'Purify active removes all crowd control debuffs (except Knockups/Suppression) from an allied carry and heals them for 100-180 health.'
+  },
+  '2065': {
+    id: '2065',
+    name: "Shurelya's Battlesong",
+    tags: ['MoveSpeed'],
+    defaultWhy: 'Motivate active grants all nearby allies a surging 30% movement speed burst to engage teamfights or disengage from danger.'
   },
   '3050': {
     id: '3050',

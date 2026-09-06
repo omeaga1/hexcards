@@ -79,7 +79,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <a
-                href={import.meta.env.VITE_DOWNLOAD_INSTALLER_URL || 'https://github.com/vprescenziTH/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe'}
+                href={import.meta.env.VITE_DOWNLOAD_INSTALLER_URL || 'https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe'}
                 download="HexCards-Setup-1.0.0.exe"
                 className="py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
               >
@@ -88,7 +88,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
               </a>
 
               <a
-                href={import.meta.env.VITE_DOWNLOAD_PORTABLE_URL || 'https://github.com/vprescenziTH/hexcards/releases/download/v1.0.0/HexCards-1.0.0-portable.exe'}
+                href={import.meta.env.VITE_DOWNLOAD_PORTABLE_URL || 'https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-1.0.0-portable.exe'}
                 download="HexCards-1.0.0-portable.exe"
                 className="py-2.5 px-3 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95"
               >

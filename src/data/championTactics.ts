@@ -397,9 +397,9 @@ export const CHAMPION_TACTICS: Record<string, TacticalGuide> = {
         order: 1
       },
       secondItem: {
-        itemId: '3157',
-        name: "Zhonya's Hourglass",
-        why: 'Allows you to dive aggressively into fights with R, land charm, and stasis safely while your team follows up.',
+        itemId: '4645',
+        name: 'Shadowflame',
+        why: 'Provides 120 AP and magic penetration that critically strikes low-health targets, ensuring Charm picks convert into confirmed kills.',
         order: 2
       },
       thirdItem: {
@@ -503,9 +503,9 @@ export const CHAMPION_TACTICS: Record<string, TacticalGuide> = {
     coreBuild: {
       starter: 'Scorchclaw Pup + Health Potion',
       firstItem: {
-        itemId: '3077',
-        name: 'Tiamat (into Titanic Hydra)',
-        why: 'Warwick has zero native AoE abilities. Tiamat is mandatory to clear Raptor and Krug jungle camps quickly.',
+        itemId: '3748',
+        name: 'Titanic Hydra',
+        why: 'Tiamat rush gives crucial jungle AoE clear speed, completed into Titanic Hydra for auto-attack resets, burst damage, and max health scaling.',
         order: 1
       },
       secondItem: {
@@ -805,7 +805,7 @@ export function generateDynamicTactics(championId: string, tags: string[], name:
     bootsName = "Berserker's Greaves";
     primaryTree = 'Precision';
     keystoneName = 'Lethal Tempo';
-    keystoneTldr = 'Attacking champions stacks attack speed and grants bonus attack range.';
+    keystoneTldr = 'Attacking champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.';
     keystoneWhy = 'Maximizes your sustained damage output from safe maximum distance.';
     secondaryTree = 'Sorcery';
     secondaryMinors = [
@@ -820,28 +820,28 @@ export function generateDynamicTactics(championId: string, tags: string[], name:
   } else if (isMage) {
     role = 'Mid';
     damageType = 'Magic Heavy';
-    playstyle = 'Burst Assassin';
+    playstyle = 'Control Mage';
     firstItemId = '6655';
     firstItemName = "Luden's Companion";
-    secondItemId = '3157';
-    secondItemName = "Zhonya's Hourglass";
+    secondItemId = '4645';
+    secondItemName = 'Shadowflame';
     thirdItemId = '3089';
     thirdItemName = "Rabadon's Deathcap";
     bootsId = '3020';
     bootsName = "Sorcerer's Shoes";
-    primaryTree = 'Domination';
-    keystoneName = 'Electrocute';
-    keystoneTldr = 'Hitting 3 attacks or abilities deals bonus burst damage.';
-    keystoneWhy = 'Maximizes quick burst trade damage in short lane exchanges.';
+    primaryTree = 'Sorcery';
+    keystoneName = 'Arcane Comet';
+    keystoneTldr = 'Damaging a champion hurls a comet dealing adaptive damage to their location.';
+    keystoneWhy = 'Consistent poke damage that synergizes with ability slows and zoning.';
     secondaryTree = 'Inspiration';
     secondaryMinors = [
       { name: 'Magical Footwear', effect: 'Free boots at 12 minutes with +10 movespeed.' },
       { name: 'Cosmic Insight', effect: 'Lower Flash and item active cooldowns.' }
     ];
-    swapTrigger = 'Facing long-range poke';
-    swapTake = 'Arcane Comet';
-    swapInstead = 'Electrocute';
-    swapWhy = 'Comet allows safe poking from outside auto-attack range.';
+    swapTrigger = 'Facing high-mobility dive or assassin threats';
+    swapTake = 'Phase Rush';
+    swapInstead = 'Arcane Comet';
+    swapWhy = 'Phase Rush gives rapid disengage movement speed and slow resistance when jumped on.';
     shards = '+8 Adaptive Force • +8 Adaptive Force • +65 Health';
   } else if (isAssassin) {
     role = 'Mid';

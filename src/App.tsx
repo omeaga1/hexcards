@@ -25,6 +25,7 @@ import { PinnedCardProvider } from './context/PinnedCardContext';
 import { PinnedWindowManager } from './components/FloatingWindows/PinnedWindowManager';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Loader2, AlertCircle, ShoppingBag, Sparkles, Compass, Layers } from 'lucide-react';
+import { useDevice } from './hooks/useDevice';
 
 const DEFAULT_FAVORITES = ['Darius', 'Garen', 'Jinx', 'Ahri', 'Warwick', 'Thresh'];
 
@@ -39,6 +40,7 @@ const AppContent: React.FC = () => {
   const [allItems, setAllItems] = useState<Record<string, ItemData>>({});
   const [currentChampion, setCurrentChampion] = useState<ChampionDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
+  const { isMobile } = useDevice();
 
   // App State
   const [selectedChampionId, setSelectedChampionId] = useState<string>('Darius');
@@ -293,7 +295,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className={`flex-1 w-full mx-auto py-1.5 sm:py-2 space-y-2 ${activeTab === 'items' ? 'max-w-[99vw] px-2 sm:px-3 lg:px-5' : 'max-w-7xl px-3 sm:px-4'}`}>
+      <main className={`flex-1 w-full mx-auto py-1.5 sm:py-2 space-y-2 ${isMobile ? 'pb-16 px-1.5' : activeTab === 'items' ? 'max-w-[99vw] px-2 sm:px-3 lg:px-5' : 'max-w-7xl px-3 sm:px-4'}`}>
         
         {/* Collapsible Champion Drawer (controlled via Header CHAMPS trigger) */}
         {isSelectorExpanded && (
@@ -308,6 +310,8 @@ const AppContent: React.FC = () => {
             }}
             favorites={favorites}
             onToggleFavorite={handleToggleFavorite}
+            selectedRole={selectedRole}
+            onSelectRole={(role) => setSelectedRole(role)}
           />
         )}
 
@@ -435,8 +439,73 @@ const AppContent: React.FC = () => {
         version={version}
       />
 
+      {/* Mobile Sticky Bottom Tab Bar (Thumb Navigation) */}
+      {isMobile && (
+        <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-1.5 flex items-center justify-around shadow-lg select-none font-['Barlow_Condensed']">
+          <button
+            onClick={() => {
+              setActiveTab('items');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
+              activeTab === 'items'
+                ? 'text-emerald-600 font-black'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <ShoppingBag className="w-4 h-4" />
+            <span className="text-[10px] uppercase tracking-wider">Items</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('abilities');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
+              activeTab === 'abilities'
+                ? 'text-emerald-600 font-black'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span className="text-[10px] uppercase tracking-wider">Abilities</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('runes');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
+              activeTab === 'runes'
+                ? 'text-emerald-600 font-black'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Compass className="w-4 h-4" />
+            <span className="text-[10px] uppercase tracking-wider">Runes</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('all');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
+              activeTab === 'all'
+                ? 'text-emerald-600 font-black'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span className="text-[10px] uppercase tracking-wider">All-in-One</span>
+          </button>
+        </nav>
+      )}
+
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-2 text-center text-[11px] text-slate-500 font-['Barlow_Condensed']">
+      <footer className={`border-t border-slate-200 bg-white py-2 text-center text-[11px] text-slate-500 font-['Barlow_Condensed'] ${isMobile ? 'pb-14' : ''}`}>
         <div className="max-w-7xl mx-auto px-3 sm:px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
           <span className="uppercase tracking-wider font-medium">HexCards • Anti-Slop Tactical LoL Companion</span>
           <div className="flex items-center gap-2">

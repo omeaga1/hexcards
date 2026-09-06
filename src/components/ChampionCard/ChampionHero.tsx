@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ChampionDetail, TacticalGuide } from '../../types';
 import { getChampionIconUrl } from '../../services/ddragon';
 import { Zap, Star } from 'lucide-react';
@@ -20,10 +20,10 @@ export const ChampionHero: React.FC<ChampionHeroProps> = ({
   onToggleFavorite
 }) => {
   return (
-    <div className="deadlock-frame relative w-full rounded-lg px-2.5 py-1 shadow-xs flex items-center justify-between gap-2 font-['Barlow_Condensed'] border border-slate-200 bg-white">
+    <div className="deadlock-frame relative w-full rounded-lg px-2.5 py-1.5 sm:py-1 shadow-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-1.5 sm:gap-2 font-['Barlow_Condensed'] border border-slate-200 bg-white">
       {/* Left: Avatar + Identity */}
       <div className="flex items-center gap-2 overflow-hidden flex-shrink-0">
-        <div className="w-7 h-7 rounded border border-emerald-500 overflow-hidden bg-slate-100 flex-shrink-0 shadow-xs">
+        <div className="w-8 h-8 sm:w-7 sm:h-7 rounded border border-emerald-500 overflow-hidden bg-slate-100 flex-shrink-0 shadow-xs">
           <img
             src={getChampionIconUrl(version, champion.image.full)}
             alt={champion.name}
@@ -38,34 +38,33 @@ export const ChampionHero: React.FC<ChampionHeroProps> = ({
             <button
               onClick={(e) => onToggleFavorite(champion.id, e)}
               title={isFavorite ? "Remove from quick deck" : "Pin to quick deck"}
-              className={`p-0.5 rounded transition-colors cursor-pointer ${
+              className={`p-1 sm:p-0.5 rounded transition-colors cursor-pointer touch-manipulation active:scale-95 ${
                 isFavorite ? 'text-amber-500' : 'text-slate-300 hover:text-amber-500'
               }`}
             >
-              <Star className={`w-3 h-3 ${isFavorite ? 'fill-amber-400' : ''}`} />
+              <Star className={`w-3.5 h-3.5 sm:w-3 sm:h-3 ${isFavorite ? 'fill-amber-400' : ''}`} />
             </button>
           )}
-          <span className="deadlock-badge px-1.5 py-0 text-[9px]">
+          <span className="deadlock-badge px-1.5 py-0 text-[9.5px] sm:text-[9px]">
             <span>{tactics.role}</span>
           </span>
-          <span className="hidden sm:inline px-1.5 py-0 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="hidden xs:inline px-1.5 py-0 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
             {tactics.playstyle}
           </span>
-          <span className="hidden md:inline px-1.5 py-0 rounded text-[9px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+          <span className="hidden sm:inline px-1.5 py-0 rounded text-[9px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
             {tactics.damageType}
           </span>
         </div>
       </div>
 
       {/* Right: Spikes Ribbon */}
-      <div className="flex items-center gap-1.5 text-xs overflow-hidden truncate">
+      <div className="flex items-center gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5 max-w-full flex-shrink-0">
         <div className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase flex-shrink-0">
           <Zap className="w-3 h-3 text-amber-500" />
           <span>Spikes:</span>
         </div>
-        <div className="flex items-center gap-1 truncate">
+        <div className="flex items-center gap-1 flex-nowrap">
           {tactics.powerSpikes.map((spike, idx) => {
-            // Condense verbose spikes (e.g. "Level 1 Cheese (W or Q brawl)" -> "Lvl 1 Cheese")
             const cleanSpike = spike
               .replace(/Level\s*/i, 'Lvl ')
               .replace(/\s*\([^)]*\)/g, '');

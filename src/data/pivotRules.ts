@@ -153,8 +153,8 @@ export const PIVOT_RULES: PivotRule[] = [
         archetype: 'ap_mage',
         itemId: '3102',
         itemName: "Banshee's Veil",
-        componentId: '3211',
-        componentName: "Spectre's Cowl",
+        componentId: '4632',
+        componentName: 'Verdant Barrier',
         why: 'Gives 120 AP plus an automatic Spell Shield to block the enemy opener (e.g. Fizz R or Veigar E).',
         timing: '3rd or 4th item.'
       }

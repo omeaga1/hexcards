@@ -1,9 +1,10 @@
-import React from 'react';
+﻿import React from 'react';
 import { ChampionDetail, TacticalGuide } from '../../types';
 import { getPassiveIconUrl, getSpellIconUrl, cleanDDragonText } from '../../services/ddragon';
 import { Sparkles, Swords, Info } from 'lucide-react';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
 import { usePinnedCards } from '../../context/PinnedCardContext';
+import { useDevice } from '../../hooks/useDevice';
 
 interface AbilityCardsProps {
   version: string;
@@ -17,6 +18,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
   tactics
 }) => {
   const { registerHover, unregisterHover } = usePinnedCards();
+  const { isMobile, isTouch } = useDevice();
 
   const isGeneric = (text: string) =>
     !text ||
@@ -110,6 +112,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
           <div
             key={ability.key}
             onMouseEnter={(e) => {
+              if (isMobile || isTouch) return;
               const mouseX = e.clientX;
               const mouseY = e.clientY;
               registerHover({
@@ -133,12 +136,17 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                 })
               });
             }}
-            onMouseLeave={() => unregisterHover(ability.key)}
-            className="p-2 sm:p-2.5 rounded-lg bg-white border border-slate-200 hover:border-emerald-500 hover:shadow-sm transition-all flex flex-col sm:flex-row gap-2.5 items-start relative group cursor-pointer"
+            onMouseLeave={() => {
+              if (isMobile || isTouch) return;
+              unregisterHover(ability.key);
+            }}
+            className="p-2 sm:p-2.5 rounded-lg bg-white border border-slate-200 sm:hover:border-emerald-500 sm:hover:shadow-sm transition-all flex flex-col sm:flex-row gap-2.5 items-start relative group"
           >
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[8.5px] px-1.5 py-0.2 rounded bg-slate-900 text-white font-bold border border-slate-700 font-sans absolute top-1.5 right-1.5">
-              [Tab] to Pin
-            </span>
+            {!isMobile && !isTouch && (
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[8.5px] px-1.5 py-0.2 rounded bg-slate-900 text-white font-bold border border-slate-700 font-sans absolute top-1.5 right-1.5">
+                [Tab] to Pin
+              </span>
+            )}
             {/* Ability Icon with Key Tag */}
             <div className="flex items-center gap-2 flex-shrink-0">
               <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded border border-emerald-500 overflow-hidden bg-slate-100 flex-shrink-0 shadow-2xs">

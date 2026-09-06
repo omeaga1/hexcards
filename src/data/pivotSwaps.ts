@@ -38,6 +38,9 @@ export function getPivotSwapsForChampion(tactics: TacticalGuide): PivotSwapRule[
   const isBruiser = !isADC && !isMage && !isTank && !isSupport;
 
   if (isSupport) {
+    const alreadyHasLocket = tactics.coreBuild.firstItem.itemId === '3190' || tactics.coreBuild.secondItem.itemId === '3190';
+    const alreadyHasVow = tactics.coreBuild.secondItem.itemId === '3109' || tactics.coreBuild.thirdItem.itemId === '3109';
+
     return [
       {
         threatId: 'healing',
@@ -95,20 +98,28 @@ export function getPivotSwapsForChampion(tactics: TacticalGuide): PivotSwapRule[
         threatLabel: 'Fed AD Assassin Diving Your Carry',
         threatColor: 'text-orange-400 border-orange-500/40 bg-orange-500/10',
         triggerChamps: 'Zed, Talon, Rengar, Kha\'Zix, Nocturne',
-        standardItem: {
+        standardItem: alreadyHasVow ? {
+          name: "2nd Core Item (Zeke's Convergence)",
+          id: '3050',
+          slot: 'Slot 2'
+        } : {
           name: 'Offensive Support Slot (Shurelya\'s)',
           id: '2065',
           slot: 'Slot 2 or 3'
         },
-        replacementItem: {
+        replacementItem: alreadyHasVow ? {
+          name: 'Frozen Heart',
+          id: '3110',
+          cost: 2500
+        } : {
           name: "Knight's Vow",
           id: '3109',
           cost: 2200
         },
         earlyComponent: {
-          name: 'Chain Vest',
-          id: '1031',
-          cost: 800,
+          name: alreadyHasVow ? "Warden's Mail" : 'Chain Vest',
+          id: alreadyHasVow ? '3082' : '1031',
+          cost: alreadyHasVow ? 1000 : 800,
           buyWindow: 'Buy early armor before dragon fights'
         },
         bootsSwap: {
@@ -116,19 +127,29 @@ export function getPivotSwapsForChampion(tactics: TacticalGuide): PivotSwapRule[
           to: 'Plated Steelcaps',
           why: 'Steelcaps flatly reduces 12% of incoming basic attacks.'
         },
-        swapRationale: 'Designate your carry as Worthy Ally: you absorb 12% of damage dealt to them and heal from their damage, neutralizing assassin burst.'
+        swapRationale: alreadyHasVow
+          ? 'You already build Knight\'s Vow! Replace Zeke\'s with Frozen Heart to cripple assassin and diver attack speed and survive physical burst.'
+          : 'Designate your carry as Worthy Ally: you absorb 12% of damage dealt to them and heal from their damage, neutralizing assassin burst.'
       },
       {
         threatId: 'burst_ap',
         threatLabel: 'Fed AP Burst / AoE Magic Threat',
         threatColor: 'text-cyan-400 border-cyan-500/40 bg-cyan-500/10',
         triggerChamps: 'Karthus, Brand, Syndra, Evelynn, Kennen',
-        standardItem: {
+        standardItem: alreadyHasLocket ? {
+          name: "3rd Item Slot (Knight's Vow)",
+          id: '3109',
+          slot: 'Slot 3'
+        } : {
           name: 'Late Support Slot (Redemption)',
           id: '3107',
           slot: 'Slot 3 or 4'
         },
-        replacementItem: {
+        replacementItem: alreadyHasLocket ? {
+          name: 'Kaenic Rookern',
+          id: '2504',
+          cost: 2900
+        } : {
           name: 'Locket of the Iron Solari / Kaenic Rookern',
           id: '3190',
           cost: 2200
@@ -139,7 +160,9 @@ export function getPivotSwapsForChampion(tactics: TacticalGuide): PivotSwapRule[
           cost: 900,
           buyWindow: 'Sit on early magic resistance'
         },
-        swapRationale: 'Locket provides an instant 200–360 team-wide shield against AoE burst spells like Karthus R, Kennen R, or Brand R.'
+        swapRationale: alreadyHasLocket
+          ? 'You already rush Locket 1st! Against fed AP threats, replace Knight\'s Vow with Kaenic Rookern for an automatic regenerating magic shield.'
+          : 'Locket provides an instant 200–360 team-wide shield against AoE burst spells like Karthus R, Kennen R, or Brand R.'
       }
     ];
   }
@@ -288,7 +311,7 @@ export function getPivotSwapsForChampion(tactics: TacticalGuide): PivotSwapRule[
         replacementItem: {
           name: 'Morellonomicon',
           id: '3165',
-          cost: 2850
+          cost: 2200
         },
         earlyComponent: {
           name: 'Oblivion Orb',

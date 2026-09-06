@@ -208,3 +208,5 @@ export function getPassiveIconUrl(version: string, filename: string): string {
 export function getItemIconUrl(version: string, itemId: string): string {
   return `${BASE_URL}/cdn/${version}/img/item/${itemId}.png`;
 }
+
+export { getRuneIconUrl } from '../data/runeIcons';

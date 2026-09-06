@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Patch Synchronization Script
-        run: node scripts/syncPatchData.mjs
+      - name: Run Patch & Meta Synchronization Scripts
+        run: npm run sync-patch
 
       - name: Build and Validate Bundle
         run: npm run build

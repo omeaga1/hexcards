@@ -3,8 +3,9 @@ import { TacticalGuide, ItemData } from '../../types';
 import { getItemIconUrl } from '../../services/ddragon';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
 import { PivotSwapGuide } from './PivotSwapGuide';
-import { X } from 'lucide-react';
+import { X, ArrowRight, ArrowLeftRight, Sparkles, Shield, Zap } from 'lucide-react';
 import { usePinnedCards } from '../../context/PinnedCardContext';
+import { useDevice } from '../../hooks/useDevice';
 
 interface DeadlockItemDeckProps {
   version: string;
@@ -50,6 +51,9 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   const [showInspector, setShowInspector] = useState<boolean>(false);
   const [hoveredCard, setHoveredCard] = useState<TacticalCard | null>(null);
   const [selectedCard, setSelectedCard] = useState<TacticalCard | null>(null);
+  const { isMobile, isTouch } = useDevice();
+  const [showMobileDrawer, setShowMobileDrawer] = useState<boolean>(false);
+  const [mobileStageFilter, setMobileStageFilter] = useState<'all' | 'early' | 'core' | 'boots' | 'counters'>('all');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { registerHover, unregisterHover } = usePinnedCards();
@@ -81,11 +85,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     category: isSupport ? 'utility' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
     isCore: true,
     coreOrder: 1,
-    buyOrderBadge: 'I',
+    buyOrderBadge: 'RUSH',
     isActive: core1.name === 'Stridebreaker' || core1.name === "Zhonya's Hourglass" || core1.name === 'Locket of the Iron Solari',
     whatItDoes: core1.why || 'Primary 1-item spike establishing trading & waveclear.',
     whenToBuy: 'Rush as 1st complete legendary item.',
-    timing: '1st Full Item'
+    timing: '1st Full Item Spike'
   }), [core1, isSupport, isMage, isTank]);
 
   const core2Card: TacticalCard = useMemo(() => ({
@@ -94,11 +98,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
     isCore: true,
     coreOrder: 2,
-    buyOrderBadge: 'II',
+    buyOrderBadge: 'SPIKE',
     isActive: core2.name === "Zhonya's Hourglass",
     whatItDoes: core2.why || 'Core 2-item power spike.',
     whenToBuy: 'Complete 2nd item after boots.',
-    timing: 'Core #2'
+    timing: 'Core #2 Synergy'
   }), [core2, isSupport, isMage, isTank]);
 
   const core3Card: TacticalCard = useMemo(() => ({
@@ -107,17 +111,17 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
     isCore: true,
     coreOrder: 3,
-    buyOrderBadge: 'III',
+    buyOrderBadge: 'PEAK',
     whatItDoes: core3.why || 'Capstone spike completing main combat engine.',
     whenToBuy: 'Complete 3rd item.',
-    timing: 'Core #3'
+    timing: 'Core #3 Capstone'
   }), [core3, isSupport, isMage, isTank]);
 
   const altCoreCard: TacticalCard = useMemo(() => ({
     id: isSupport ? '3001' : isADC ? '3087' : isMage ? '4628' : isBruiser ? '6692' : '3084',
     name: isSupport ? 'Trailblazer' : isADC ? 'Statikk Shiv' : isMage ? 'Horizon Focus' : isBruiser ? 'Eclipse' : 'Heartsteel',
     category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: 'ALT',
+    buyOrderBadge: 'FLEX',
     whatItDoes: isSupport
       ? 'Movement speed trail granting allies +15% move speed.'
       : isADC
@@ -144,7 +148,6 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       ? 'Grants a massive magic damage shield that regenerates out of combat.'
       : 'Stores 30% of incoming damage to bleed over 3 seconds.';
 
-    // Check collision with Core #3 (e.g. Darius with Death's Dance 3rd)
     if (altId === core3.itemId || altName.toLowerCase() === core3.name.toLowerCase()) {
       if (isBruiser) {
         altId = '3026';
@@ -173,7 +176,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       id: altId,
       name: altName,
       category: isSupport ? 'utility' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-      buyOrderBadge: 'ALT',
+      buyOrderBadge: 'FLEX',
       whatItDoes,
       whenToBuy: 'Capstone situational flex item.',
       timing: 'Capstone flex'
@@ -212,7 +215,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     id: isSupport ? '3865' : isJungle ? '3563' : isMage ? '1056' : isTank ? '1054' : '1055',
     name: isSupport ? "World Atlas" : isJungle ? "Scorchclaw Pup" : isMage ? "Doran's Ring" : isTank ? "Doran's Shield" : "Doran's Blade",
     category: isSupport ? 'utility' : isJungle ? 'weapon' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: '0:00',
+    buyOrderBadge: 'START',
     whatItDoes: isSupport
       ? 'Support quest item executing minions to share gold.'
       : isJungle
@@ -236,7 +239,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     id: isSupport ? '3067' : isADC ? '6670' : isMage ? '3802' : isTank ? '6660' : '3134',
     name: isSupport ? 'Kindlegem' : isADC ? 'Noonquiver' : isMage ? 'Lost Chapter' : isTank ? "Bami's Cinder" : 'Serrated Dirk',
     category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: '1ST BACK',
+    buyOrderBadge: 'RECALL',
     whatItDoes: isSupport
       ? '+200 Health and +10 Ability Haste.'
       : isMage
@@ -252,18 +255,18 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     id: '1001',
     name: 'Boots',
     category: 'utility',
-    buyOrderBadge: 'BOOTS',
+    buyOrderBadge: 'T1',
     whatItDoes: '+25 Flat Movement Speed.',
     whenToBuy: 'Pick up on 1st or 2nd back (300g) to dodge skillshots and contest objectives.',
     timing: 'Early Recall (~5:00)'
   }), []);
 
-  // Stage 5 Situational Counter Pods (Realistic Meta Targets: 1st Back, Core #2, Core #3)
+  // Situational Counter Pods (Realistic Meta Targets: 1st Back, Core #2, Core #3)
   const antiHeal800g: TacticalCard = useMemo(() => ({
     id: isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3916' : '3076') : isMage ? '3916' : isTank ? '3076' : '3123',
     name: isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Oblivion Orb' : 'Bramble Vest') : isMage ? 'Oblivion Orb' : isTank ? 'Bramble Vest' : "Executioner's Calling",
     category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
-    buyOrderBadge: 'TECH',
+    buyOrderBadge: '800G',
     replacesSlot: '1st Back',
     replacesItemName: firstBackCard.name,
     swapReason: 'Sit on this 800g component on 1st back against high sustain / healing laners (Aatrox, Warwick, Vlad, Soraka).',
@@ -366,7 +369,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     id: '3140',
     name: 'Quicksilver Sash',
     category: 'weapon',
-    buyOrderBadge: 'TECH',
+    buyOrderBadge: 'QSS',
     replacesSlot: '1st Back',
     replacesItemName: firstBackCard.name,
     swapReason: 'Buy 1300g QSS on early recall vs suppression (Malzahar, Warwick, Skarner). Sit on it.',
@@ -440,87 +443,57 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: 'Late game utility'
   }), [isSupport, core3Card.name]);
 
-  // Group into 5 Chronological Stages
-  const chronoStages: ChronoStage[] = useMemo(() => [
-    {
-      id: 'stage_1',
-      stageNumber: 1,
-      title: '0:00 Start & Recall',
-      subtitle: 'Laning Foundation',
-      accentBorder: 'border-emerald-200',
-      badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-300',
-      cards: [starterCard, potionCard, firstBackCard, tier1BootsCard]
-    },
-    {
-      id: 'stage_2',
-      stageNumber: 2,
-      title: 'Rush #1 & Boots',
-      subtitle: 'Primary Spike Engine',
-      accentBorder: 'border-sky-200',
-      badgeBg: 'bg-sky-50 text-sky-800 border-sky-300',
-      cards: [core1Card, defaultBootsCard, altBootsCard]
-    },
-    {
-      id: 'stage_3',
-      stageNumber: 3,
-      title: 'Mid-Game Core #2',
-      subtitle: 'Skirmish Multiplier',
-      accentBorder: 'border-amber-200',
-      badgeBg: 'bg-amber-50 text-amber-800 border-amber-300',
-      cards: [core2Card, altCoreCard]
-    },
-    {
-      id: 'stage_4',
-      stageNumber: 4,
-      title: 'Capstone Core #3',
-      subtitle: 'Peak Scaling Spike',
-      accentBorder: 'border-rose-200',
-      badgeBg: 'bg-rose-50 text-rose-800 border-rose-300',
-      cards: [core3Card, altCapstoneCard]
-    }
-  ], [
-    starterCard, potionCard, firstBackCard, tier1BootsCard,
-    core1Card, defaultBootsCard, altBootsCard,
-    core2Card, altCoreCard,
-    core3Card, altCapstoneCard
-  ]);
-
-  // Stage 5 Situational Counter Pods
+  // Situational Pods organized by Mobalytics Threat Scenarios
   const situationalPods = useMemo(() => [
     {
-      title: 'Anti-Heal',
-      color: 'border-rose-200 text-rose-800',
+      title: 'Anti-Heal (Grievous)',
+      subtitle: 'vs Sustain & Healers',
+      accent: 'border-rose-400 bg-rose-50/20 text-rose-800',
+      badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
+      icon: '🩸',
       cards: [antiHeal800g, antiHealFull]
     },
     {
-      title: 'Anti-Burst & Defense',
-      color: 'border-amber-200 text-amber-800',
+      title: 'Anti-Burst & Armor',
+      subtitle: 'vs AD Assassins & Lethality',
+      accent: 'border-amber-400 bg-amber-50/20 text-amber-800',
+      badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
+      icon: '🛡️',
       cards: [antiBurst1, antiBurst2, antiBurst3]
     },
     {
-      title: 'Resist Shred & Pen',
-      color: 'border-purple-200 text-purple-800',
+      title: 'Magic Resist & Shields',
+      subtitle: 'vs Fed AP Mages & Poke',
+      accent: 'border-purple-400 bg-purple-50/20 text-purple-800',
+      badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
+      icon: '🔮',
+      cards: [antiCC3, antiBurst1]
+    },
+    {
+      title: 'Armor / MR Penetration',
+      subtitle: 'vs Tanks & High Resistance',
+      accent: 'border-sky-400 bg-sky-50/20 text-sky-800',
+      badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
+      icon: '⚔️',
       cards: [shred1, shred2]
     },
     {
-      title: 'Cleanse & Tenacity',
-      color: 'border-emerald-200 text-emerald-800',
-      cards: [antiCC1, antiCC2, antiCC3]
-    },
-    {
-      title: 'Tactical Flex',
-      color: 'border-sky-200 text-sky-800',
-      cards: [flex1, flex2, flex3]
+      title: 'Utility & Cleanses',
+      subtitle: 'vs Hard CC & Shields',
+      accent: 'border-emerald-400 bg-emerald-50/20 text-emerald-800',
+      badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      icon: '⚡',
+      cards: [antiCC1, antiCC2, flex1, flex2, flex3]
     }
   ], [
     antiHeal800g, antiHealFull,
     antiBurst1, antiBurst2, antiBurst3,
+    antiCC3,
     shred1, shred2,
-    antiCC1, antiCC2, antiCC3,
-    flex1, flex2, flex3
+    antiCC1, antiCC2, flex1, flex2, flex3
   ]);
 
-  // Full-Frame Category Colors (Green/White Light Theme)
+  // Deadlock Category Frame Colors
   const getCategoryFrame = (category: ItemCategory) => {
     switch (category) {
       case 'weapon':
@@ -531,7 +504,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           glow: 'shadow-[0_1px_3px_rgba(249,115,22,0.18)]',
           glowStrong: '0_4px_14px_rgba(249,115,22,0.35)',
           badgeBg: 'bg-orange-500 text-white font-black',
-          tagText: 'text-orange-600'
+          tagText: 'text-orange-600',
+          chipBg: 'bg-orange-50 border-orange-200 text-orange-800'
         };
       case 'spirit':
         return {
@@ -541,7 +515,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           glow: 'shadow-[0_1px_3px_rgba(168,85,247,0.18)]',
           glowStrong: '0_4px_14px_rgba(168,85,247,0.35)',
           badgeBg: 'bg-purple-600 text-white font-black',
-          tagText: 'text-purple-600'
+          tagText: 'text-purple-600',
+          chipBg: 'bg-purple-50 border-purple-200 text-purple-800'
         };
       case 'vitality':
         return {
@@ -551,7 +526,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           glow: 'shadow-[0_1px_3px_rgba(16,185,129,0.18)]',
           glowStrong: '0_4px_14px_rgba(16,185,129,0.35)',
           badgeBg: 'bg-emerald-600 text-white font-black',
-          tagText: 'text-emerald-700'
+          tagText: 'text-emerald-700',
+          chipBg: 'bg-emerald-50 border-emerald-200 text-emerald-800'
         };
       case 'utility':
         return {
@@ -561,7 +537,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           glow: 'shadow-[0_1px_3px_rgba(14,165,233,0.18)]',
           glowStrong: '0_4px_14px_rgba(14,165,233,0.35)',
           badgeBg: 'bg-sky-600 text-white font-black',
-          tagText: 'text-sky-700'
+          tagText: 'text-sky-700',
+          chipBg: 'bg-sky-50 border-sky-200 text-sky-800'
         };
     }
   };
@@ -580,7 +557,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       if (hovered.replacesSlot === 'Core #1' && targetCard.coreOrder === 1) return true;
       if (hovered.replacesSlot === 'Core #2' && targetCard.coreOrder === 2) return true;
       if (hovered.replacesSlot === 'Core #3' && targetCard.coreOrder === 3) return true;
-      if (hovered.replacesSlot === '1st Back' && (targetCard.buyOrderBadge === '1ST BACK' || targetCard.name === firstBackCard.name)) return true;
+      if (hovered.replacesSlot === '1st Back' && (targetCard.buyOrderBadge === 'RECALL' || targetCard.buyOrderBadge === '1ST BACK' || targetCard.name === firstBackCard.name)) return true;
       if (hovered.replacesSlot === 'Boots' && targetCard.isCore && (targetCard.buyOrderBadge === 'BOOTS' || targetCard.id === defaultBootsCard.id)) return true;
     }
     if (hovered.replacesItemName && targetCard.name.toLowerCase() === hovered.replacesItemName.toLowerCase()) {
@@ -600,7 +577,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     if ((hovered.buyOrderBadge === 'BOOTS' || hovered.id === defaultBootsCard.id) && candidateCard.id === altBootsCard.id) {
       return true;
     }
-    if ((hovered.buyOrderBadge === '1ST BACK' || hovered.name === firstBackCard.name) && candidateCard.replacesSlot === '1st Back') {
+    if ((hovered.buyOrderBadge === 'RECALL' || hovered.buyOrderBadge === '1ST BACK' || hovered.name === firstBackCard.name) && candidateCard.replacesSlot === '1st Back') {
       return true;
     }
     if (hovered.isCore && hovered.coreOrder === 1 && candidateCard.replacesSlot === 'Core #1') {
@@ -618,16 +595,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     return false;
   };
 
-  // Check if a card participates in any swap pairings
   const cardHasSwapConnection = (card: TacticalCard): boolean => {
     if (card.replacesSlot || card.replacesItemName) return true;
     if (card.id === defaultBootsCard.id || card.id === altBootsCard.id) return true;
-    if (card.buyOrderBadge === '1ST BACK') return true;
+    if (card.buyOrderBadge === 'RECALL' || card.buyOrderBadge === '1ST BACK') return true;
     if (card.isCore && (card.coreOrder === 1 || card.coreOrder === 2 || card.coreOrder === 3)) return true;
     return false;
   };
 
-  // Render a Single Ultra-Compact Tactical Item Tile with Zero Arrows and Crisp Hover Swaps
+  // Render a Single Deadlock Item Tile
   const renderCardNode = (card: TacticalCard) => {
     const itemData = allItems ? allItems[card.id] : null;
     const gold = itemData?.gold?.total;
@@ -646,9 +622,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         data-card-id={card.id}
         onClick={() => {
           setSelectedCard(card);
-          setShowInspector(true);
+          setHoveredCard(card);
+          if (isMobile) {
+            setShowMobileDrawer(true);
+          } else {
+            setShowInspector(true);
+          }
         }}
         onMouseEnter={(e) => {
+          if (isMobile || isTouch) return;
           setHoveredCard(card);
           const currentTarget = e.currentTarget;
           const rect = currentTarget.getBoundingClientRect();
@@ -685,10 +667,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           });
         }}
         onMouseLeave={() => {
+          if (isMobile || isTouch) return;
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative w-[56px] sm:w-[64px] md:w-[70px] lg:w-[76px] xl:w-[80px] h-[60px] sm:h-[68px] md:h-[74px] lg:h-[80px] xl:h-[86px] rounded-md flex flex-col justify-between overflow-hidden cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} ${frame.bg} ${
+        className={`group relative w-[60px] sm:w-[68px] md:w-[74px] h-[66px] sm:h-[74px] md:h-[80px] rounded-lg flex flex-col justify-between overflow-hidden cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} ${frame.bg} ${
           isTarget
             ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)] z-30 animate-pulse'
             : isCandidate
@@ -714,7 +697,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           {/* Micro Corner Pill: Gold (Top-Left) */}
           {gold ? (
             <div className="absolute top-0.5 left-0.5 pointer-events-none z-10">
-              <span className="text-[7px] sm:text-[8px] md:text-[9px] font-mono font-black text-amber-950 bg-amber-100/95 backdrop-blur-xs px-0.5 py-0 rounded border border-amber-400 shadow-2xs leading-none">
+              <span className="text-[7.5px] sm:text-[8.5px] font-mono font-black text-amber-950 bg-amber-100/95 backdrop-blur-xs px-1 py-0 rounded border border-amber-400 shadow-2xs leading-none">
                 {gold >= 1000 ? `${(gold / 1000).toFixed(1)}k` : `${gold}g`}
               </span>
             </div>
@@ -723,37 +706,37 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           {/* Micro Corner Pill: Milestone / Active (Top-Right) */}
           <div className="absolute top-0.5 right-0.5 flex items-center gap-0.5 pointer-events-none z-10">
             {card.isActive && (
-              <span className="text-[6px] sm:text-[7px] md:text-[7.5px] font-black text-white bg-slate-900 border border-slate-700 px-0.5 py-0 rounded shadow-2xs leading-none">
+              <span className="text-[6.5px] sm:text-[7.5px] font-black text-white bg-slate-900 border border-slate-700 px-1 py-0 rounded shadow-2xs leading-none">
                 ACT
               </span>
             )}
             {card.isCore && card.coreOrder ? (
-              <span className="text-[7px] sm:text-[8px] md:text-[8.5px] font-black text-white bg-emerald-600 px-1 py-0 rounded shadow-2xs border border-emerald-700 leading-none">
+              <span className="text-[7.5px] sm:text-[8.5px] font-black text-white bg-emerald-600 px-1 py-0 rounded shadow-2xs border border-emerald-700 leading-none">
                 {card.coreOrder === 1 ? 'I' : card.coreOrder === 2 ? 'II' : 'III'}
               </span>
             ) : card.buyOrderBadge ? (
-              <span className="text-[6px] sm:text-[7px] md:text-[7.5px] font-black uppercase text-slate-800 bg-white/95 px-0.5 py-0 rounded border border-slate-300 leading-none shadow-2xs">
+              <span className="text-[6.5px] sm:text-[7.5px] font-black uppercase text-slate-800 bg-white/95 px-1 py-0 rounded border border-slate-300 leading-none shadow-2xs">
                 {card.buyOrderBadge}
               </span>
             ) : null}
           </div>
 
-          {/* Micro Bottom Glass Label or High-Contrast Swap Badge */}
+          {/* Bottom Label or High-Contrast Swap Badge */}
           {isTarget ? (
             <div className="absolute bottom-0 inset-x-0 bg-rose-600/95 py-0.5 px-0.5 flex items-center justify-center text-center z-20 pointer-events-none shadow-md">
-              <span className="text-[7px] sm:text-[8px] md:text-[8.5px] font-black uppercase tracking-wider text-white leading-none">
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-white leading-none">
                 SWAP OUT
               </span>
             </div>
           ) : isCandidate ? (
             <div className="absolute bottom-0 inset-x-0 bg-sky-600/95 py-0.5 px-0.5 flex items-center justify-center text-center z-20 pointer-events-none shadow-md">
-              <span className="text-[7px] sm:text-[8px] md:text-[8.5px] font-black uppercase tracking-wider text-white leading-none">
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-white leading-none">
                 SWAP IN
               </span>
             </div>
           ) : (
-            <div className="absolute bottom-0 inset-x-0 h-[15px] sm:h-[17px] bg-slate-950/85 backdrop-blur-xs px-0.5 flex items-center justify-center text-center z-10 pointer-events-none">
-              <span className="text-[7.5px] sm:text-[8px] md:text-[8.5px] font-black uppercase text-white line-clamp-1 tracking-tight font-['Barlow_Condensed'] leading-tight">
+            <div className="absolute bottom-0 inset-x-0 h-[17px] bg-slate-950/85 backdrop-blur-xs px-0.5 flex items-center justify-center text-center z-10 pointer-events-none">
+              <span className="text-[8px] sm:text-[8.5px] font-black uppercase text-white line-clamp-1 tracking-tight font-['Barlow_Condensed'] leading-tight">
                 {card.name}
               </span>
             </div>
@@ -763,165 +746,435 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     );
   };
 
+  // Render a Hero-Sized Featured Core Item Node (Mobalytics style with Deadlock tech HUD)
+  const renderFeaturedCoreNode = (card: TacticalCard, orderLabel: string, roleSubtitle: string) => {
+    const itemData = allItems ? allItems[card.id] : null;
+    const gold = itemData?.gold?.total;
+    const isHovered = hoveredCard?.id === card.id;
+    const isSelected = selectedCard ? selectedCard.id === card.id : (!hoveredCard && card.isCore && card.coreOrder === 1);
+    const frame = getCategoryFrame(card.category);
+
+    const isTarget = isCardReplacementTarget(card, hoveredCard);
+    const isCandidate = isCardSwapCandidate(card, hoveredCard);
+    const isConnected = isHovered || isTarget || isCandidate;
+    const isDimmed = Boolean(hoveredCard && cardHasSwapConnection(hoveredCard) && !isConnected);
+
+    return (
+      <div
+        key={card.id}
+        data-card-id={card.id}
+        onClick={() => {
+          setSelectedCard(card);
+          setHoveredCard(card);
+          if (isMobile) {
+            setShowMobileDrawer(true);
+          } else {
+            setShowInspector(true);
+          }
+        }}
+        onMouseEnter={(e) => {
+          if (isMobile || isTouch) return;
+          setHoveredCard(card);
+          const currentTarget = e.currentTarget;
+          const rect = currentTarget.getBoundingClientRect();
+          const components = itemData?.from?.map(compId => ({
+            id: compId,
+            name: allItems[compId]?.name || compId,
+            gold: allItems[compId]?.gold?.total
+          })).filter(Boolean) || [];
+
+          registerHover({
+            id: card.id,
+            type: 'item',
+            title: card.name,
+            category: card.category,
+            data: { card: { ...card, components }, version, gold, components },
+            getCoords: () => {
+              const width = 340;
+              const height = 360;
+              const margin = 16;
+              let x = rect.right + 12;
+              if (x + width > window.innerWidth - margin) {
+                x = Math.max(margin, rect.left - width - 12);
+              }
+              let y = rect.top - 10;
+              if (y + height > window.innerHeight - margin) {
+                y = Math.max(margin, window.innerHeight - height - margin);
+              }
+              if (y < margin) y = margin;
+              return { x, y };
+            },
+            onFreeze: () => {
+              setHoveredCard(null);
+            }
+          });
+        }}
+        onMouseLeave={() => {
+          if (isMobile || isTouch) return;
+          setHoveredCard(null);
+          unregisterHover(card.id);
+        }}
+        className={`group relative flex-1 min-w-[120px] max-w-[200px] p-2 rounded-xl flex flex-col justify-between border-2 ${frame.border} bg-white transition-all duration-150 cursor-pointer shadow-xs ${
+          isTarget
+            ? 'scale-105 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_22px_rgba(244,63,94,0.45)] z-30 animate-pulse'
+            : isCandidate
+            ? 'scale-105 ring-4 ring-sky-500 border-sky-500 shadow-[0_0_22px_rgba(14,165,233,0.45)] z-30 animate-pulse'
+            : isHovered
+            ? `scale-105 shadow-lg z-25 ring-3 ${frame.ring}`
+            : isSelected
+            ? 'ring-2 ring-emerald-500 shadow-md'
+            : isDimmed
+            ? 'opacity-30 grayscale-[50%]'
+            : 'hover:-translate-y-0.5 hover:shadow-md'
+        }`}
+      >
+        {/* Top Header Row: Order Badge + Gold */}
+        <div className="flex items-center justify-between gap-1 pb-1 mb-1 border-b border-slate-100">
+          <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-300">
+            {orderLabel}
+          </span>
+          {gold && (
+            <span className="text-[10px] font-mono font-black text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-300">
+              {gold}g
+            </span>
+          )}
+        </div>
+
+        {/* Center Artwork & Name */}
+        <div className="flex items-center gap-2 my-1">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 shadow-2xs">
+            <img
+              src={getItemIconUrl(version, card.id)}
+              alt={card.name}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+              loading="lazy"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-xs sm:text-sm font-black uppercase text-slate-900 tracking-wide leading-tight truncate">
+              {card.name}
+            </h4>
+            <span className="text-[9.5px] font-bold text-slate-500 uppercase block truncate">
+              {roleSubtitle}
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Tag / Swap Signal */}
+        {isTarget ? (
+          <div className="w-full bg-rose-600 py-0.5 px-1 rounded text-center shadow-xs">
+            <span className="text-[8.5px] font-black uppercase tracking-wider text-white">
+              REPLACE WITH PIVOT
+            </span>
+          </div>
+        ) : (
+          <div className="w-full bg-slate-50 py-0.5 px-1 rounded text-center border border-slate-200">
+            <span className="text-[8.5px] font-bold text-slate-600 line-clamp-1">
+              {card.whatItDoes}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-2 sm:p-2.5 lg:p-3 shadow-xs overflow-hidden font-['Barlow_Condensed'] select-none"
+      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 lg:p-3.5 shadow-xs overflow-hidden font-['Barlow_Condensed'] select-none"
       style={{
         backgroundImage: 'radial-gradient(#e2e8f0 1.25px, transparent 1.25px)',
         backgroundSize: '16px 16px'
       }}
     >
-      {/* Utility Control Bar */}
-      <div className="relative z-20 flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-slate-200">
+      {/* Control Bar */}
+      <div className="relative z-20 flex items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200">
         <div className="flex items-center gap-2">
           {/* View Toggles */}
-          <div className="flex items-center bg-slate-100 rounded p-0.5 border border-slate-200">
+          <div className="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 shadow-2xs">
             <button
               onClick={() => setSubView('canvas')}
-              className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                 subView === 'canvas'
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Canvas
+              Tactical Deck
             </button>
             <button
               onClick={() => setSubView('matrix')}
-              className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                 subView === 'matrix'
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Matrix
+              Pivot Matrix
             </button>
           </div>
+
+          <span className="hidden sm:inline text-[10.5px] font-bold text-slate-500 uppercase tracking-wide">
+            Mobalytics Flow • Deadlock HUD
+          </span>
         </div>
 
         {/* Inspector Toggle */}
         <button
           onClick={() => setShowInspector(!showInspector)}
-          className={`px-2 py-0.5 rounded border text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
+          className={`px-2.5 py-0.5 rounded-lg border text-xs font-black uppercase tracking-wider transition-colors cursor-pointer ${
             showInspector
-              ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+              ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
               : 'bg-white border-slate-300 text-slate-600 hover:text-slate-900'
           }`}
         >
-          {showInspector ? 'Inspector: On' : 'Inspector: Off'}
+          {showInspector ? 'Inspector: Open' : 'Inspector: Closed'}
         </button>
       </div>
 
+      {/* Mobile Category Filter Tabs */}
+      {isMobile && subView === 'canvas' && (
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2 border-b border-slate-100">
+          {[
+            { id: 'all', label: 'All Build Steps' },
+            { id: 'early', label: '1: Early & Back' },
+            { id: 'core', label: '2: Core Build ➔' },
+            { id: 'boots', label: '3: Boots' },
+            { id: 'counters', label: '4: Counters' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setMobileStageFilter(tab.id as any)}
+              className={`px-2.5 py-1 rounded text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-all touch-manipulation ${
+                mobileStageFilter === tab.id
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Main View Area */}
       {subView === 'canvas' ? (
-        <div className="relative flex-col justify-between space-y-1.5">
+        <div className="relative flex-col justify-between space-y-2.5">
 
-          {/* TIER 1: CHRONOLOGICAL PROGRESSION (STAGES 1 - 4) */}
-          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-            {chronoStages.map((stage) => (
-              <div
-                key={stage.id}
-                className={`rounded-lg bg-white border ${stage.accentBorder} flex flex-col justify-between overflow-hidden shadow-2xs`}
-              >
-                <div className="px-2 py-0.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          {/* SECTION 1: MOBALYTICS CHRONOLOGICAL HIGHWAY (EARLY -> CORE -> BOOTS) */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-stretch">
+            
+            {/* SUB-POD A: STARTING ITEMS & 1ST RECALL (3 COLS) */}
+            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
+              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-2.5 shadow-2xs flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-100">
                   <div className="flex items-center gap-1.5">
-                    <span className={`text-[9px] px-1.5 py-0.2 rounded font-black uppercase tracking-wider border ${stage.badgeBg}`}>
-                      {stage.stageNumber}
+                    <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-slate-900 text-white">
+                      0:00 - 5:00
                     </span>
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                      {stage.title}
+                      Early Game & Back
                     </h3>
                   </div>
-                  <span className="text-[9px] font-mono font-bold text-slate-500 uppercase">
-                    {stage.stageNumber === 1 ? 'EARLY' : stage.stageNumber === 2 ? 'CORE 1-2' : stage.stageNumber === 3 ? 'SPIKE' : 'CAPSTONE'}
-                  </span>
                 </div>
 
-                <div className="p-1.5 sm:p-2 flex flex-wrap items-center gap-1.5 sm:gap-2 justify-start bg-slate-50/40">
-                  {stage.cards.map(renderCardNode)}
+                {/* Starters & 1st Recall Cards */}
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-[9.5px] font-bold text-slate-500 uppercase block mb-1">
+                      Starter Bundle (0:00)
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {renderCardNode(starterCard)}
+                      {renderCardNode(potionCard)}
+                    </div>
+                  </div>
+
+                  <div className="pt-1.5 border-t border-slate-100">
+                    <span className="text-[9.5px] font-bold text-emerald-700 uppercase block mb-1">
+                      1st Recall Spike (~4:30)
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {renderCardNode(firstBackCard)}
+                      {renderCardNode(tier1BootsCard)}
+                    </div>
+                  </div>
                 </div>
               </div>
-            ))}
+            )}
+
+            {/* SUB-POD B: THE CORE BUILD HIGHWAY (6 COLS - MOBALYTICS ARROW FLOW) */}
+            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
+              <div className="lg:col-span-6 rounded-xl bg-gradient-to-r from-emerald-50/20 via-white to-sky-50/20 border-2 border-emerald-400/80 p-2.5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">
+                      The Core Build Highway
+                    </h3>
+                  </div>
+                  <span className="text-[9.5px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.2 rounded border border-emerald-300">
+                    RECOMMENDED RUSH
+                  </span>
+                </div>
+
+                {/* 3 Core Items Connected with Chevrons */}
+                <div className="flex items-center justify-between gap-1.5 sm:gap-2 my-1 overflow-x-auto no-scrollbar">
+                  {renderFeaturedCoreNode(core1Card, '1ST RUSH', 'Primary Spike')}
+                  <ArrowRight className="w-5 h-5 text-emerald-600 flex-shrink-0 animate-pulse" />
+                  {renderFeaturedCoreNode(core2Card, '2ND CORE', 'Kit Synergy')}
+                  <ArrowRight className="w-5 h-5 text-emerald-600 flex-shrink-0 animate-pulse" />
+                  {renderFeaturedCoreNode(core3Card, '3RD CORE', 'Peak Capstone')}
+                </div>
+
+                {/* Flex Alternatives Pill Bar */}
+                <div className="mt-2 pt-1.5 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-600">
+                  <span className="font-bold uppercase text-slate-500">
+                    Tempo Alternatives:
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-black uppercase text-slate-800 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
+                      Flex 2nd: {altCoreCard.name}
+                    </span>
+                    <span className="font-black uppercase text-slate-800 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
+                      Flex 3rd: {altCapstoneCard.name}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUB-POD C: BOOTS ENGINE (3 COLS) */}
+            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
+              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-2.5 shadow-2xs flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 border border-sky-300">
+                      T2 BOOTS
+                    </span>
+                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                      Boots Engine
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Default vs Situational Boots */}
+                <div className="flex items-center justify-around gap-2 my-1">
+                  <div className="flex flex-col items-center">
+                    <span className="text-[9px] font-black uppercase text-emerald-700 mb-1">Standard</span>
+                    {renderCardNode(defaultBootsCard)}
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <ArrowLeftRight className="w-4 h-4 text-sky-600 animate-pulse my-1" />
+                    <span className="text-[8px] font-black uppercase text-slate-400">SWAP</span>
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <span className="text-[9px] font-black uppercase text-sky-700 mb-1">Alternative</span>
+                    {renderCardNode(altBootsCard)}
+                  </div>
+                </div>
+
+                <div className="p-1.5 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-600 leading-snug mt-1 text-center">
+                  {bootsRec.alternative}
+                </div>
+              </div>
+            )}
+
           </div>
 
-          {/* DYNAMIC TACTICAL SWAP STATUS BAR */}
-          <div className="relative z-10 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs select-none shadow-2xs">
+          {/* SECTION 2: DYNAMIC TACTICAL SWAP STATUS BAR */}
+          <div className="relative z-10 px-3 py-1.5 rounded-lg bg-slate-900 text-white flex items-center justify-between text-xs select-none shadow-sm">
             <div className="flex items-center gap-2 overflow-hidden">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
               {hoveredCard && hoveredCard.replacesSlot ? (
                 <div className="flex items-center gap-2 truncate">
-                  <span className="text-slate-900 font-black uppercase tracking-wide">
+                  <span className="text-white font-black uppercase tracking-wide">
                     {hoveredCard.name}
                   </span>
-                  <span className="text-slate-400">➔</span>
-                  <span className="text-rose-600 font-bold uppercase tracking-wide">
+                  <span className="text-amber-400">➔</span>
+                  <span className="text-rose-400 font-black uppercase tracking-wide">
                     Replaces {hoveredCard.replacesSlot} ({hoveredCard.replacesItemName})
                   </span>
                   {hoveredCard.swapReason && (
-                    <span className="text-slate-500 hidden md:inline truncate">
+                    <span className="text-slate-300 hidden md:inline truncate">
                       — {hoveredCard.swapReason}
                     </span>
                   )}
                 </div>
               ) : hoveredCard && cardHasSwapConnection(hoveredCard) ? (
                 <div className="flex items-center gap-2 truncate">
-                  <span className="text-emerald-700 font-black uppercase tracking-wide">
+                  <span className="text-emerald-400 font-black uppercase tracking-wide">
                     {hoveredCard.name}
                   </span>
                   <span className="text-slate-400">➔</span>
-                  <span className="text-slate-600 font-medium">
-                    Situational swap alternatives highlighted below
+                  <span className="text-slate-200 font-medium">
+                    Situational counter alternatives highlighted below
                   </span>
                 </div>
               ) : (
-                <span className="text-slate-500 uppercase tracking-wider text-[10.5px] font-bold">
-                  Tactical Item Deck • Hover items to highlight swap options
+                <span className="text-slate-300 uppercase tracking-wider text-[11px] font-bold">
+                  {isMobile ? 'Tactical Deck • Tap items to view situational swap replacements' : 'Tactical Deck • Hover any item to reveal matchup swap connections'}
                 </span>
               )}
             </div>
-            <span className="text-[9.5px] font-mono text-slate-400 uppercase tracking-wider hidden sm:inline flex-shrink-0">
-              Zero-Scroll HUD
+            <span className="text-[9.5px] font-mono text-emerald-400 uppercase tracking-wider hidden sm:inline flex-shrink-0">
+              ZERO-SCROLL TELEMETRY
             </span>
           </div>
 
-          {/* TIER 2: SITUATIONAL COUNTERS & PIVOTS */}
-          <div className="relative z-10 rounded-lg bg-white border border-slate-200 overflow-hidden shadow-2xs flex flex-col justify-between">
-            <div className="px-2 py-0.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-900">
-                Situational Counters & Pivots
-              </span>
-              <span className="text-[9px] text-slate-500 font-sans hidden sm:inline">
-                Optional items to swap into build based on enemy team
-              </span>
-            </div>
+          {/* SECTION 3: SITUATIONAL COUNTERS & MATCHUP PIVOTS (MOBALYTICS THREAT PODS) */}
+          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
+            <div className="relative z-10 rounded-xl bg-white border border-slate-200 p-2.5 shadow-2xs flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-900">
+                    Situational Counters & Matchup Pivots
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 font-sans hidden sm:inline">
+                    Swap these into your build when facing specific enemy threats
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                  5 Threat Categories
+                </span>
+              </div>
 
-            <div className="p-1.5 sm:p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-1.5 lg:gap-2 bg-slate-50/40">
-              {situationalPods.map((pod, idx) => (
-                <div
-                  key={idx}
-                  className="rounded bg-white border border-slate-200 p-1.5 flex flex-col justify-between shadow-2xs"
-                >
-                  <div className="pb-0.5 mb-1 border-b border-slate-100">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-800">
-                      {pod.title}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+                {situationalPods.map((pod, idx) => (
+                  <div
+                    key={idx}
+                    className={`rounded-lg border ${pod.accent} p-2 flex flex-col justify-between shadow-2xs bg-white`}
+                  >
+                    <div className="pb-1 mb-1.5 border-b border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs">{pod.icon}</span>
+                        <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-900 truncate">
+                          {pod.title}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 justify-start py-0.5">
+                      {pod.cards.map(renderCardNode)}
+                    </div>
+
+                    <span className="text-[9px] text-slate-500 font-sans leading-tight mt-1 pt-1 border-t border-slate-100 truncate block">
+                      {pod.subtitle}
                     </span>
                   </div>
-
-                  <div className="flex flex-wrap items-center gap-1.5 justify-start">
-                    {pod.cards.map(renderCardNode)}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* DOCKED INSPECTOR */}
           {showInspector && activeInspectorCard && (
-            <div className="relative z-20 mt-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200 shadow-xs font-sans animate-in fade-in duration-150">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-slate-200">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded border-2 border-emerald-500 overflow-hidden bg-white flex-shrink-0 shadow-xs">
+            <div className="relative z-20 mt-2 p-3 rounded-xl bg-slate-50 border-2 border-slate-200 shadow-sm font-sans animate-in fade-in duration-150">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg border-2 border-emerald-500 overflow-hidden bg-white flex-shrink-0 shadow-xs">
                     <img
                       src={getItemIconUrl(version, activeInspectorCard.id)}
                       alt={activeInspectorCard.name}
@@ -929,30 +1182,30 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                     />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-black text-slate-900 leading-none uppercase tracking-wide font-['Barlow_Condensed']">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-base font-black text-slate-900 leading-none uppercase tracking-wide font-['Barlow_Condensed']">
                         {activeInspectorCard.name}
                       </h4>
                       {activeInspectorCard.isCore ? (
-                        <span className="deadlock-badge px-1.5 py-0 text-[9px] text-emerald-700">
+                        <span className="deadlock-badge px-2 py-0 text-[10px] text-emerald-700 bg-emerald-50 border-emerald-300">
                           <span>CORE #{activeInspectorCard.coreOrder || '1'}</span>
                         </span>
                       ) : activeInspectorCard.replacesSlot ? (
-                        <span className="deadlock-badge px-1.5 py-0 text-[9px] text-rose-700 border-rose-300">
+                        <span className="deadlock-badge px-2 py-0 text-[10px] text-rose-700 border-rose-300 bg-rose-50">
                           <span>REPLACES {activeInspectorCard.replacesSlot}</span>
                         </span>
                       ) : (
-                        <span className="deadlock-badge px-1.5 py-0 text-[9px] text-slate-700">
+                        <span className="deadlock-badge px-2 py-0 text-[10px] text-slate-700">
                           <span>{activeInspectorCard.tag || 'SITUATIONAL'}</span>
                         </span>
                       )}
                       {activeInspectorCard.isActive && (
-                        <span className="deadlock-active-tag text-[7px] py-0 px-1">
+                        <span className="deadlock-active-tag text-[8px] py-0 px-1.5">
                           ACTIVE
                         </span>
                       )}
                       {inspectedGold && (
-                        <span className="text-amber-800 font-bold text-xs">
+                        <span className="text-amber-900 font-mono font-bold text-xs bg-amber-100 px-1.5 py-0.2 rounded border border-amber-300">
                           {inspectedGold}g
                         </span>
                       )}
@@ -970,23 +1223,23 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                     onClick={() => setShowInspector(false)}
                     className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                <div className="p-2 rounded bg-white border border-slate-200">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block mb-0.5 font-['Barlow_Condensed']">
-                    Kit Synergy & Function
+                <div className="p-2.5 rounded-lg bg-white border border-slate-200">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block mb-1 font-['Barlow_Condensed']">
+                    Kit Synergy & Combat Function
                   </span>
                   <p className="text-slate-700 leading-relaxed text-[11.5px]">
                     <GlossaryText text={activeInspectorCard.whatItDoes} />
                   </p>
                 </div>
-                <div className="p-2 rounded bg-white border border-slate-200">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 block mb-0.5 font-['Barlow_Condensed']">
-                    Tactical Purchase Trigger
+                <div className="p-2.5 rounded-lg bg-white border border-slate-200">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 block mb-1 font-['Barlow_Condensed']">
+                    Tactical Purchase Trigger & Matchup
                   </span>
                   <p className="text-slate-700 leading-relaxed text-[11.5px]">
                     <GlossaryText text={activeInspectorCard.whenToBuy} />
@@ -1004,6 +1257,108 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           allItems={allItems}
         />
       )}
+
+      {/* MOBILE BOTTOM SHEET ITEM INSPECTOR */}
+      {isMobile && showMobileDrawer && activeInspectorCard && (
+        <div 
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs p-0 animate-in fade-in duration-150"
+          onClick={() => setShowMobileDrawer(false)}
+        >
+          <div 
+            className="w-full max-w-lg bg-white rounded-t-2xl p-4 shadow-2xl border-t-2 border-emerald-500 max-h-[85vh] overflow-y-auto font-sans animate-in slide-in-from-bottom duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle bar */}
+            <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-3" />
+
+            {/* Header with Item Icon, Name, Category & Gold */}
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2.5">
+                <div className="w-12 h-12 rounded-lg border-2 border-emerald-500 overflow-hidden bg-white flex-shrink-0 shadow-sm">
+                  <img
+                    src={getItemIconUrl(version, activeInspectorCard.id)}
+                    alt={activeInspectorCard.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h3 className="text-base font-black text-slate-900 leading-none uppercase tracking-wide font-['Barlow_Condensed']">
+                      {activeInspectorCard.name}
+                    </h3>
+                    {inspectedGold && (
+                      <span className="text-amber-800 font-bold text-xs bg-amber-50 px-1.5 py-0.2 rounded border border-amber-300 font-mono">
+                        {inspectedGold}g
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1 mt-1 flex-wrap font-['Barlow_Condensed']">
+                    {activeInspectorCard.isCore ? (
+                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-emerald-700 bg-emerald-50 border-emerald-300">
+                        <span>CORE #{activeInspectorCard.coreOrder || '1'}</span>
+                      </span>
+                    ) : activeInspectorCard.replacesSlot ? (
+                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-rose-700 border-rose-300 bg-rose-50">
+                        <span>REPLACES {activeInspectorCard.replacesSlot}</span>
+                      </span>
+                    ) : (
+                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-slate-700">
+                        <span>{activeInspectorCard.tag || 'SITUATIONAL'}</span>
+                      </span>
+                    )}
+                    {activeInspectorCard.isActive && (
+                      <span className="deadlock-active-tag text-[7.5px] py-0 px-1">
+                        ACTIVE
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setShowMobileDrawer(false)}
+                className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Tactical Content */}
+            <div className="space-y-2.5 text-xs">
+              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span className="text-[10.5px] font-black uppercase tracking-wider text-emerald-700 block mb-0.5 font-['Barlow_Condensed']">
+                  Kit Synergy & Combat Role
+                </span>
+                <p className="text-slate-700 leading-relaxed text-[12px]">
+                  <GlossaryText text={activeInspectorCard.whatItDoes} />
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-amber-50/60 border border-amber-200">
+                <span className="text-[10.5px] font-black uppercase tracking-wider text-amber-800 block mb-0.5 font-['Barlow_Condensed']">
+                  When to Purchase / Swap Trigger
+                </span>
+                <p className="text-slate-800 leading-relaxed text-[12px] font-medium">
+                  <GlossaryText text={activeInspectorCard.whenToBuy} />
+                </p>
+              </div>
+
+              {activeInspectorCard.replacesSlot && (
+                <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-rose-900 font-['Barlow_Condensed'] uppercase">
+                    Replaces {activeInspectorCard.replacesSlot} ({activeInspectorCard.replacesItemName})
+                  </span>
+                  <span className="text-[10px] font-black uppercase bg-rose-600 text-white px-2 py-0.5 rounded">
+                    PIVOT
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

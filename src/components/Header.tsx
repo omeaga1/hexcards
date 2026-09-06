@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+﻿import React, { useEffect, useRef } from 'react';
 import { Search, BookOpen, Shield, Zap, X, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { ChampionSummary } from '../types';
 import { getChampionIconUrl } from '../services/ddragon';
+import { useDevice } from '../hooks/useDevice';
 
 interface HeaderProps {
   version: string;
@@ -43,6 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleSelector
 }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const { isMobile } = useDevice();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -97,13 +99,13 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs font-['Barlow_Condensed'] select-none">
-      <div className="w-full px-2 sm:px-4 py-1.5 flex items-center justify-between gap-2 overflow-x-auto">
+      <div className="w-full px-2 sm:px-4 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2">
         
         {/* Left: Brand + Patch + Champion Grid Toggle */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           <div 
             onClick={() => onSelectRole('All')}
-            className="flex items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity"
+            className="flex items-center gap-1 sm:gap-1.5 cursor-pointer hover:opacity-90 transition-opacity"
           >
             <div className="w-6 h-6 rounded bg-emerald-50 border border-emerald-500/60 flex items-center justify-center shadow-xs">
               <Shield className="w-3.5 h-3.5 text-emerald-600" />
@@ -120,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({
               title={`New Patch ${newPatchAvailable} available. Click to sync.`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-              <span>PATCH {newPatchAvailable}</span>
+              <span>{isMobile ? newPatchAvailable : `PATCH ${newPatchAvailable}`}</span>
             </button>
           ) : (
             <div 
@@ -136,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
           {onToggleSelector && (
             <button
               onClick={onToggleSelector}
-              className={`px-2 py-0.5 rounded text-[10.5px] font-black uppercase tracking-wider border flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded text-[10.5px] font-black uppercase tracking-wider border flex items-center gap-1 transition-all cursor-pointer touch-manipulation active:scale-95 ${
                 isSelectorExpanded
                   ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
                   : 'bg-slate-100 text-slate-700 hover:text-emerald-700 border-slate-300 hover:border-emerald-400'
@@ -147,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Roles Pills */}
+          {/* Roles Pills (Desktop Only) */}
           <div className="hidden md:flex items-center gap-1">
             {roles.map(r => (
               <button
@@ -171,12 +173,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Center: Search Bar */}
-        <div className="relative w-40 sm:w-60 md:w-72 flex-shrink-0">
+        <div className="relative flex-1 min-w-[75px] max-w-[140px] sm:max-w-none sm:w-60 md:w-72">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Search champion... ('/')"
+            placeholder={isMobile ? "Search..." : "Search champion... ('/')"}
             value={searchQuery}
             onChange={(e) => {
               onSearchChange(e.target.value);
@@ -185,12 +187,12 @@ export const Header: React.FC<HeaderProps> = ({
               }
             }}
             onKeyDown={handleSearchKeyDown}
-            className="w-full pl-7 pr-6 py-0.5 text-xs rounded bg-slate-100 border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-sans"
+            className="w-full pl-6 sm:pl-7 pr-6 py-0.5 text-xs rounded bg-slate-100 border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-sans"
           />
           {searchQuery ? (
             <button
               onClick={() => onSearchChange('')}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-700 p-0.5 cursor-pointer"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-700 p-0.5 cursor-pointer touch-manipulation"
             >
               <X className="w-3 h-3" />
             </button>
@@ -202,8 +204,8 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Right: Favorites Quick Deck & Actions */}
-        <div className="flex items-center gap-1.5 flex-shrink-0">
-          {/* Quick Deck Chips */}
+        <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+          {/* Quick Deck Chips (Desktop Only) */}
           <div className="hidden xl:flex items-center gap-1">
             {favorites.slice(0, 5).map(champId => {
               const champ = allChampions[champId];
@@ -235,7 +237,7 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenExportModal && (
             <button
               onClick={onOpenExportModal}
-              className={`px-2 py-0.5 rounded border text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs ${
+              className={`p-1 sm:px-2 sm:py-0.5 rounded border text-[10px] sm:text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs touch-manipulation ${
                 isBridgeConnected
                   ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-800'
                   : 'bg-white hover:bg-slate-50 border-slate-300 text-slate-700 hover:text-slate-900'
@@ -250,18 +252,19 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Glossary Button */}
           <button
             onClick={onOpenGlossary}
-            className="px-2 py-0.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 text-[10.5px] font-bold uppercase flex items-center gap-1 transition-all cursor-pointer shadow-xs"
+            className="p-1 sm:px-2 sm:py-0.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 text-[10px] sm:text-[10.5px] font-bold uppercase flex items-center gap-1 transition-all cursor-pointer shadow-xs touch-manipulation"
+            title="LoL Terminology Glossary"
           >
             <BookOpen className="w-3 h-3 text-emerald-600" />
             <span className="hidden sm:inline">Glossary</span>
           </button>
 
-          {/* Download App Button (Desktop Companion) */}
-          {onOpenDownloadModal && (
+          {/* Download App Button (Desktop Companion only, hidden on mobile) */}
+          {!isMobile && onOpenDownloadModal && (
             <button
               onClick={onOpenDownloadModal}
               className="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
-              title="Download standalone Windows desktop app (like Blitz)"
+              title="Download standalone Windows desktop app"
             >
               <Download className="w-3 h-3" />
               <span>Download App</span>

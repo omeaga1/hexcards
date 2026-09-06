@@ -9,6 +9,8 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
+    host: true,
+    port: 5173,
     watch: {
       ignored: ['**/dist-electron/**', '**/electron/**']
     }
