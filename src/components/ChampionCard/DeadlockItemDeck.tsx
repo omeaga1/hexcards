@@ -620,13 +620,12 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     return false;
   };
 
-  // Render a Single Deadlock Item Tile
-  const renderCardNode = (card: TacticalCard) => {
+  // Render an Authentic Deadlock-Style Item Tile (Light or Dark Theme)
+  const renderCardNode = (card: TacticalCard, isDarkTier = false) => {
     const itemData = allItems ? allItems[card.id] : null;
     const gold = itemData?.gold?.total;
     const isHovered = hoveredCard?.id === card.id;
     const isSelected = selectedCard ? selectedCard.id === card.id : (!hoveredCard && card.isCore && card.coreOrder === 1);
-    const frame = getCategoryFrame(card.category);
 
     const isTarget = isCardReplacementTarget(card, hoveredCard);
     const isCandidate = isCardSwapCandidate(card, hoveredCard);
@@ -688,46 +687,63 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative w-[80px] sm:w-[88px] md:w-[94px] p-2 rounded-xl flex flex-col items-center justify-between cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} bg-white shadow-2xs ${
+        className={`group relative w-[82px] sm:w-[90px] md:w-[96px] rounded-md overflow-hidden flex flex-col justify-between cursor-pointer select-none transition-all duration-150 border shadow-2xs ${
+          isDarkTier
+            ? 'bg-[#15201a] border-[#2a3c30]'
+            : 'bg-[#faf9f4] border-[#c4ccbe]'
+        } ${
           isTarget
-            ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.45)] z-30 animate-pulse'
+            ? 'scale-105 -translate-y-1 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)] z-30 animate-pulse'
             : isCandidate
-            ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.45)] z-30 animate-pulse'
+            ? 'scale-105 -translate-y-1 ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.5)] z-30 animate-pulse'
             : isHovered
-            ? `scale-105 sm:scale-110 -translate-y-1 shadow-lg z-25 ring-2 sm:ring-3 ${frame.ring}`
+            ? isDarkTier
+              ? 'scale-105 -translate-y-1 border-[#34d399] shadow-[0_0_14px_rgba(52,211,153,0.4)] z-25 ring-2 ring-[#34d399]'
+              : 'scale-105 -translate-y-1 shadow-md z-25 ring-2 ring-emerald-600 border-emerald-600'
             : isSelected
-            ? 'shadow-md ring-2 ring-emerald-500'
+            ? 'ring-2 ring-emerald-500 shadow-sm'
             : isDimmed
             ? 'opacity-30 grayscale-[50%] transition-opacity duration-200'
-            : 'hover:-translate-y-0.5 hover:shadow-md'
+            : 'hover:-translate-y-0.5 hover:shadow-xs'
         }`}
       >
-        {/* Clean, Unobstructed Item Artwork */}
-        <div className="relative w-13 h-13 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 group-hover:border-emerald-500 flex-shrink-0 shadow-2xs">
-          <img
-            src={getItemIconUrl(version, card.id)}
-            alt={card.name}
-            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-            loading="lazy"
-          />
-
-          {/* Active Ability Indicator */}
-          {card.isActive && (
-            <span className="absolute top-0.5 right-0.5 text-[9px] font-black text-white bg-slate-900/90 px-1 py-0.5 rounded border border-slate-700 leading-none">
-              ACT
+        {/* Top Artwork Area */}
+        <div className="relative p-1.5 flex flex-col items-center justify-center min-h-[66px]">
+          {/* Blue Star for Core / Key Items */}
+          {card.isCore && (
+            <span className="absolute top-1 left-1.5 text-[11px] text-sky-500 leading-none drop-shadow-xs font-black">
+              ★
             </span>
+          )}
+
+          {/* Item Icon */}
+          <div className="w-12 h-12 sm:w-13 sm:h-13 rounded overflow-hidden bg-black/10 border border-black/10 flex-shrink-0 shadow-2xs">
+            <img
+              src={getItemIconUrl(version, card.id)}
+              alt={card.name}
+              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+
+          {/* Deadlock Black Capsule Active Badge */}
+          {card.isActive && (
+            <div className="mt-1 flex items-center gap-1 bg-[#101712] text-[#86efac] text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full border border-[#233527] leading-none shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" />
+              <span>ACTIVE</span>
+            </div>
           )}
 
           {/* High-Contrast Swap Badge over icon on hover connection */}
           {isTarget && (
-            <div className="absolute inset-0 bg-rose-600/85 flex items-center justify-center p-0.5">
+            <div className="absolute inset-0 bg-rose-600/90 flex items-center justify-center p-0.5">
               <span className="text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight">
                 SWAP OUT
               </span>
             </div>
           )}
           {isCandidate && (
-            <div className="absolute inset-0 bg-sky-600/85 flex items-center justify-center p-0.5">
+            <div className="absolute inset-0 bg-sky-600/90 flex items-center justify-center p-0.5">
               <span className="text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight">
                 SWAP IN
               </span>
@@ -735,9 +751,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           )}
         </div>
 
-        {/* Clear, Legible Item Name Underneath Icon */}
-        <div className="w-full mt-1.5 flex items-center justify-center min-h-[30px]">
-          <span className="text-xs sm:text-[13px] font-bold text-slate-800 group-hover:text-emerald-700 line-clamp-2 text-center leading-snug tracking-tight font-sans">
+        {/* Bottom Shaded Name Plate */}
+        <div
+          className={`px-1 py-1 text-center min-h-[28px] flex items-center justify-center border-t transition-colors ${
+            isDarkTier
+              ? 'bg-[#101814] border-[#1f2d24] text-[#d6ede1]'
+              : 'bg-[#eae8de] border-[#dad9cd] text-[#222920]'
+          }`}
+        >
+          <span className="text-[11px] sm:text-xs font-bold leading-tight line-clamp-2 font-sans tracking-tight">
             {card.name}
           </span>
         </div>
@@ -745,13 +767,12 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     );
   };
 
-  // Render a Hero-Sized Featured Core Item Node (Mobalytics style with Deadlock tech HUD)
+  // Render a Hero-Sized Featured Core Item Node (Deadlock Catalog Spec)
   const renderFeaturedCoreNode = (card: TacticalCard, orderLabel: string, roleSubtitle: string) => {
     const itemData = allItems ? allItems[card.id] : null;
     const gold = itemData?.gold?.total;
     const isHovered = hoveredCard?.id === card.id;
     const isSelected = selectedCard ? selectedCard.id === card.id : (!hoveredCard && card.isCore && card.coreOrder === 1);
-    const frame = getCategoryFrame(card.category);
 
     const isTarget = isCardReplacementTarget(card, hoveredCard);
     const isCandidate = isCardSwapCandidate(card, hoveredCard);
@@ -813,30 +834,35 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative flex-1 min-w-[140px] max-w-[240px] p-2.5 sm:p-3 rounded-xl flex flex-col justify-between border-2 ${frame.border} bg-white transition-all duration-150 cursor-pointer shadow-xs ${
+        className={`group relative flex-1 min-w-[130px] max-w-[220px] rounded-md overflow-hidden flex flex-col justify-between border border-[#c4ccbe] bg-[#faf9f4] transition-all duration-150 cursor-pointer shadow-2xs ${
           isTarget
             ? 'scale-105 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_22px_rgba(244,63,94,0.45)] z-30 animate-pulse'
             : isCandidate
             ? 'scale-105 ring-4 ring-sky-500 border-sky-500 shadow-[0_0_22px_rgba(14,165,233,0.45)] z-30 animate-pulse'
             : isHovered
-            ? `scale-105 shadow-lg z-25 ring-3 ${frame.ring}`
+            ? 'scale-105 shadow-md z-25 ring-2 ring-emerald-600 border-emerald-600'
             : isSelected
-            ? 'ring-2 ring-emerald-500 shadow-md'
+            ? 'ring-2 ring-emerald-500 shadow-sm'
             : isDimmed
             ? 'opacity-30 grayscale-[50%]'
-            : 'hover:-translate-y-0.5 hover:shadow-md'
+            : 'hover:-translate-y-0.5 hover:shadow-xs'
         }`}
       >
-        {/* Top Header Row: Order Badge (No static gold) */}
-        <div className="flex items-center justify-between gap-1 pb-1.5 mb-1.5 border-b border-slate-100">
-          <span className="text-xs font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
-            {orderLabel}
+        {/* Top Order Strip with Blue Star */}
+        <div className="flex items-center justify-between px-2 py-1 bg-[#eae8de] border-b border-[#dad9cd]">
+          <span className="text-[11px] font-black uppercase tracking-wider text-[#1e271d] font-mono flex items-center gap-1">
+            <span className="text-sky-600 text-xs">★</span> {orderLabel}
           </span>
+          {card.isActive && (
+            <span className="bg-[#101712] text-[#86efac] text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full border border-[#233527] leading-none">
+              ACT
+            </span>
+          )}
         </div>
 
-        {/* Center Artwork & Name */}
-        <div className="flex items-center gap-3 my-1.5">
-          <div className="w-14 h-14 sm:w-15 sm:h-15 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 shadow-2xs">
+        {/* Center Artwork & Details */}
+        <div className="p-2.5 flex items-center gap-2.5 my-0.5">
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded overflow-hidden bg-black/10 border border-[#c5cdbf] flex-shrink-0 shadow-2xs">
             <img
               src={getItemIconUrl(version, card.id)}
               alt={card.name}
@@ -845,10 +871,10 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-base sm:text-lg font-black uppercase text-slate-900 tracking-wide leading-tight truncate font-['Barlow_Condensed']">
+            <h4 className="text-sm sm:text-base font-black uppercase text-[#1d261c] tracking-wide leading-tight truncate font-['Barlow_Condensed']">
               {card.name}
             </h4>
-            <span className="text-xs font-bold text-slate-500 uppercase block truncate font-sans mt-0.5">
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#576854] uppercase block truncate font-sans mt-0.5">
               {roleSubtitle}
             </span>
           </div>
@@ -856,75 +882,93 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
         {/* Swap Signal overlay if targeted during hover */}
         {isTarget && (
-          <div className="w-full bg-rose-600 py-1 px-2 rounded text-center shadow-xs mt-1">
+          <div className="w-full bg-rose-600 py-1 px-2 text-center shadow-xs">
             <span className="text-xs font-black uppercase tracking-wider text-white block">
               REPLACE WITH PIVOT
             </span>
           </div>
         )}
       </div>
-    );
+  );
   };
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-3 sm:p-4 lg:p-5 shadow-xs overflow-hidden font-['Barlow_Condensed'] select-none"
+      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-2xl border-2 border-[#323d30] bg-[#dbe2d6] p-3 sm:p-4 lg:p-5 shadow-xl overflow-hidden font-['Barlow_Condensed'] select-none"
       style={{
-        backgroundImage: 'radial-gradient(#e2e8f0 1.25px, transparent 1.25px)',
-        backgroundSize: '16px 16px'
+        backgroundImage: 'radial-gradient(#b4c1ae 1.5px, transparent 1.5px)',
+        backgroundSize: '18px 18px'
       }}
     >
-      {/* Slide Presentation Header Bar */}
-      <div className="relative z-20 flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-slate-200">
+      {/* Printed Corner Registration Marks */}
+      <span className="absolute top-2 left-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌜</span>
+      <span className="absolute top-2 right-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌝</span>
+      <span className="absolute bottom-2 left-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌞</span>
+      <span className="absolute bottom-2 right-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌟</span>
+
+      {/* DEADLOCK HEADER BAR: Binder Tabs & Mystic Requisitions Stamp */}
+      <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 pb-2.5 mb-3 border-b-2 border-[#bcc7b6]">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-slate-900 text-white shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs sm:text-sm font-black uppercase tracking-wider font-['Barlow_Condensed']">
-              TACTICAL ITEM BLUEPRINT
-            </span>
+          {/* Deadlock Iconic Spine Tabs */}
+          <div className="hidden sm:flex items-center gap-1 bg-[#c8d4c2] p-1 rounded-md border border-[#a4b49c] shadow-2xs">
+            <span className="w-6 h-6 rounded bg-[#4f9dbf] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Core Spikes">★</span>
+            <span className="w-6 h-6 rounded bg-[#df8634] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Weapon / AD Damage">⌖</span>
+            <span className="w-6 h-6 rounded bg-[#7cb342] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Vitality / Armor">✚</span>
+            <span className="w-6 h-6 rounded bg-[#9c6bb5] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Spirit / Magic">⬡</span>
           </div>
 
-          <span className="hidden sm:inline text-xs font-bold text-slate-500 uppercase tracking-wide">
-            1-Page Tactical Canvas • Chronological Highway & Contingency Arsenal
-          </span>
+          {/* Mystic Requisitions Stamped Brand Box */}
+          <div className="flex items-center gap-2.5 bg-[#cbd7c5] border border-[#a4b49c] rounded-md px-3 py-1.5 shadow-2xs">
+            <div className="flex items-center justify-center w-7 h-7 rounded bg-[#2e3b2c] text-[#7de39b] font-black text-sm tracking-tighter">
+              ⬡
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs sm:text-[13px] font-black uppercase tracking-wider text-[#263124] leading-tight font-['Barlow_Condensed']">
+                MPS • MYSTIC COMBAT REQUISITIONS
+              </span>
+              <span className="text-[10px] font-bold text-[#4e5e4b] italic leading-tight">
+                VOTED #1 PHARMACY & ARMORY FOR CHAMPIONS
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Inspector Toggle & Action Bar */}
+        {/* Slanted Version Tag & Inspector Toggle */}
         <div className="flex items-center gap-2">
-          <span className="hidden md:inline text-[11px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-1 rounded border border-slate-200">
-            Interactive Deck • Hover To Inspect
+          <span className="hidden md:inline-block -rotate-1 bg-[#182319] text-[#7de39b] font-mono font-black text-[11px] px-2.5 py-1 rounded shadow-2xs border border-[#2a3c2c]">
+            PATCH 15.x COMPLIANT
           </span>
           <button
             onClick={() => setShowInspector(!showInspector)}
-            className={`px-3 py-1 rounded-lg border text-xs sm:text-sm font-black uppercase tracking-wider transition-colors cursor-pointer ${
+            className={`px-3 py-1 rounded-md border text-xs sm:text-sm font-black uppercase tracking-wider transition-colors cursor-pointer shadow-xs ${
               showInspector
-                ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
-                : 'bg-white border-slate-300 text-slate-600 hover:text-slate-900'
+                ? 'bg-[#182319] border-[#2e4030] text-[#7de39b]'
+                : 'bg-[#edf2e8] border-[#b5c2af] text-[#2c372a] hover:bg-white'
             }`}
           >
-            {showInspector ? 'Inspector: Open' : 'Inspector: Closed'}
+            {showInspector ? 'INSPECTOR: OPEN' : 'INSPECTOR: CLOSED'}
           </button>
         </div>
       </div>
 
-      {/* Mobile Category Filter Tabs */}
+      {/* Mobile Stage Filter Tabs */}
       {isMobile && (
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2 border-b border-slate-100">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2.5 border-b border-[#bcc7b6]">
           {[
-            { id: 'all', label: 'All Build Steps' },
-            { id: 'early', label: '1: Early & Back' },
-            { id: 'core', label: '2: Core Build ➔' },
-            { id: 'boots', label: '3: Boots' },
-            { id: 'counters', label: '4: Counters' },
+            { id: 'all', label: 'All 4 Tiers' },
+            { id: 'early', label: '$800 Tier 1' },
+            { id: 'core', label: '$3200 Tier 2' },
+            { id: 'boots', label: '$3200 Tier 3' },
+            { id: 'counters', label: '$6400 Tier 4 (Experts)' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setMobileStageFilter(tab.id as any)}
               className={`px-2.5 py-1 rounded text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-all touch-manipulation ${
                 mobileStageFilter === tab.id
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                  ? 'bg-[#182319] text-[#7de39b] border border-[#2e4030] shadow-xs'
+                  : 'bg-[#cbd7c5] text-[#2c372a] hover:bg-white border border-[#a4b49c]'
               }`}
             >
               {tab.label}
@@ -933,216 +977,303 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         </div>
       )}
 
-      {/* Main View Area */}
-      <div className="relative flex-col justify-between space-y-3">
+      {/* DEADLOCK 4-TIER QUADRANT GRID */}
+      <div className="relative flex-col justify-between space-y-3.5">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-stretch">
 
-          {/* SECTION 1: MOBALYTICS CHRONOLOGICAL HIGHWAY (EARLY -> CORE -> BOOTS) */}
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
-            
-            {/* SUB-POD A: STARTING ITEMS & 1ST RECALL (3 COLS) */}
-            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
-              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-900 text-white">
-                      0:00 - 5:00
-                    </span>
-                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
-                      Early Game & Back
-                    </h3>
+          {/* ============================================================ */}
+          {/* QUADRANT 1: $800 TIER 1 • EARLY LANING & 1ST RECALL */}
+          {/* ============================================================ */}
+          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
+            <div className="rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative">
+              {/* Tier Header with Tilted Price Tag */}
+              <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
+                    $800
+                  </span>
+                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
+                    TIER 1 • EARLY LANING (0:00 - 5:00)
+                  </h3>
+                </div>
+              </div>
+
+              {/* Cards Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-1">
+                {/* Starters Sub-Group */}
+                <div className="bg-[#e4ebde] p-2 rounded-lg border border-[#c4d0be]">
+                  <span className="text-[11px] font-bold text-[#4d5d4a] uppercase block mb-1.5 font-sans">
+                    0:00 Initial Spawn
+                  </span>
+                  <div className="flex items-center justify-center gap-2">
+                    {renderCardNode(starterCard)}
+                    {renderCardNode(potionCard)}
                   </div>
                 </div>
 
-                {/* Starters & 1st Recall Cards */}
-                <div className="space-y-2.5">
-                  <div>
-                    <span className="text-[11px] font-bold text-slate-500 uppercase block mb-1 font-sans">
-                      Starter Bundle (0:00)
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {renderCardNode(starterCard)}
-                      {renderCardNode(potionCard)}
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-100">
-                    <span className="text-[11px] font-bold text-emerald-700 uppercase block mb-1 font-sans">
-                      1st Recall Spike (~4:30)
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {renderCardNode(firstBackCard)}
-                      {renderCardNode(tier1BootsCard)}
-                    </div>
+                {/* 1st Recall Sub-Group */}
+                <div className="bg-[#e4ebde] p-2 rounded-lg border border-[#c4d0be]">
+                  <span className="text-[11px] font-bold text-emerald-800 uppercase block mb-1.5 font-sans">
+                    ~4:30 1st Recall Spike
+                  </span>
+                  <div className="flex items-center justify-center gap-2">
+                    {renderCardNode(firstBackCard)}
+                    {renderCardNode(tier1BootsCard)}
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* SUB-POD B: THE CORE BUILD HIGHWAY (6 COLS - MOBALYTICS ARROW FLOW) */}
-            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
-              <div className="lg:col-span-6 rounded-xl bg-gradient-to-r from-emerald-50/30 via-white to-sky-50/30 border-2 border-emerald-400 p-3 sm:p-3.5 shadow-xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-200">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
-                      The Core Build Highway
-                    </h3>
-                  </div>
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded border border-emerald-300">
-                    RECOMMENDED RUSH
-                  </span>
-                </div>
-
-                {/* 3 Core Items Connected with Chevrons */}
-                <div className="flex items-center justify-between gap-2 sm:gap-3 my-1.5 overflow-x-auto no-scrollbar">
-                  {renderFeaturedCoreNode(core1Card, '1ST RUSH', 'Primary Spike')}
-                  <ArrowRight className="w-6 h-6 text-emerald-600 flex-shrink-0 animate-pulse" />
-                  {renderFeaturedCoreNode(core2Card, '2ND CORE', 'Kit Synergy')}
-                  <ArrowRight className="w-6 h-6 text-emerald-600 flex-shrink-0 animate-pulse" />
-                  {renderFeaturedCoreNode(core3Card, '3RD CORE', 'Peak Capstone')}
-                </div>
-
-                {/* Flex Alternatives Pill Bar */}
-                <div className="mt-2.5 pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-600 font-sans">
-                  <span className="font-bold uppercase text-slate-500 font-['Barlow_Condensed'] text-xs">
-                    Tempo Alternatives:
-                  </span>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold uppercase text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                      Flex 2nd: <strong className="text-emerald-800 font-black">{altCoreCard.name}</strong>
-                    </span>
-                    <span className="font-bold uppercase text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                      Flex 3rd: <strong className="text-emerald-800 font-black">{altCapstoneCard.name}</strong>
-                    </span>
-                  </div>
-                </div>
+              <div className="mt-2 pt-1.5 border-t border-[#c8d4c2] text-center">
+                <span className="text-[11px] text-[#556652] font-sans font-medium">
+                  Establish lane wave-control and recall immediately at 1100–1300g spike
+                </span>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* SUB-POD C: BOOTS ENGINE (3 COLS) */}
-            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
-              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300">
-                      T2 BOOTS
-                    </span>
-                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
-                      Boots Engine
-                    </h3>
-                  </div>
+          {/* ============================================================ */}
+          {/* QUADRANT 2: $3200 TIER 2 • THE CORE HIGHWAY & BOOTS */}
+          {/* ============================================================ */}
+          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
+            <div className="rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative overflow-hidden">
+              {/* Radar Circles Watermark */}
+              <div 
+                className="absolute inset-0 pointer-events-none opacity-20"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, transparent 20%, #b8c7b2 21%, transparent 22%, transparent 40%, #b8c7b2 41%, transparent 42%, transparent 60%, #b8c7b2 61%, transparent 62%)',
+                  backgroundPosition: 'center center'
+                }}
+              />
+
+              {/* Tier Header with Tilted Price Tag */}
+              <div className="relative z-10 flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
+                    $3200
+                  </span>
+                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
+                    TIER 2 • THE CORE HIGHWAY
+                  </h3>
                 </div>
+                <span className="text-[10px] font-black uppercase text-[#1a231b] bg-[#c8d8c2] px-2 py-0.5 rounded border border-[#a8be9e]">
+                  RECOMMENDED RUSH
+                </span>
+              </div>
 
-                {/* Default vs Situational Boots */}
-                <div className="flex items-center justify-around gap-2 my-1.5">
-                  <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black uppercase text-emerald-700 mb-1">Standard</span>
+              {/* The 3 Core Items with Chevrons */}
+              <div className="relative z-10 flex items-center justify-between gap-1.5 sm:gap-2 my-1">
+                {renderFeaturedCoreNode(core1Card, '#1 RUSH', 'Primary Spike')}
+                <ArrowRight className="w-5 h-5 text-[#2f3d2d] flex-shrink-0 animate-pulse" />
+                {renderFeaturedCoreNode(core2Card, '#2 SPIKE', 'Kit Synergy')}
+                <ArrowRight className="w-5 h-5 text-[#2f3d2d] flex-shrink-0 animate-pulse" />
+                {renderFeaturedCoreNode(core3Card, '#3 PEAK', 'Capstone Spike')}
+              </div>
+
+              {/* Boots Engine & Alternatives Bar */}
+              <div className="relative z-10 mt-2 pt-2 border-t border-[#c8d4c2] flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-[#4d5d4a] uppercase font-sans">
+                    Boots:
+                  </span>
+                  <div className="flex items-center gap-1.5">
                     {renderCardNode(defaultBootsCard)}
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <ArrowLeftRight className="w-5 h-5 text-sky-600 animate-pulse my-1" />
-                    <span className="text-[9px] font-black uppercase text-slate-400">SWAP</span>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black uppercase text-sky-700 mb-1">Alternative</span>
+                    <ArrowLeftRight className="w-3.5 h-3.5 text-[#3a4938]" />
                     {renderCardNode(altBootsCard)}
                   </div>
                 </div>
 
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-snug mt-1 text-center font-sans">
-                  {bootsRec.alternative}
-                </div>
-              </div>
-            )}
-
-          </div>
-
-          {/* SECTION 2: DYNAMIC TACTICAL SWAP STATUS BAR */}
-          <div className="relative z-10 px-3.5 py-2 rounded-lg bg-slate-900 text-white flex items-center justify-between text-xs select-none shadow-sm">
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-              {hoveredCard && hoveredCard.replacesSlot ? (
-                <div className="flex items-center gap-2 truncate text-xs sm:text-sm">
-                  <span className="text-white font-black uppercase tracking-wide">
-                    {hoveredCard.name}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-bold uppercase text-[#313e2e] bg-[#dae4d4] px-1.5 py-0.5 rounded border border-[#b8c6b2]">
+                    Flex 2: <strong className="text-emerald-900">{altCoreCard.name}</strong>
                   </span>
-                  <span className="text-amber-400">➔</span>
-                  <span className="text-emerald-400 font-bold font-sans">
-                    {hoveredCard.swapReason || `Substitute for ${hoveredCard.replacesItemName || hoveredCard.replacesSlot}`}
+                  <span className="text-[10px] font-bold uppercase text-[#313e2e] bg-[#dae4d4] px-1.5 py-0.5 rounded border border-[#b8c6b2]">
+                    Flex 3: <strong className="text-emerald-900">{altCapstoneCard.name}</strong>
                   </span>
                 </div>
-              ) : hoveredCard && cardHasSwapConnection(hoveredCard) ? (
-                <div className="flex items-center gap-2 truncate text-xs sm:text-sm">
-                  <span className="text-emerald-400 font-black uppercase tracking-wide">
-                    {hoveredCard.name}
-                  </span>
-                  <span className="text-slate-400">➔</span>
-                  <span className="text-slate-200 font-medium font-sans">
-                    Situational counter alternatives highlighted below
-                  </span>
-                </div>
-              ) : (
-                <span className="text-slate-300 uppercase tracking-wider text-xs sm:text-sm font-bold">
-                  {isMobile ? 'Tactical Deck • Tap items to view situational swap replacements' : 'Tactical Deck • Hover any item to reveal matchup swap connections'}
-                </span>
-              )}
-            </div>
-            <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider hidden sm:inline flex-shrink-0 font-bold">
-              ZERO-SCROLL TELEMETRY
-            </span>
-          </div>
-
-          {/* SECTION 3: SITUATIONAL COUNTERS & MATCHUP PIVOTS (MOBALYTICS THREAT PODS) */}
-          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
-            <div className="relative z-10 rounded-xl bg-white border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-200">
-                <div className="flex items-center gap-2.5">
-                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
-                    Situational Counters & Matchup Pivots
-                  </h3>
-                  <span className="text-xs font-bold text-slate-500 font-sans hidden sm:inline">
-                    — Swap these into your build when facing specific enemy threats
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                  5 Threat Categories
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                {situationalPods.map((pod, idx) => (
-                  <div
-                    key={idx}
-                    className={`rounded-xl border-2 ${pod.accent} p-3 flex flex-col justify-between shadow-2xs bg-white hover:shadow-md transition-shadow`}
-                  >
-                    {/* Category Header */}
-                    <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-base flex-shrink-0">{pod.icon}</span>
-                        <span className="text-xs sm:text-[13px] font-black uppercase tracking-wide text-slate-900 truncate">
-                          {pod.title}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Centered Symmetrical 2-Card Row */}
-                    <div className="flex items-center justify-center gap-2 py-1">
-                      {pod.cards.map(renderCardNode)}
-                    </div>
-
-                    {/* Threat Subtitle Footer */}
-                    <div className="mt-2 pt-2 border-t border-slate-100 text-center">
-                      <span className="text-[11px] text-slate-500 font-sans leading-tight block font-semibold truncate">
-                        {pod.subtitle}
-                      </span>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           )}
+
+          {/* ============================================================ */}
+          {/* QUADRANT 3: $3200 TIER 3 • DEFENSE & ANTI-HEAL PIVOTS */}
+          {/* ============================================================ */}
+          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
+            <div className="rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative">
+              {/* Tier Header with Tilted Price Tag */}
+              <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
+                    $3200
+                  </span>
+                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
+                    TIER 3 • DEFENSE & SUSTAIN PIVOTS
+                  </h3>
+                </div>
+              </div>
+
+              {/* Two Threat Pods Aligned Side-by-Side */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-1">
+                {/* Pod 1: Anti-Heal */}
+                <div className="rounded-lg border-2 border-rose-400/80 bg-rose-50/20 p-2 flex flex-col justify-between shadow-2xs">
+                  <div className="pb-1 mb-1 border-b border-rose-200/50 flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-wide text-rose-900 flex items-center gap-1">
+                      <span>🩸</span> Anti-Heal (Grievous)
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    {renderCardNode(antiHeal800g)}
+                    {renderCardNode(antiHealFull)}
+                  </div>
+                  <span className="text-[10px] text-slate-600 font-sans text-center font-medium mt-1">
+                    vs Heavy Sustain & Drain Healers
+                  </span>
+                </div>
+
+                {/* Pod 2: Anti-Physical & Armor */}
+                <div className="rounded-lg border-2 border-amber-400/80 bg-amber-50/20 p-2 flex flex-col justify-between shadow-2xs">
+                  <div className="pb-1 mb-1 border-b border-amber-200/50 flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-wide text-amber-900 flex items-center gap-1">
+                      <span>🛡️</span> Anti-Physical & Armor
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    {renderCardNode(antiBurst3)}
+                    {renderCardNode(flex2)}
+                  </div>
+                  <span className="text-[10px] text-slate-600 font-sans text-center font-medium mt-1">
+                    vs AD Burst, Lethality & Auto-Carries
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-2 pt-1.5 border-t border-[#c8d4c2] text-center">
+                <span className="text-[11px] text-[#556652] font-sans font-medium">
+                  Substitutions for Core #2 or Core #3 when facing high physical threat
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* QUADRANT 4: $6400 TIER 4 • EXPERTS ONLY ★★★ (DARK INVERTED THEME) */}
+          {/* ============================================================ */}
+          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
+            <div className="rounded-xl bg-[#0d1612] border-2 border-[#1c2e24] p-3 sm:p-3.5 shadow-inner flex flex-col justify-between text-white relative overflow-hidden">
+              {/* Corner Ambient Glow */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#34d399]/5 rounded-full blur-2xl pointer-events-none" />
+
+              {/* Tier Header with Inverted Price Tag */}
+              <div className="relative z-10 flex items-center justify-between pb-2 mb-2.5 border-b border-[#1d2f25]">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block -rotate-2 bg-black text-[#34d399] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-sm border border-[#34d399]/40">
+                    $6400
+                  </span>
+                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#c6eed8] flex items-center gap-1">
+                    TIER 4 • EXPERTS ONLY <span className="text-emerald-400 text-xs">★★★</span>
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono font-bold text-[#86efac] uppercase bg-[#14231b] px-2 py-0.5 rounded border border-[#25392d]">
+                  HIGH-THREAT ADAPTATIONS
+                </span>
+              </div>
+
+              {/* Three Threat Pods Rendered in Deadlock Dark Theme */}
+              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-2 my-1">
+                {/* Pod 1: Magic Resist */}
+                <div className="rounded-lg border border-[#2b3e32] bg-[#131d17] p-2 flex flex-col justify-between shadow-2xs">
+                  <div className="pb-1 mb-1 border-b border-[#213027] flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-wide text-[#b5e0ca] flex items-center gap-1">
+                      <span>🔮</span> Magic Resist
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 py-1">
+                    {renderCardNode(antiBurst1, true)}
+                    {renderCardNode(antiBurst2, true)}
+                  </div>
+                  <span className="text-[9px] text-[#7ea08f] font-sans text-center font-medium mt-1 leading-tight">
+                    vs Fed AP & Poke
+                  </span>
+                </div>
+
+                {/* Pod 2: Resistance Shred */}
+                <div className="rounded-lg border border-[#2b3e32] bg-[#131d17] p-2 flex flex-col justify-between shadow-2xs">
+                  <div className="pb-1 mb-1 border-b border-[#213027] flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-wide text-[#b5e0ca] flex items-center gap-1">
+                      <span>⚔️</span> % Shred
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 py-1">
+                    {renderCardNode(shred1, true)}
+                    {renderCardNode(shred2, true)}
+                  </div>
+                  <span className="text-[9px] text-[#7ea08f] font-sans text-center font-medium mt-1 leading-tight">
+                    vs Stacking Tanks
+                  </span>
+                </div>
+
+                {/* Pod 3: Cleanse & Utility */}
+                <div className="rounded-lg border border-[#2b3e32] bg-[#131d17] p-2 flex flex-col justify-between shadow-2xs">
+                  <div className="pb-1 mb-1 border-b border-[#213027] flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-wide text-[#b5e0ca] flex items-center gap-1">
+                      <span>⚡</span> Cleanse & Shield
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 py-1">
+                    {renderCardNode(antiCC1, true)}
+                    {renderCardNode(flex1, true)}
+                  </div>
+                  <span className="text-[9px] text-[#7ea08f] font-sans text-center font-medium mt-1 leading-tight">
+                    vs Hard CC & Shields
+                  </span>
+                </div>
+              </div>
+
+              <div className="relative z-10 mt-2 pt-1.5 border-t border-[#1d2f25] text-center">
+                <span className="text-[10px] text-[#86a695] font-sans font-medium">
+                  Late-game dynamic pivots to break enemy frontline or survive lethal crowd control
+                </span>
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* ============================================================ */}
+        {/* DEADLOCK TELEMETRY RIBBON: REAL-TIME SWAP PATH FINDER */}
+        {/* ============================================================ */}
+        <div className="relative z-10 px-3.5 py-2 rounded-lg bg-[#141f17] border border-[#253629] text-[#7de39b] flex items-center justify-between text-xs select-none shadow-sm font-mono">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#4ade80] animate-pulse flex-shrink-0" />
+            {hoveredCard && hoveredCard.replacesSlot ? (
+              <div className="flex items-center gap-2 truncate text-xs sm:text-sm font-sans">
+                <span className="text-white font-black uppercase tracking-wide font-['Barlow_Condensed']">
+                  {hoveredCard.name}
+                </span>
+                <span className="text-amber-400 font-mono">➔</span>
+                <span className="text-[#86efac] font-bold">
+                  {hoveredCard.swapReason || `Substitute for ${hoveredCard.replacesItemName || hoveredCard.replacesSlot}`}
+                </span>
+              </div>
+            ) : hoveredCard && cardHasSwapConnection(hoveredCard) ? (
+              <div className="flex items-center gap-2 truncate text-xs sm:text-sm font-sans">
+                <span className="text-[#86efac] font-black uppercase tracking-wide font-['Barlow_Condensed']">
+                  {hoveredCard.name}
+                </span>
+                <span className="text-slate-400 font-mono">➔</span>
+                <span className="text-slate-200 font-medium">
+                  Situational counter alternatives highlighted above
+                </span>
+              </div>
+            ) : (
+              <span className="text-[#a4cca8] uppercase tracking-wider text-xs sm:text-sm font-bold font-['Barlow_Condensed']">
+                {isMobile ? 'Tactical Catalog • Tap any item to inspect stats and swap paths' : 'Tactical Catalog • Hover any item to trace dynamic combat substitution paths'}
+              </span>
+            )}
+          </div>
+          <span className="text-xs font-mono text-[#4ade80] uppercase tracking-wider hidden sm:inline flex-shrink-0 font-bold">
+            DEADLOCK HUD ACTIVE
+          </span>
+        </div>
 
           {/* DOCKED INSPECTOR */}
           {showInspector && activeInspectorCard && (
