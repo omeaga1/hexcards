@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --deadlock-bg: #f8fafc;
+    --deadlock-panel: #ffffff;
+    --deadlock-border: #e2e8f0;
+    --deadlock-border-emerald: #10b981;
+    --deadlock-green-accent: #059669;
+    --deadlock-text-main: #0f172a;
+    --deadlock-text-muted: #475569;
+  }
+
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: 'Barlow Condensed', 'Chakra Petch', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.02em;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Tactical Light Grid Background Texture */
+.deadlock-hatched {
+  background-color: #f8fafc;
+  background-image: radial-gradient(#e2e8f0 1.25px, transparent 1.25px);
+  background-size: 16px 16px;
+}
+
+/* Deadlock Panel Frame (Light High-Contrast Mode) */
+.deadlock-frame {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+/* Slanted Emerald Badge */
+.deadlock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #ecfdf5;
+  color: #047857;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid #a7f3d0;
+  transform: skewX(-8deg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.deadlock-badge > * {
+  transform: skewX(8deg);
+}
+
+/* Deadlock Cards */
+.deadlock-card-base {
+  border-radius: 6px;
+  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.deadlock-card-base:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 0 10px rgba(16, 185, 129, 0.25);
+  z-index: 30;
+}
+
+/* Tiered Card Palettes */
+.tier-1-card {
+  background: #f0fdf4;
+  color: #14532d;
+  border: 1px solid #bbf7d0;
+}
+
+.tier-2-card {
+  background: #ecfdf5;
+  color: #064e3b;
+  border: 1px solid #a7f3d0;
+}
+
+.tier-3-card {
+  background: #047857;
+  color: #ffffff;
+  border: 1px solid #065f46;
+}
+
+.tier-4-card {
+  background: #064e3b;
+  color: #ffffff;
+  border: 1px solid #022c22;
+}
+
+/* Category Palettes */
+.card-theme-weapon {
+  --cat-accent: #ea580c;
+  --cat-light: #fff7ed;
+  --cat-glow: rgba(234, 88, 12, 0.2);
+}
+
+.card-theme-spirit {
+  --cat-accent: #9333ea;
+  --cat-light: #faf5ff;
+  --cat-glow: rgba(147, 51, 234, 0.2);
+}
+
+.card-theme-vitality {
+  --cat-accent: #16a34a;
+  --cat-light: #f0fdf4;
+  --cat-glow: rgba(22, 163, 74, 0.2);
+}
+
+.card-theme-utility {
+  --cat-accent: #0284c7;
+  --cat-light: #f0f9ff;
+  --cat-glow: rgba(2, 132, 199, 0.2);
+}
+
+/* Deadlock Active Pill */
+.deadlock-active-tag {
+  background: #0f172a;
+  color: #ffffff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Purchase Sequence Ribbon */
+.sequence-ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+
+.sequence-ribbon strong {
+  color: #0f172a;
+}
+
+.sequence-arrow {
+  color: #059669;
+  font-weight: 900;
+}
+
+/* Tactical Energy Conduits & Flowing Arrows */
+@keyframes energyConduitFlow {
+  from {
+    stroke-dashoffset: 28;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.energy-flow-active {
+  animation: energyConduitFlow 0.75s linear infinite;
+}
+
+.energy-flow-ambient {
+  animation: energyConduitFlow 2.2s linear infinite;
+}
+
+/* Tactical Target Slot Bracket */
+@keyframes targetSlotPulse {
+  0%, 100% {
+    box-shadow: 0 0 14px rgba(244, 63, 94, 0.6), inset 0 0 10px rgba(244, 63, 94, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(244, 63, 94, 0.95), inset 0 0 16px rgba(244, 63, 94, 0.5);
+  }
+}
+
+.target-slot-bracket {
+  animation: targetSlotPulse 1.4s ease-in-out infinite;
+  position: relative;
+}
+
+.target-slot-bracket::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 10px;
+  height: 10px;
+  border-top: 2.5px solid #f43f5e;
+  border-left: 2.5px solid #f43f5e;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.target-slot-bracket::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2.5px solid #f43f5e;
+  border-right: 2.5px solid #f43f5e;
+  pointer-events: none;
+  z-index: 40;
+}

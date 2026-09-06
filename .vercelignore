@@ -1,0 +1,8 @@
+dist-electron
+electron
+node_modules
+.git
+.vercel
+public/downloads/*.exe
+dist/downloads/*.exe
+*.log

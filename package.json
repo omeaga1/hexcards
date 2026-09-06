@@ -1,0 +1,62 @@
+{
+  "name": "lol-quick-cards",
+  "description": "HexCards - Anti-Slop League of Legends Tactical Companion",
+  "author": "HexCards Team",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "electron:dev": "electron .",
+    "electron:build": "tsc -b && vite build && electron-builder",
+    "dist": "npm run electron:build",
+    "bridge": "node scripts/leagueBridge.mjs",
+    "sync-patch": "node scripts/syncPatchData.mjs",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "build": {
+    "appId": "com.hexcards.app",
+    "productName": "HexCards",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "HexCards"
+    }
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.41.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "electron": "^44.2.0",
+    "electron-builder": "^26.15.3",
+    "oxlint": "^1.79.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2"
+  }
+}
