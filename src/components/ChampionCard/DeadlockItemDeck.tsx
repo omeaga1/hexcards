@@ -671,7 +671,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative w-[72px] sm:w-[80px] md:w-[86px] p-1.5 rounded-xl flex flex-col items-center justify-between cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} bg-white shadow-2xs ${
+        className={`group relative w-[80px] sm:w-[88px] md:w-[94px] p-2 rounded-xl flex flex-col items-center justify-between cursor-pointer select-none transition-all duration-150 border-2 ${frame.border} bg-white shadow-2xs ${
           isTarget
             ? 'scale-105 sm:scale-110 -translate-y-1 ring-3 sm:ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.45)] z-30 animate-pulse'
             : isCandidate
@@ -686,7 +686,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         }`}
       >
         {/* Clean, Unobstructed Item Artwork */}
-        <div className="relative w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 group-hover:border-emerald-500 flex-shrink-0 shadow-2xs">
+        <div className="relative w-13 h-13 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 group-hover:border-emerald-500 flex-shrink-0 shadow-2xs">
           <img
             src={getItemIconUrl(version, card.id)}
             alt={card.name}
@@ -696,7 +696,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
           {/* Active Ability Indicator */}
           {card.isActive && (
-            <span className="absolute top-0.5 right-0.5 text-[8.5px] font-black text-white bg-slate-900/90 px-1 py-0.2 rounded border border-slate-700 leading-none">
+            <span className="absolute top-0.5 right-0.5 text-[9px] font-black text-white bg-slate-900/90 px-1 py-0.5 rounded border border-slate-700 leading-none">
               ACT
             </span>
           )}
@@ -704,14 +704,14 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           {/* High-Contrast Swap Badge over icon on hover connection */}
           {isTarget && (
             <div className="absolute inset-0 bg-rose-600/85 flex items-center justify-center p-0.5">
-              <span className="text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight">
+              <span className="text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight">
                 SWAP OUT
               </span>
             </div>
           )}
           {isCandidate && (
             <div className="absolute inset-0 bg-sky-600/85 flex items-center justify-center p-0.5">
-              <span className="text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight">
+              <span className="text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight">
                 SWAP IN
               </span>
             </div>
@@ -719,8 +719,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         </div>
 
         {/* Clear, Legible Item Name Underneath Icon */}
-        <div className="w-full mt-1 flex items-center justify-center min-h-[26px]">
-          <span className="text-[11px] sm:text-xs font-bold text-slate-800 group-hover:text-emerald-700 line-clamp-2 text-center leading-tight tracking-tight font-sans">
+        <div className="w-full mt-1.5 flex items-center justify-center min-h-[30px]">
+          <span className="text-xs sm:text-[13px] font-bold text-slate-800 group-hover:text-emerald-700 line-clamp-2 text-center leading-snug tracking-tight font-sans">
             {card.name}
           </span>
         </div>
@@ -796,7 +796,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative flex-1 min-w-[120px] max-w-[200px] p-2 rounded-xl flex flex-col justify-between border-2 ${frame.border} bg-white transition-all duration-150 cursor-pointer shadow-xs ${
+        className={`group relative flex-1 min-w-[140px] max-w-[240px] p-2.5 sm:p-3 rounded-xl flex flex-col justify-between border-2 ${frame.border} bg-white transition-all duration-150 cursor-pointer shadow-xs ${
           isTarget
             ? 'scale-105 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_22px_rgba(244,63,94,0.45)] z-30 animate-pulse'
             : isCandidate
@@ -811,15 +811,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         }`}
       >
         {/* Top Header Row: Order Badge (No static gold) */}
-        <div className="flex items-center justify-between gap-1 pb-1 mb-1 border-b border-slate-100">
-          <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
+        <div className="flex items-center justify-between gap-1 pb-1.5 mb-1.5 border-b border-slate-100">
+          <span className="text-xs font-black uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
             {orderLabel}
           </span>
         </div>
 
         {/* Center Artwork & Name */}
-        <div className="flex items-center gap-2.5 my-1">
-          <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 shadow-2xs">
+        <div className="flex items-center gap-3 my-1.5">
+          <div className="w-14 h-14 sm:w-15 sm:h-15 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 shadow-2xs">
             <img
               src={getItemIconUrl(version, card.id)}
               alt={card.name}
@@ -828,25 +828,25 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm sm:text-base font-black uppercase text-slate-900 tracking-wide leading-tight truncate font-['Barlow_Condensed']">
+            <h4 className="text-base sm:text-lg font-black uppercase text-slate-900 tracking-wide leading-tight truncate font-['Barlow_Condensed']">
               {card.name}
             </h4>
-            <span className="text-[11px] font-bold text-slate-500 uppercase block truncate font-sans">
+            <span className="text-xs font-bold text-slate-500 uppercase block truncate font-sans mt-0.5">
               {roleSubtitle}
             </span>
           </div>
         </div>
 
-        {/* Bottom Tag / Swap Signal */}
+        {/* Bottom Tag / Swap Signal - Complete Readable Explanation */}
         {isTarget ? (
-          <div className="w-full bg-rose-600 py-1 px-1 rounded text-center shadow-xs">
-            <span className="text-[11px] font-black uppercase tracking-wider text-white">
+          <div className="w-full bg-rose-600 py-1.5 px-2 rounded text-center shadow-xs mt-1">
+            <span className="text-xs font-black uppercase tracking-wider text-white block">
               REPLACE WITH PIVOT
             </span>
           </div>
         ) : (
-          <div className="w-full bg-slate-50 py-1 px-1.5 rounded text-center border border-slate-200">
-            <span className="text-[11px] font-semibold text-slate-700 line-clamp-1 font-sans">
+          <div className="w-full bg-slate-50 py-1.5 px-2 rounded border border-slate-200 mt-1 min-h-[36px] flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-700 line-clamp-2 leading-tight font-sans text-center">
               {card.whatItDoes}
             </span>
           </div>
@@ -858,20 +858,20 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 lg:p-3.5 shadow-xs overflow-hidden font-['Barlow_Condensed'] select-none"
+      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-3 sm:p-4 lg:p-5 shadow-xs overflow-hidden font-['Barlow_Condensed'] select-none"
       style={{
         backgroundImage: 'radial-gradient(#e2e8f0 1.25px, transparent 1.25px)',
         backgroundSize: '16px 16px'
       }}
     >
       {/* Control Bar */}
-      <div className="relative z-20 flex items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200">
-        <div className="flex items-center gap-2">
+      <div className="relative z-20 flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-slate-200">
+        <div className="flex items-center gap-2.5">
           {/* View Toggles */}
           <div className="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 shadow-2xs">
             <button
               onClick={() => setSubView('canvas')}
-              className={`px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
                 subView === 'canvas'
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -881,7 +881,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             </button>
             <button
               onClick={() => setSubView('matrix')}
-              className={`px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
                 subView === 'matrix'
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -891,7 +891,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             </button>
           </div>
 
-          <span className="hidden sm:inline text-[10.5px] font-bold text-slate-500 uppercase tracking-wide">
+          <span className="hidden sm:inline text-xs font-bold text-slate-500 uppercase tracking-wide">
             Mobalytics Flow • Deadlock HUD
           </span>
         </div>
@@ -899,7 +899,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         {/* Inspector Toggle */}
         <button
           onClick={() => setShowInspector(!showInspector)}
-          className={`px-2.5 py-0.5 rounded-lg border text-xs font-black uppercase tracking-wider transition-colors cursor-pointer ${
+          className={`px-3 py-1 rounded-lg border text-xs sm:text-sm font-black uppercase tracking-wider transition-colors cursor-pointer ${
             showInspector
               ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
               : 'bg-white border-slate-300 text-slate-600 hover:text-slate-900'
@@ -936,42 +936,42 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
       {/* Main View Area */}
       {subView === 'canvas' ? (
-        <div className="relative flex-col justify-between space-y-2.5">
+        <div className="relative flex-col justify-between space-y-3">
 
           {/* SECTION 1: MOBALYTICS CHRONOLOGICAL HIGHWAY (EARLY -> CORE -> BOOTS) */}
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-stretch">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
             
             {/* SUB-POD A: STARTING ITEMS & 1ST RECALL (3 COLS) */}
             {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
-              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-2.5 shadow-2xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-100">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-slate-900 text-white">
+              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-900 text-white">
                       0:00 - 5:00
                     </span>
-                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
                       Early Game & Back
                     </h3>
                   </div>
                 </div>
 
                 {/* Starters & 1st Recall Cards */}
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <div>
-                    <span className="text-[9.5px] font-bold text-slate-500 uppercase block mb-1">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block mb-1 font-sans">
                       Starter Bundle (0:00)
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       {renderCardNode(starterCard)}
                       {renderCardNode(potionCard)}
                     </div>
                   </div>
 
-                  <div className="pt-1.5 border-t border-slate-100">
-                    <span className="text-[9.5px] font-bold text-emerald-700 uppercase block mb-1">
+                  <div className="pt-2 border-t border-slate-100">
+                    <span className="text-[11px] font-bold text-emerald-700 uppercase block mb-1 font-sans">
                       1st Recall Spike (~4:30)
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       {renderCardNode(firstBackCard)}
                       {renderCardNode(tier1BootsCard)}
                     </div>
@@ -982,39 +982,39 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
             {/* SUB-POD B: THE CORE BUILD HIGHWAY (6 COLS - MOBALYTICS ARROW FLOW) */}
             {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
-              <div className="lg:col-span-6 rounded-xl bg-gradient-to-r from-emerald-50/20 via-white to-sky-50/20 border-2 border-emerald-400/80 p-2.5 shadow-xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-200">
+              <div className="lg:col-span-6 rounded-xl bg-gradient-to-r from-emerald-50/30 via-white to-sky-50/30 border-2 border-emerald-400 p-3 sm:p-3.5 shadow-xs flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-200">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
                       The Core Build Highway
                     </h3>
                   </div>
-                  <span className="text-[9.5px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.2 rounded border border-emerald-300">
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded border border-emerald-300">
                     RECOMMENDED RUSH
                   </span>
                 </div>
 
                 {/* 3 Core Items Connected with Chevrons */}
-                <div className="flex items-center justify-between gap-1.5 sm:gap-2 my-1 overflow-x-auto no-scrollbar">
+                <div className="flex items-center justify-between gap-2 sm:gap-3 my-1.5 overflow-x-auto no-scrollbar">
                   {renderFeaturedCoreNode(core1Card, '1ST RUSH', 'Primary Spike')}
-                  <ArrowRight className="w-5 h-5 text-emerald-600 flex-shrink-0 animate-pulse" />
+                  <ArrowRight className="w-6 h-6 text-emerald-600 flex-shrink-0 animate-pulse" />
                   {renderFeaturedCoreNode(core2Card, '2ND CORE', 'Kit Synergy')}
-                  <ArrowRight className="w-5 h-5 text-emerald-600 flex-shrink-0 animate-pulse" />
+                  <ArrowRight className="w-6 h-6 text-emerald-600 flex-shrink-0 animate-pulse" />
                   {renderFeaturedCoreNode(core3Card, '3RD CORE', 'Peak Capstone')}
                 </div>
 
                 {/* Flex Alternatives Pill Bar */}
-                <div className="mt-2 pt-1.5 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-600">
-                  <span className="font-bold uppercase text-slate-500">
+                <div className="mt-2.5 pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-600 font-sans">
+                  <span className="font-bold uppercase text-slate-500 font-['Barlow_Condensed'] text-xs">
                     Tempo Alternatives:
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-black uppercase text-slate-800 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
-                      Flex 2nd: {altCoreCard.name}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold uppercase text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                      Flex 2nd: <strong className="text-emerald-800 font-black">{altCoreCard.name}</strong>
                     </span>
-                    <span className="font-black uppercase text-slate-800 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
-                      Flex 3rd: {altCapstoneCard.name}
+                    <span className="font-bold uppercase text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                      Flex 3rd: <strong className="text-emerald-800 font-black">{altCapstoneCard.name}</strong>
                     </span>
                   </div>
                 </div>
@@ -1023,37 +1023,37 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
             {/* SUB-POD C: BOOTS ENGINE (3 COLS) */}
             {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
-              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-2.5 shadow-2xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-100">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 border border-sky-300">
+              <div className="lg:col-span-3 rounded-xl bg-white border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300">
                       T2 BOOTS
                     </span>
-                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
                       Boots Engine
                     </h3>
                   </div>
                 </div>
 
                 {/* Default vs Situational Boots */}
-                <div className="flex items-center justify-around gap-2 my-1">
+                <div className="flex items-center justify-around gap-2 my-1.5">
                   <div className="flex flex-col items-center">
-                    <span className="text-[9px] font-black uppercase text-emerald-700 mb-1">Standard</span>
+                    <span className="text-[10px] font-black uppercase text-emerald-700 mb-1">Standard</span>
                     {renderCardNode(defaultBootsCard)}
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <ArrowLeftRight className="w-4 h-4 text-sky-600 animate-pulse my-1" />
-                    <span className="text-[8px] font-black uppercase text-slate-400">SWAP</span>
+                    <ArrowLeftRight className="w-5 h-5 text-sky-600 animate-pulse my-1" />
+                    <span className="text-[9px] font-black uppercase text-slate-400">SWAP</span>
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <span className="text-[9px] font-black uppercase text-sky-700 mb-1">Alternative</span>
+                    <span className="text-[10px] font-black uppercase text-sky-700 mb-1">Alternative</span>
                     {renderCardNode(altBootsCard)}
                   </div>
                 </div>
 
-                <div className="p-1.5 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-600 leading-snug mt-1 text-center">
+                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-snug mt-1 text-center font-sans">
                   {bootsRec.alternative}
                 </div>
               </div>
@@ -1062,9 +1062,9 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           </div>
 
           {/* SECTION 2: DYNAMIC TACTICAL SWAP STATUS BAR */}
-          <div className="relative z-10 px-3 py-1.5 rounded-lg bg-slate-900 text-white flex items-center justify-between text-xs select-none shadow-sm">
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+          <div className="relative z-10 px-3.5 py-2 rounded-lg bg-slate-900 text-white flex items-center justify-between text-xs select-none shadow-sm">
+            <div className="flex items-center gap-2.5 overflow-hidden">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
               {hoveredCard && hoveredCard.replacesSlot ? (
                 <div className="flex items-center gap-2 truncate text-xs sm:text-sm">
                   <span className="text-white font-black uppercase tracking-wide">
@@ -1086,53 +1086,53 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   </span>
                 </div>
               ) : (
-                <span className="text-slate-300 uppercase tracking-wider text-xs font-bold">
+                <span className="text-slate-300 uppercase tracking-wider text-xs sm:text-sm font-bold">
                   {isMobile ? 'Tactical Deck • Tap items to view situational swap replacements' : 'Tactical Deck • Hover any item to reveal matchup swap connections'}
                 </span>
               )}
             </div>
-            <span className="text-[11px] font-mono text-emerald-400 uppercase tracking-wider hidden sm:inline flex-shrink-0">
+            <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider hidden sm:inline flex-shrink-0 font-bold">
               ZERO-SCROLL TELEMETRY
             </span>
           </div>
 
           {/* SECTION 3: SITUATIONAL COUNTERS & MATCHUP PIVOTS (MOBALYTICS THREAT PODS) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
-            <div className="relative z-10 rounded-xl bg-white border border-slate-200 p-2.5 shadow-2xs flex flex-col justify-between">
-              <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-200">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-900">
+            <div className="relative z-10 rounded-xl bg-white border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-200">
+                <div className="flex items-center gap-2.5">
+                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
                     Situational Counters & Matchup Pivots
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-500 font-sans hidden sm:inline">
-                    Swap these into your build when facing specific enemy threats
+                  </h3>
+                  <span className="text-xs font-bold text-slate-500 font-sans hidden sm:inline">
+                    — Swap these into your build when facing specific enemy threats
                   </span>
                 </div>
-                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                   5 Threat Categories
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
                 {situationalPods.map((pod, idx) => (
                   <div
                     key={idx}
-                    className={`rounded-lg border ${pod.accent} p-2 flex flex-col justify-between shadow-2xs bg-white`}
+                    className={`rounded-xl border-2 ${pod.accent} p-2.5 flex flex-col justify-between shadow-2xs bg-white`}
                   >
-                    <div className="pb-1 mb-1.5 border-b border-slate-100 flex items-center justify-between">
+                    <div className="pb-1.5 mb-2 border-b border-slate-100 flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs">{pod.icon}</span>
-                        <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-900 truncate">
+                        <span className="text-sm">{pod.icon}</span>
+                        <span className="text-xs sm:text-[13px] font-black uppercase tracking-wide text-slate-900 truncate">
                           {pod.title}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-1.5 justify-start py-0.5">
+                    <div className="flex flex-wrap items-center gap-2 justify-start py-1">
                       {pod.cards.map(renderCardNode)}
                     </div>
 
-                    <span className="text-[9px] text-slate-500 font-sans leading-tight mt-1 pt-1 border-t border-slate-100 truncate block">
+                    <span className="text-[10px] text-slate-500 font-sans leading-tight mt-1.5 pt-1.5 border-t border-slate-100 truncate block font-medium">
                       {pod.subtitle}
                     </span>
                   </div>

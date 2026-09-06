@@ -79,22 +79,22 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
   ];
 
   return (
-    <div className="deadlock-frame w-full rounded-xl p-2.5 sm:p-3 shadow-sm flex flex-col gap-2 font-['Barlow_Condensed'] bg-white border border-slate-200">
+    <div className="deadlock-frame w-full rounded-xl p-3 sm:p-4 shadow-sm flex flex-col gap-2.5 font-['Barlow_Condensed'] bg-white border border-slate-200">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <span className="deadlock-badge px-2 py-0.5 text-xs text-emerald-700">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
+        <div className="flex items-center gap-2.5">
+          <span className="deadlock-badge px-2.5 py-0.5 text-xs sm:text-sm text-emerald-700">
             <span>ABILITIES</span>
           </span>
-          <h2 className="text-base sm:text-lg font-black uppercase text-slate-900 tracking-wide">
+          <h2 className="text-lg sm:text-xl font-black uppercase text-slate-900 tracking-wide">
             Abilities & Skill Priority
           </h2>
         </div>
 
         {/* Skill Max Order */}
         <div className="flex items-center gap-2">
-          <span className="text-xs uppercase text-slate-500 font-bold">Max Order:</span>
-          <span className="deadlock-badge px-2 py-0.2 text-xs text-emerald-800 font-black tracking-widest bg-emerald-50 border-emerald-300">
+          <span className="text-xs sm:text-sm uppercase text-slate-500 font-bold">Max Order:</span>
+          <span className="deadlock-badge px-2.5 py-0.5 text-xs sm:text-sm text-emerald-800 font-black tracking-widest bg-emerald-50 border-emerald-300">
             <span>{tactics.skillMaxOrder}</span>
           </span>
         </div>

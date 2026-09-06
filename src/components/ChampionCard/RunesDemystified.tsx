@@ -42,15 +42,15 @@ export const RunesDemystified: React.FC<RunesDemystifiedProps> = ({ tactics }) =
   };
 
   return (
-    <div className="deadlock-frame w-full rounded-xl p-2.5 sm:p-3.5 shadow-sm flex flex-col gap-3 font-['Barlow_Condensed'] bg-white border border-slate-200 select-none">
+    <div className="deadlock-frame w-full rounded-xl p-3 sm:p-4 shadow-sm flex flex-col gap-3 font-['Barlow_Condensed'] bg-white border border-slate-200 select-none">
       {/* Mobalytics + Deadlock Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-1.5 bg-slate-900 text-white px-2 py-0.5 rounded shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-black uppercase tracking-wider">RUNES ENGINE</span>
+          <div className="flex items-center gap-1.5 bg-slate-900 text-white px-2.5 py-0.5 rounded shadow-xs">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">RUNES ENGINE</span>
           </div>
-          <h2 className="text-base sm:text-lg font-black uppercase text-slate-900 tracking-wide">
+          <h2 className="text-lg sm:text-xl font-black uppercase text-slate-900 tracking-wide">
             Optimal Rune Page & Matchup Pivots
           </h2>
         </div>

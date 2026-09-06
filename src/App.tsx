@@ -335,52 +335,52 @@ const AppContent: React.FC = () => {
             />
 
             {/* View Selector Tabs */}
-            <div className="flex items-center justify-center sm:justify-start gap-1 p-0.5 rounded-lg bg-white border border-slate-200 shadow-xs w-full sm:w-auto overflow-x-auto font-['Barlow_Condensed']">
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 p-1 rounded-xl bg-white border border-slate-200 shadow-xs w-full sm:w-auto overflow-x-auto font-['Barlow_Condensed']">
               <button
                 onClick={() => setActiveTab('items')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'items'
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <ShoppingBag className="w-3.5 h-3.5" />
+                <ShoppingBag className="w-4 h-4" />
                 <span>Items</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('abilities')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'abilities'
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-4 h-4" />
                 <span>Abilities</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('runes')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'runes'
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <Compass className="w-3.5 h-3.5" />
+                <Compass className="w-4 h-4" />
                 <span>Runes</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('all')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'all'
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <Layers className="w-3.5 h-3.5" />
+                <Layers className="w-4 h-4" />
                 <span>All-in-One</span>
               </button>
             </div>
