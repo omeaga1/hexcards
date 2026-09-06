@@ -432,7 +432,13 @@ ipcMain.handle("update:checkForUpdates", async () => {
   }
   try {
     const res = await autoUpdater.checkForUpdates();
-    return { status: "ok", updateInfo: res?.updateInfo };
+    const isNewer = Boolean(res?.updateInfo && res.updateInfo.version !== app.getVersion());
+    return {
+      status: "ok",
+      isNewer,
+      version: res?.updateInfo?.version,
+      currentVersion: app.getVersion()
+    };
   } catch (err) {
     return { status: "error", message: err.message };
   }

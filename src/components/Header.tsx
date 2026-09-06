@@ -70,10 +70,17 @@ export const Header: React.FC<HeaderProps> = ({
     try {
       const res = await window.electronAPI.checkForUpdates();
       if (res.status === 'ok') {
-        setUpdateInfo({ status: 'idle', message: 'Up to date ✓' });
-        setTimeout(() => setUpdateInfo({ status: 'idle' }), 3500);
+        if (res.isNewer) {
+          setUpdateInfo({ status: 'downloading', percent: 0, version: res.version });
+        } else {
+          setUpdateInfo({ status: 'idle', message: `Up to date (v${res.currentVersion || ''}) ✓` });
+          setTimeout(() => setUpdateInfo({ status: 'idle' }), 3500);
+        }
+      } else if (res.status === 'dev') {
+        setUpdateInfo({ status: 'idle', message: 'Dev Mode' });
+        setTimeout(() => setUpdateInfo({ status: 'idle' }), 3000);
       } else {
-        setUpdateInfo({ status: 'idle', message: 'Checked' });
+        setUpdateInfo({ status: 'idle', message: 'Check Failed' });
         setTimeout(() => setUpdateInfo({ status: 'idle' }), 3000);
       }
     } catch {
