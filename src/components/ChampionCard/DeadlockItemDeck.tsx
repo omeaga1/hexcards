@@ -329,21 +329,49 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     };
   }, [isSupport, tactics?.damageType, isMage, isTank, isADC, core2Card.name, core3Card.name]);
 
-  const antiBurst1: TacticalCard = useMemo(() => ({
-    id: isSupport ? '3222' : '2504',
-    name: isSupport ? "Mikael's Blessing" : 'Kaenic Rookern',
-    category: isSupport ? 'utility' : 'vitality',
-    buyOrderBadge: isSupport ? 'CORE #2' : 'CORE #3',
-    replacesSlot: isSupport ? 'Core #2' : 'Core #3',
-    replacesItemName: isSupport ? core2Card.name : core3Card.name,
-    swapReason: isSupport ? 'Cleanse high CC picks targeting your carry' : 'Enemy team has fed AP burst mages one-shotting you',
-    isActive: isSupport,
-    whatItDoes: isSupport
-      ? 'Active: Instantly cleanses stuns/roots from an ally carry and heals them.'
-      : 'Grants an automatic 18% max HP magic damage shield refreshing out of combat.',
-    whenToBuy: 'When enemy magic burst or CC threatens instant elimination.',
-    timing: 'Build 2nd (Support) or 3rd/4th (Bruiser)'
-  }), [isSupport, core2Card.name, core3Card.name]);
+  const antiBurst1: TacticalCard = useMemo(() => {
+    if (isSupport) {
+      return {
+        id: '3222',
+        name: "Mikael's Blessing",
+        category: 'utility',
+        buyOrderBadge: 'CORE #2',
+        replacesSlot: 'Core #2',
+        replacesItemName: core2Card.name,
+        swapReason: 'Cleanse high CC picks targeting your carry',
+        isActive: true,
+        whatItDoes: 'Active: Instantly cleanses stuns/roots from an ally carry and heals them.',
+        whenToBuy: 'When enemy crowd control threatens instant elimination of your carry.',
+        timing: 'Build 2nd or 3rd on enchanter supports'
+      };
+    }
+    if (isADC) {
+      return {
+        id: '3091',
+        name: "Wit's End",
+        category: 'weapon',
+        buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3',
+        replacesItemName: core3Card.name,
+        swapReason: 'Provides +45 Magic Resist and 20% Tenacity without sacrificing DPS (+55% Attack Speed and on-hit magic damage).',
+        whatItDoes: '+45 Magic Resist, +55% Attack Speed, +20% Tenacity, and on-hit magic damage.',
+        whenToBuy: 'Enemy team has heavy AP poke / DPS mages (Azir, Cassiopeia, Teemo, Swain).',
+        timing: '3rd or 4th item slot vs AP DPS'
+      };
+    }
+    return {
+      id: '2504',
+      name: 'Kaenic Rookern',
+      category: 'vitality',
+      buyOrderBadge: 'CORE #3',
+      replacesSlot: 'Core #3',
+      replacesItemName: core3Card.name,
+      swapReason: 'Enemy team has fed AP burst mages one-shotting you',
+      whatItDoes: 'Grants an automatic 18% max HP magic damage shield refreshing out of combat.',
+      whenToBuy: 'When enemy magic burst threatens instant elimination.',
+      timing: 'Build 3rd or 4th on tanks and bruisers'
+    };
+  }, [isSupport, isADC, core2Card.name, core3Card.name]);
 
   const antiBurst2: TacticalCard = useMemo(() => ({
     id: isSupport ? '3109' : isMage ? '3102' : isTank ? '4401' : '3156',
@@ -408,13 +436,13 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   }), [isSupport, isMage, isADC, isBruiser, isTank, core3Card.name]);
 
   const shred2: TacticalCard = useMemo(() => {
-    const id = isSupport ? '3001' : isMage ? '3137' : isADC ? '3302' : isBruiser ? '6694' : '8020';
-    const name = isSupport ? 'Trailblazer' : isMage ? 'Cryptbloom' : isADC ? 'Terminus' : isBruiser ? "Serylda's Grudge" : 'Abyssal Mask';
+    const id = isSupport ? '3001' : isMage ? '3137' : isADC ? '3153' : isBruiser ? '6694' : '8020';
+    const name = isSupport ? 'Trailblazer' : isMage ? 'Cryptbloom' : isADC ? 'Blade of the Ruined King' : isBruiser ? "Serylda's Grudge" : 'Abyssal Mask';
     const category: ItemCategory = isMage ? 'spirit' : isSupport ? 'utility' : isTank ? 'vitality' : 'weapon';
     const whatItDoes = isMage
       ? '30% Magic Pen + releases healing nova for allies on champion takedowns.'
       : isADC
-      ? 'Attacks alternate between +30% Armor & Magic Pen and granting up to 25 Armor & MR.'
+      ? 'Deals 9% current HP physical on-hit + steals 25% movespeed on 3rd attack to melt colossal health tanks.'
       : isBruiser
       ? '30% Armor Pen + slows enemies below 50% health.'
       : isSupport
@@ -429,49 +457,91 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       replacesSlot: 'Core #3',
       replacesItemName: core3Card.name,
       swapReason: isADC
-        ? 'Dual % Armor and Magic Penetration with stacking hybrid resistances for extended auto-attack teamfights.'
+        ? 'Melt colossal health-stacking tanks (Heartsteel Sion, ChoGath, Warmogs) with 9% current HP on-hit physical damage.'
         : 'Alternative % penetration or resistance shred for extended teamfights.',
       whatItDoes,
-      whenToBuy: 'Alternative % resistance shred vs durable tank compositions.',
+      whenToBuy: isADC ? 'Enemy frontline stacks massive bonus Health (Heartsteel / Warmogs).' : 'Alternative % resistance shred vs durable tank compositions.',
       timing: '3rd or 4th item slot'
     };
   }, [isSupport, isMage, isADC, isBruiser, isTank, core3Card.name]);
 
-  const antiCC1: TacticalCard = useMemo(() => ({
-    id: '3140',
-    name: 'Quicksilver Sash',
-    category: 'weapon',
-    buyOrderBadge: '1300G QSS',
-    lineageType: 'component',
-    buildsIntoId: '3139',
-    buildsIntoName: 'Mercurial Scimitar',
-    finalSwapSlot: 'Core #3',
-    finalSwapItemName: core3Card.name,
-    replacesSlot: '1st Back',
-    replacesItemName: firstBackCard.name,
-    swapReason: 'Buy 1300g QSS on early recall vs suppression (Malzahar, Warwick, Skarner). Sit on it, then upgrade to Mercurial Scimitar late.',
-    isActive: true,
-    whatItDoes: 'Active cleanses all crowd control (including Suppression) immediately.',
-    whenToBuy: 'Enemy has point-and-click Suppression (Malzahar, Warwick, Skarner).',
-    timing: 'Buy 1300g component early, sit on it!'
-  }), [firstBackCard.name, core3Card.name]);
+  const antiCC1: TacticalCard = useMemo(() => {
+    if (isMage) {
+      return {
+        id: '4632',
+        name: 'Verdant Barrier',
+        category: 'spirit',
+        buyOrderBadge: '1600G COMP',
+        lineageType: 'component',
+        buildsIntoId: '3102',
+        buildsIntoName: "Banshee's Veil",
+        finalSwapSlot: 'Core #2',
+        finalSwapItemName: core2Card.name,
+        replacesSlot: '1st Back',
+        replacesItemName: firstBackCard.name,
+        swapReason: `Sit on 1600g Verdant Barrier component early vs lethal AP burst or initiation. Later, finish Banshee's Veil to swap out ${core2Card.name}.`,
+        isActive: false,
+        whatItDoes: 'Grants 35 Ability Power and 30 Magic Resistance + Annul spell shield passive.',
+        whenToBuy: 'Enemy team has dangerous long-range engage or crowd control.',
+        timing: 'Buy early component, sit on it!'
+      };
+    }
+    return {
+      id: '3140',
+      name: 'Quicksilver Sash',
+      category: 'weapon',
+      buyOrderBadge: '1300G QSS',
+      lineageType: 'component',
+      buildsIntoId: '3139',
+      buildsIntoName: 'Mercurial Scimitar',
+      finalSwapSlot: 'Core #3',
+      finalSwapItemName: core3Card.name,
+      replacesSlot: '1st Back',
+      replacesItemName: firstBackCard.name,
+      swapReason: `Buy 1300g QSS on early recall vs point-and-click suppression (Malzahar, Warwick, Skarner). Sit on it, then upgrade to Mercurial Scimitar late (swaps ${core3Card.name}).`,
+      isActive: true,
+      whatItDoes: 'Active cleanses all crowd control (including Suppression) immediately.',
+      whenToBuy: 'Enemy has point-and-click Suppression (Malzahar, Warwick, Skarner).',
+      timing: 'Buy 1300g component early, sit on it!'
+    };
+  }, [isMage, firstBackCard.name, core2Card.name, core3Card.name]);
 
-  const antiCC2: TacticalCard = useMemo(() => ({
-    id: '3139',
-    name: 'Mercurial Scimitar',
-    category: 'weapon',
-    buyOrderBadge: 'CORE #3',
-    lineageType: 'upgrade',
-    buildsFromId: '3140',
-    buildsFromName: 'Quicksilver Sash',
-    replacesSlot: 'Core #3',
-    replacesItemName: core3Card.name,
-    swapReason: 'Finish QSS into full item to retain CC cleanse while gaining +50 AD and +50% move speed burst.',
-    isActive: true,
-    whatItDoes: 'Active cleanses all CC and grants +50% move speed for 1.5 seconds.',
-    whenToBuy: 'Complete from Quicksilver Sash after your core damage is built.',
-    timing: '4th or 5th completed item'
-  }), [core3Card.name]);
+  const antiCC2: TacticalCard = useMemo(() => {
+    if (isMage) {
+      return {
+        id: '3102',
+        name: "Banshee's Veil",
+        category: 'spirit',
+        buyOrderBadge: 'FULL UPGRADE',
+        lineageType: 'upgrade',
+        buildsFromId: '4632',
+        buildsFromName: 'Verdant Barrier',
+        replacesSlot: 'Core #2',
+        replacesItemName: core2Card.name,
+        swapReason: `Upgraded from 1600g Verdant Barrier. Swaps ${core2Card.name} to gain 105 AP and an active spell shield blocking enemy initiation.`,
+        isActive: false,
+        whatItDoes: 'Grants a spell shield that blocks the next enemy ability, plus 105 AP and 50 MR.',
+        whenToBuy: 'Complete from Verdant Barrier when enemy pick potential threatens teamfights.',
+        timing: `Completed Upgrade (Swaps ${core2Card.name})`
+      };
+    }
+    return {
+      id: '3139',
+      name: 'Mercurial Scimitar',
+      category: 'weapon',
+      buyOrderBadge: 'FULL UPGRADE',
+      lineageType: 'upgrade',
+      buildsFromId: '3140',
+      buildsFromName: 'Quicksilver Sash',
+      replacesSlot: 'Core #3',
+      replacesItemName: core3Card.name,
+      swapReason: `Finish QSS into full item to retain CC cleanse while gaining +50 AD, +40 MR, and +50% move speed burst. Swaps ${core3Card.name}.`,
+      isActive: true,
+      whatItDoes: 'Active cleanses all CC and grants +50% move speed for 1.5 seconds, plus 50 AD and 40 MR.',
+      whenToBuy: 'Complete from Quicksilver Sash after your core damage is built.',
+      timing: `Completed Upgrade (Swaps ${core3Card.name})`
+    };
+  }, [isMage, core2Card.name, core3Card.name]);
 
   const antiCC3: TacticalCard = useMemo(() => ({
     id: isMage ? '3102' : '3814',
@@ -508,18 +578,48 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: '2nd or 3rd situational purchase'
   }), [isSupport, isMage, core2Card.name]);
 
-  const flex2: TacticalCard = useMemo(() => ({
-    id: '3110',
-    name: 'Frozen Heart',
-    category: 'vitality',
-    buyOrderBadge: 'CORE #2',
-    replacesSlot: 'Core #2',
-    replacesItemName: core2Card.name,
-    swapReason: 'Multiple enemy basic attack carries (Jinx, Master Yi, Yasuo, Yone).',
-    whatItDoes: 'Aura reduces nearby enemy attack speed by 20% and reduces incoming basic attack damage.',
-    whenToBuy: 'Multiple heavy auto-attackers.',
-    timing: 'Cheap 2nd or 3rd slot armor'
-  }), [core2Card.name]);
+  const flex2: TacticalCard = useMemo(() => {
+    if (isADC) {
+      return {
+        id: '6673',
+        name: 'Immortal Shieldbow',
+        category: 'weapon',
+        buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3',
+        replacesItemName: core3Card.name,
+        swapReason: 'Lifeline shield (320-720 HP) prevents burst assassins from 100-to-0 executing you while preserving 25% Crit and 55 AD.',
+        whatItDoes: 'Grants a massive 320–720 emergency shield when taking damage that drops you below 30% HP.',
+        whenToBuy: 'Enemy team has lethal burst assassins (Zed, Talon, Rengar, Kayn).',
+        timing: '3rd or 4th defensive slot'
+      };
+    }
+    if (isBruiser) {
+      return {
+        id: '6333',
+        name: "Death's Dance",
+        category: 'weapon',
+        buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3',
+        replacesItemName: core3Card.name,
+        swapReason: 'Stores 30% of incoming physical & magic burst as true damage bleed over 3 seconds. Takedowns cleanse the bleed and heal 120% bonus AD.',
+        whatItDoes: 'Delays lethal burst damage and cleanses remaining bleed on champion takedown.',
+        whenToBuy: 'Against heavy physical dive / burst compositions.',
+        timing: '3rd or 4th item slot'
+      };
+    }
+    return {
+      id: '3110',
+      name: 'Frozen Heart',
+      category: 'vitality',
+      buyOrderBadge: 'CORE #2',
+      replacesSlot: 'Core #2',
+      replacesItemName: core2Card.name,
+      swapReason: 'Multiple enemy basic attack carries (Master Yi, Yasuo, Yone).',
+      whatItDoes: 'Aura reduces nearby enemy attack speed by 20% and reduces incoming basic attack damage.',
+      whenToBuy: 'Multiple heavy auto-attackers.',
+      timing: 'Cheap 2nd or 3rd slot armor'
+    };
+  }, [isADC, isBruiser, core2Card.name, core3Card.name]);
 
   const flex3: TacticalCard = useMemo(() => ({
     id: isSupport ? '3107' : '3083',
@@ -552,7 +652,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Anti-Physical & Armor',
-      subtitle: 'vs AD Burst & Assassins',
+      subtitle: isADC ? 'vs Lethal AD Assassins & Burst' : 'vs AD Burst & Assassins',
       accent: 'border-amber-400 bg-amber-50/20 text-amber-800',
       badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
       icon: '🛡️',
@@ -560,7 +660,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Magic Resist & Shields',
-      subtitle: 'vs Fed AP Mages & Poke',
+      subtitle: isADC ? 'vs Fed AP Mages & Magic Poke' : 'vs Fed AP Mages & Poke',
       accent: 'border-purple-400 bg-purple-50/20 text-purple-800',
       badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
       icon: '🔮',
@@ -568,27 +668,33 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Armor / MR Penetration',
-      subtitle: 'vs Tanks & Resistances',
+      subtitle: isADC ? 'vs High Armor & Health Tanks' : 'vs Tanks & Resistances',
       accent: 'border-sky-400 bg-sky-50/20 text-sky-800',
       badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
       icon: '⚔️',
       cards: [shred1, shred2]
     },
     {
-      title: 'Cleanse & Shield Reaver',
-      subtitle: 'vs Hard CC & Shield Stacks',
+      title: 'Cleanse & Suppression',
+      subtitle: isADC
+        ? 'Sit on QSS (1300g) ➔ Finish Mercurial Scimitar late'
+        : isMage
+        ? "Verdant Barrier (1600g) ➔ Upgrade to Banshee's Veil"
+        : 'Sit on 1300g QSS ➔ Finish Mercurial Scimitar late',
       accent: 'border-emerald-400 bg-emerald-50/20 text-emerald-800',
       badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
       icon: '⚡',
-      cards: [antiCC1, flex1]
+      hasBuildLineage: true,
+      cards: [antiCC1, antiCC2]
     }
   ], [
     isADC,
+    isMage,
     antiHeal800g, antiHealFull,
     antiBurst3, flex2,
     antiBurst1, antiBurst2,
     shred1, shred2,
-    antiCC1, flex1
+    antiCC1, antiCC2
   ]);
 
   // Deadlock Category Frame Colors
@@ -1277,10 +1383,16 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                       <>
                         {renderCardNode(pod.cards[0], false)}
                         <div className="flex flex-col items-center justify-center px-0.5 flex-shrink-0">
-                          <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-rose-700 bg-rose-50 border border-rose-200 px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed']">
+                          <span className={`text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
+                            pod.accent.includes('emerald')
+                              ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
+                              : 'text-rose-700 bg-rose-50 border border-rose-200'
+                          }`}>
                             BUILDS
                           </span>
-                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 animate-pulse" />
+                          <ArrowRight className={`w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse ${
+                            pod.accent.includes('emerald') ? 'text-emerald-500' : 'text-rose-500'
+                          }`} />
                         </div>
                         {renderCardNode(pod.cards[1], false)}
                       </>
