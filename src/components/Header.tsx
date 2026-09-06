@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Search, BookOpen, Shield, Zap, X, ChevronDown, ChevronUp, Download } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Search, BookOpen, Shield, Zap, X, ChevronDown, ChevronUp, Download, RefreshCw, Sparkles, ShieldCheck } from 'lucide-react';
 import { ChampionSummary } from '../types';
 import { getChampionIconUrl } from '../services/ddragon';
 import { useDevice } from '../hooks/useDevice';
@@ -45,6 +45,41 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { isMobile } = useDevice();
+  const isDesktop = typeof window !== 'undefined' && Boolean(window.electronAPI?.isDesktop);
+
+  const [updateInfo, setUpdateInfo] = useState<{
+    status: 'idle' | 'checking' | 'available' | 'downloading' | 'downloaded' | 'error';
+    version?: string;
+    percent?: number;
+    message?: string;
+  }>({ status: 'idle' });
+
+  useEffect(() => {
+    if (!isDesktop || !window.electronAPI?.onUpdateStatus) return;
+    const unsubscribe = window.electronAPI.onUpdateStatus((data) => {
+      setUpdateInfo(data);
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [isDesktop]);
+
+  const handleCheckForUpdates = async () => {
+    if (!window.electronAPI?.checkForUpdates) return;
+    setUpdateInfo({ status: 'checking' });
+    try {
+      const res = await window.electronAPI.checkForUpdates();
+      if (res.status === 'ok') {
+        setUpdateInfo({ status: 'idle', message: 'Up to date ✓' });
+        setTimeout(() => setUpdateInfo({ status: 'idle' }), 3500);
+      } else {
+        setUpdateInfo({ status: 'idle', message: 'Checked' });
+        setTimeout(() => setUpdateInfo({ status: 'idle' }), 3000);
+      }
+    } catch {
+      setUpdateInfo({ status: 'idle' });
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -259,8 +294,40 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">Glossary</span>
           </button>
 
-          {/* Download App Button */}
-          {onOpenDownloadModal && (
+          {/* Desktop Update Status Notification OR Web Download Button */}
+          {isDesktop ? (
+            <div>
+              {updateInfo.status === 'downloaded' ? (
+                <button
+                  onClick={() => window.electronAPI?.installUpdate?.()}
+                  className="px-2.5 py-0.5 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-md animate-pulse active:scale-95"
+                  title="Click to restart HexCards and apply the latest update"
+                >
+                  <Sparkles className="w-3.5 h-3.5 fill-current" />
+                  <span>Update Ready • Restart</span>
+                </button>
+              ) : updateInfo.status === 'downloading' ? (
+                <div className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold flex items-center gap-1 font-mono">
+                  <RefreshCw className="w-3 h-3 text-emerald-600 animate-spin" />
+                  <span>Updating {updateInfo.percent || 0}%</span>
+                </div>
+              ) : updateInfo.status === 'checking' ? (
+                <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold flex items-center gap-1">
+                  <RefreshCw className="w-3 h-3 animate-spin text-slate-500" />
+                  <span>Checking...</span>
+                </div>
+              ) : (
+                <button
+                  onClick={handleCheckForUpdates}
+                  className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-300 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-2xs active:scale-95"
+                  title="HexCards Desktop Companion • Click to check for updates"
+                >
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  <span>{updateInfo.message || 'Check Updates'}</span>
+                </button>
+              )}
+            </div>
+          ) : onOpenDownloadModal ? (
             <button
               onClick={onOpenDownloadModal}
               className="px-2 sm:px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
@@ -269,7 +336,7 @@ export const Header: React.FC<HeaderProps> = ({
               <Download className="w-3 h-3" />
               <span>{isMobile ? 'App' : 'Download .exe'}</span>
             </button>
-          )}
+          ) : null}
         </div>
 
       </div>

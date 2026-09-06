@@ -425,6 +425,17 @@ ipcMain.handle("window:toggleAlwaysOnTop", () => {
 ipcMain.on("update:installNow", () => {
   autoUpdater.quitAndInstall();
 });
+ipcMain.handle("update:checkForUpdates", async () => {
+  if (!app.isPackaged) {
+    return { status: "dev", message: "Development mode (updates disabled)" };
+  }
+  try {
+    const res = await autoUpdater.checkForUpdates();
+    return { status: "ok", updateInfo: res?.updateInfo };
+  } catch (err) {
+    return { status: "error", message: err.message };
+  }
+});
 
 function setupAutoUpdater() {
   if (!app.isPackaged) return;

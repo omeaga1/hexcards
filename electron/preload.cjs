@@ -1,4 +1,4 @@
-﻿const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   isDesktop: true,
@@ -9,6 +9,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
   importItemSet: (itemSet) => ipcRenderer.invoke("lcu:importItemSet", itemSet),
   importRunes: (runePage) => ipcRenderer.invoke("lcu:importRunes", runePage),
   checkBridgeStatus: () => ipcRenderer.invoke("lcu:getStatus"),
+
+  // Auto-Updater
+  onUpdateStatus: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on("update:status", handler);
+    return () => ipcRenderer.removeListener("update:status", handler);
+  },
+  checkForUpdates: () => ipcRenderer.invoke("update:checkForUpdates"),
+  installUpdate: () => ipcRenderer.send("update:installNow"),
 
   // Window Controls
   minimize: () => ipcRenderer.send("window:minimize"),

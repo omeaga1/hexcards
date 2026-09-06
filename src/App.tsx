@@ -51,6 +51,19 @@ const AppContent: React.FC = () => {
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
   const [isBridgeConnected, setIsBridgeConnected] = useState<boolean>(false);
+  const [downloadedUpdateVersion, setDownloadedUpdateVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.electronAPI?.onUpdateStatus) return;
+    const unsubscribe = window.electronAPI.onUpdateStatus((data) => {
+      if (data.status === 'downloaded') {
+        setDownloadedUpdateVersion(data.version || 'latest');
+      }
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
 
   // Focus View Tab: 'items' | 'abilities' | 'runes' | 'all'
   const [activeTab, setActiveTab] = useState<'items' | 'abilities' | 'runes' | 'all'>('items');
@@ -293,6 +306,24 @@ const AppContent: React.FC = () => {
         onSelectChampion={setSelectedChampionId}
         version={version}
       />
+
+      {/* Update Ready In-App Banner */}
+      {downloadedUpdateVersion && (
+        <div className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 px-4 py-2 flex items-center justify-between shadow-md font-['Barlow_Condensed'] font-bold border-b border-amber-400">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 fill-current animate-pulse text-slate-950" />
+            <span className="text-sm uppercase tracking-wide">
+              HexCards Update (v{downloadedUpdateVersion}) is ready to install!
+            </span>
+          </div>
+          <button
+            onClick={() => window.electronAPI?.installUpdate?.()}
+            className="px-3 py-1 rounded bg-slate-950 hover:bg-slate-900 text-amber-400 text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-xs active:scale-95"
+          >
+            Restart & Apply Update
+          </button>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <main className={`flex-1 w-full max-w-7xl mx-auto py-2 sm:py-3 space-y-3 ${isMobile ? 'pb-16 px-2' : 'px-3 sm:px-4 lg:px-6'}`}>

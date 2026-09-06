@@ -217,6 +217,9 @@ declare global {
       maximize: () => void;
       close: () => void;
       toggleAlwaysOnTop: () => Promise<boolean>;
+      onUpdateStatus?: (callback: (data: { status: 'checking' | 'available' | 'downloading' | 'downloaded' | 'error'; version?: string; percent?: number }) => void) => () => void;
+      checkForUpdates?: () => Promise<{ status: string; message?: string }>;
+      installUpdate?: () => void;
     };
   }
 }
