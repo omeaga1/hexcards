@@ -2,7 +2,6 @@ import React, { useState, useRef, useMemo } from 'react';
 import { TacticalGuide, ItemData } from '../../types';
 import { getItemIconUrl } from '../../services/ddragon';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
-import { PivotSwapGuide } from './PivotSwapGuide';
 import { X, ArrowRight, ArrowLeftRight, Sparkles, Shield, Zap } from 'lucide-react';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 import { useDevice } from '../../hooks/useDevice';
@@ -47,7 +46,6 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   tactics,
   allItems
 }) => {
-  const [subView, setSubView] = useState<'canvas' | 'matrix'>('canvas');
   const [showInspector, setShowInspector] = useState<boolean>(false);
   const [hoveredCard, setHoveredCard] = useState<TacticalCard | null>(null);
   const [selectedCard, setSelectedCard] = useState<TacticalCard | null>(null);
@@ -303,18 +301,28 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   }), [isSupport, core2Card.name, core3Card.name]);
 
   const antiBurst2: TacticalCard = useMemo(() => ({
-    id: isSupport ? '3109' : '3156',
-    name: isSupport ? "Knight's Vow" : 'Maw of Malmortius',
-    category: isSupport ? 'vitality' : 'weapon',
+    id: isSupport ? '3109' : isMage ? '3102' : isTank ? '4401' : '3156',
+    name: isSupport ? "Knight's Vow" : isMage ? "Banshee's Veil" : isTank ? 'Force of Nature' : 'Maw of Malmortius',
+    category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
     replacesSlot: 'Core #2',
     replacesItemName: core2Card.name,
-    swapReason: isSupport ? 'Assassins diving your carry' : 'Rush Maw 2nd vs fed AP assassins to prevent one-shots',
+    swapReason: isSupport
+      ? 'Redirect 12% ally carry damage onto yourself'
+      : isMage
+      ? 'Spell shield & MR against enemy burst mages'
+      : isTank
+      ? 'Max movement speed & magic damage reduction vs DPS mages'
+      : 'Rush Maw 2nd vs fed AP assassins to prevent one-shots',
     whatItDoes: isSupport
       ? 'Designate carry: redirect 12% damage onto yourself and heal from their damage.'
+      : isMage
+      ? 'Grants a spell shield blocking the next enemy ability + 50 MR.'
+      : isTank
+      ? 'Builds up to 70 bonus MR and 6% move speed when taking magic damage.'
       : 'Triggers a massive Lifeline magic shield on taking lethal AP burst + 10% lifesteal.',
-    whenToBuy: 'Against fed assassins diving priority champions. Delay 2nd offensive item for survival.',
-    timing: 'Rush 2nd item slot vs fed AP threat'
-  }), [isSupport, core2Card.name]);
+    whenToBuy: 'Against fed AP threats or magic burst.',
+    timing: '2nd or 3rd item slot vs heavy AP'
+  }), [isSupport, isMage, isTank, core2Card.name]);
 
   const antiBurst3: TacticalCard = useMemo(() => ({
     id: isMage ? '3157' : isSupport ? '3190' : '3026',
@@ -405,16 +413,25 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   }), [isMage, core2Card.name]);
 
   const flex1: TacticalCard = useMemo(() => ({
-    id: '6695',
-    name: "Serpent's Fang",
-    category: 'weapon',
+    id: isSupport ? '3107' : isMage ? '4645' : '6695',
+    name: isSupport ? 'Redemption' : isMage ? 'Shadowflame' : "Serpent's Fang",
+    category: isSupport ? 'utility' : isMage ? 'spirit' : 'weapon',
     replacesSlot: 'Core #2',
     replacesItemName: core2Card.name,
-    swapReason: 'Rush 2nd vs heavy shield stackers (Sett, Tahm Kench, Karma, Lulu, Shen, Steraks).',
-    whatItDoes: 'Reduces enemy shields gained by 50% and instantly carves existing shields.',
-    whenToBuy: 'Enemy team stacks shields.',
-    timing: 'Cheap 2nd or 3rd situational purchase'
-  }), [core2Card.name]);
+    swapReason: isSupport
+      ? 'Choke point teamfight heal & true damage'
+      : isMage
+      ? 'Critical magic damage and bonus penetration against shielded / low health targets'
+      : 'Rush 2nd vs heavy shield stackers (Sett, Tahm Kench, Karma, Lulu, Shen, Steraks).',
+    isActive: isSupport,
+    whatItDoes: isSupport
+      ? 'Active: Heals all allies in a 5500-range circle and burns enemies.'
+      : isMage
+      ? 'Passes true AP crits and extra damage against shielded and low-health targets.'
+      : 'Reduces enemy shields gained by 50% and instantly carves existing shields.',
+    whenToBuy: isSupport ? 'Teamfight choke point utility.' : 'Enemy team stacks shields or high health.',
+    timing: '2nd or 3rd situational purchase'
+  }), [isSupport, isMage, core2Card.name]);
 
   const flex2: TacticalCard = useMemo(() => ({
     id: '3110',
@@ -443,23 +460,23 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: 'Late game utility'
   }), [isSupport, core3Card.name]);
 
-  // Situational Pods organized by Mobalytics Threat Scenarios
+  // Situational Pods organized by Mobalytics Threat Scenarios (Balanced 2-card presentation)
   const situationalPods = useMemo(() => [
     {
       title: 'Anti-Heal (Grievous)',
-      subtitle: 'vs Sustain & Healers',
+      subtitle: 'vs Sustain & Drain Healers',
       accent: 'border-rose-400 bg-rose-50/20 text-rose-800',
       badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
       icon: '🩸',
       cards: [antiHeal800g, antiHealFull]
     },
     {
-      title: 'Anti-Burst & Armor',
-      subtitle: 'vs AD Assassins & Lethality',
+      title: 'Anti-Physical & Armor',
+      subtitle: 'vs AD Burst & Assassins',
       accent: 'border-amber-400 bg-amber-50/20 text-amber-800',
       badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
       icon: '🛡️',
-      cards: [antiBurst1, antiBurst2, antiBurst3]
+      cards: [antiBurst3, flex2]
     },
     {
       title: 'Magic Resist & Shields',
@@ -467,30 +484,30 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       accent: 'border-purple-400 bg-purple-50/20 text-purple-800',
       badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
       icon: '🔮',
-      cards: [antiCC3, antiBurst1]
+      cards: [antiBurst1, antiBurst2]
     },
     {
       title: 'Armor / MR Penetration',
-      subtitle: 'vs Tanks & High Resistance',
+      subtitle: 'vs Tanks & Resistances',
       accent: 'border-sky-400 bg-sky-50/20 text-sky-800',
       badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
       icon: '⚔️',
       cards: [shred1, shred2]
     },
     {
-      title: 'Utility & Cleanses',
-      subtitle: 'vs Hard CC & Shields',
+      title: 'Cleanse & Shield Reaver',
+      subtitle: 'vs Hard CC & Shield Stacks',
       accent: 'border-emerald-400 bg-emerald-50/20 text-emerald-800',
       badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
       icon: '⚡',
-      cards: [antiCC1, antiCC2, flex1, flex2, flex3]
+      cards: [antiCC1, flex1]
     }
   ], [
     antiHeal800g, antiHealFull,
-    antiBurst1, antiBurst2, antiBurst3,
-    antiCC3,
+    antiBurst3, flex2,
+    antiBurst1, antiBurst2,
     shred1, shred2,
-    antiCC1, antiCC2, flex1, flex2, flex3
+    antiCC1, flex1
   ]);
 
   // Deadlock Category Frame Colors
@@ -858,53 +875,41 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         backgroundSize: '16px 16px'
       }}
     >
-      {/* Control Bar */}
+      {/* Slide Presentation Header Bar */}
       <div className="relative z-20 flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-slate-200">
-        <div className="flex items-center gap-2.5">
-          {/* View Toggles */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 shadow-2xs">
-            <button
-              onClick={() => setSubView('canvas')}
-              className={`px-3 py-1 rounded text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
-                subView === 'canvas'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Tactical Deck
-            </button>
-            <button
-              onClick={() => setSubView('matrix')}
-              className={`px-3 py-1 rounded text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
-                subView === 'matrix'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Pivot Matrix
-            </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-slate-900 text-white shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs sm:text-sm font-black uppercase tracking-wider font-['Barlow_Condensed']">
+              TACTICAL ITEM BLUEPRINT
+            </span>
           </div>
 
           <span className="hidden sm:inline text-xs font-bold text-slate-500 uppercase tracking-wide">
-            Mobalytics Flow • Deadlock HUD
+            1-Page Tactical Canvas • Chronological Highway & Contingency Arsenal
           </span>
         </div>
 
-        {/* Inspector Toggle */}
-        <button
-          onClick={() => setShowInspector(!showInspector)}
-          className={`px-3 py-1 rounded-lg border text-xs sm:text-sm font-black uppercase tracking-wider transition-colors cursor-pointer ${
-            showInspector
-              ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
-              : 'bg-white border-slate-300 text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          {showInspector ? 'Inspector: Open' : 'Inspector: Closed'}
-        </button>
+        {/* Inspector Toggle & Action Bar */}
+        <div className="flex items-center gap-2">
+          <span className="hidden md:inline text-[11px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-1 rounded border border-slate-200">
+            Interactive Deck • Hover To Inspect
+          </span>
+          <button
+            onClick={() => setShowInspector(!showInspector)}
+            className={`px-3 py-1 rounded-lg border text-xs sm:text-sm font-black uppercase tracking-wider transition-colors cursor-pointer ${
+              showInspector
+                ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
+                : 'bg-white border-slate-300 text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            {showInspector ? 'Inspector: Open' : 'Inspector: Closed'}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Category Filter Tabs */}
-      {isMobile && subView === 'canvas' && (
+      {isMobile && (
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2 border-b border-slate-100">
           {[
             { id: 'all', label: 'All Build Steps' },
@@ -929,8 +934,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       )}
 
       {/* Main View Area */}
-      {subView === 'canvas' ? (
-        <div className="relative flex-col justify-between space-y-3">
+      <div className="relative flex-col justify-between space-y-3">
 
           {/* SECTION 1: MOBALYTICS CHRONOLOGICAL HIGHWAY (EARLY -> CORE -> BOOTS) */}
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
@@ -1107,28 +1111,33 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 {situationalPods.map((pod, idx) => (
                   <div
                     key={idx}
-                    className={`rounded-xl border-2 ${pod.accent} p-2.5 flex flex-col justify-between shadow-2xs bg-white`}
+                    className={`rounded-xl border-2 ${pod.accent} p-3 flex flex-col justify-between shadow-2xs bg-white hover:shadow-md transition-shadow`}
                   >
-                    <div className="pb-1.5 mb-2 border-b border-slate-100 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">{pod.icon}</span>
+                    {/* Category Header */}
+                    <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-base flex-shrink-0">{pod.icon}</span>
                         <span className="text-xs sm:text-[13px] font-black uppercase tracking-wide text-slate-900 truncate">
                           {pod.title}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 justify-start py-1">
+                    {/* Centered Symmetrical 2-Card Row */}
+                    <div className="flex items-center justify-center gap-2 py-1">
                       {pod.cards.map(renderCardNode)}
                     </div>
 
-                    <span className="text-[10px] text-slate-500 font-sans leading-tight mt-1.5 pt-1.5 border-t border-slate-100 truncate block font-medium">
-                      {pod.subtitle}
-                    </span>
+                    {/* Threat Subtitle Footer */}
+                    <div className="mt-2 pt-2 border-t border-slate-100 text-center">
+                      <span className="text-[11px] text-slate-500 font-sans leading-tight block font-semibold truncate">
+                        {pod.subtitle}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1223,13 +1232,6 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           )}
 
         </div>
-      ) : (
-        <PivotSwapGuide
-          version={version}
-          tactics={tactics}
-          allItems={allItems}
-        />
-      )}
 
       {/* MOBILE BOTTOM SHEET ITEM INSPECTOR */}
       {isMobile && showMobileDrawer && activeInspectorCard && (
