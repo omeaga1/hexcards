@@ -647,6 +647,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       <div
         key={card.id}
         data-card-id={card.id}
+        title={card.name}
         onClick={() => {
           setSelectedCard(card);
           setHoveredCard(card);
@@ -698,7 +699,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative w-[88px] sm:w-[94px] md:w-[98px] h-[124px] sm:h-[128px] rounded-md overflow-hidden flex flex-col justify-between cursor-pointer select-none transition-all duration-150 border shadow-2xs ${
+        className={`group relative w-[88px] sm:w-[94px] md:w-[96px] h-[128px] sm:h-[132px] rounded-md overflow-hidden flex flex-col justify-between cursor-pointer select-none transition-all duration-150 border shadow-2xs ${
           isDarkTier
             ? 'bg-[#15201a] border-[#2a3c30]'
             : 'bg-[#faf9f4] border-[#c4ccbe]'
@@ -766,15 +767,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           )}
         </div>
 
-        {/* Bottom Shaded Name Plate: 100% full text display without truncation */}
+        {/* Bottom Shaded Name Plate: 100% full text display with zero truncation */}
         <div
-          className={`px-1 py-0.5 text-center h-[34px] sm:h-[36px] flex items-center justify-center border-t flex-shrink-0 transition-colors ${
+          className={`px-1 py-0.5 text-center min-h-[38px] flex items-center justify-center border-t flex-shrink-0 transition-colors ${
             isDarkTier
               ? 'bg-[#101814] border-[#1f2d24] text-[#d6ede1]'
               : 'bg-[#eae8de] border-[#dad9cd] text-[#222920]'
           }`}
         >
-          <span className="text-[10px] sm:text-[10.5px] font-bold leading-[1.15] line-clamp-2 font-sans tracking-tight break-words text-center">
+          <span className="text-[10px] sm:text-[10.5px] font-bold leading-[1.12] font-sans tracking-tight break-words text-center">
             {card.name}
           </span>
         </div>
@@ -976,27 +977,19 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                       Situational Swaps for Core #2 & #3
                     </span>
                   </div>
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-6 py-0.5">
+                    <div className="flex flex-col items-center">
                       {renderCardNode(altCoreCard)}
-                      <div className="hidden sm:flex flex-col text-left max-w-[110px]">
-                        <span className="text-[10px] font-black uppercase text-[#293527]">FLEX 2ND</span>
-                        <span className="text-[9.5px] text-[#556652] leading-tight font-sans line-clamp-2">
-                          {altCoreCard.whatItDoes}
-                        </span>
-                      </div>
+                      <span className="text-[9.5px] font-bold text-[#4d5d4a] uppercase mt-0.5 font-sans">
+                        Flex 2nd Spike
+                      </span>
                     </div>
 
-                    <div className="w-px h-12 bg-[#c4d0be] hidden sm:block" />
-
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-center">
                       {renderCardNode(altCapstoneCard)}
-                      <div className="hidden sm:flex flex-col text-left max-w-[110px]">
-                        <span className="text-[10px] font-black uppercase text-[#293527]">FLEX 3RD</span>
-                        <span className="text-[9.5px] text-[#556652] leading-tight font-sans line-clamp-2">
-                          {altCapstoneCard.whatItDoes}
-                        </span>
-                      </div>
+                      <span className="text-[9.5px] font-bold text-[#4d5d4a] uppercase mt-0.5 font-sans">
+                        Flex 3rd Capstone
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1038,11 +1031,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </div>
 
                 {/* Defensive Comparison Details */}
-                <div className="p-2 rounded-lg bg-[#e4ebde] border border-[#c4d0be] text-[10.5px] text-[#4d5d4a] leading-snug font-sans">
-                  <div className="font-bold text-[#2d392b] mb-1 truncate">
+                <div className="p-2 rounded-lg bg-[#e4ebde] border border-[#c4d0be] text-[10.5px] text-[#4d5d4a] leading-snug font-sans space-y-1">
+                  <div className="font-bold text-[#2d392b]">
                     ● {defaultBootsCard.name}: <span className="font-normal text-[#556652]">{bootsRec.why}</span>
                   </div>
-                  <div className="font-bold text-[#1f4e5b] truncate">
+                  <div className="font-bold text-[#1f4e5b]">
                     ● {altBootsCard.name}: <span className="font-normal text-[#556652]">{bootsRec.alternative}</span>
                   </div>
                 </div>
@@ -1088,7 +1081,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   <div className="pb-1.5 mb-1.5 border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <span className="text-sm flex-shrink-0">{pod.icon}</span>
-                      <span className="text-xs sm:text-[12.5px] font-black uppercase tracking-wide text-slate-900 truncate">
+                      <span className="text-xs sm:text-[12.5px] font-black uppercase tracking-wide text-slate-900">
                         {pod.title}
                       </span>
                     </div>
@@ -1101,7 +1094,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
                   {/* Threat Subtitle Footer */}
                   <div className="mt-1.5 pt-1.5 border-t border-slate-100 text-center">
-                    <span className="text-[10.5px] text-slate-500 font-sans leading-tight block font-semibold truncate">
+                    <span className="text-[10.5px] text-slate-500 font-sans leading-tight block font-semibold">
                       {pod.subtitle}
                     </span>
                   </div>

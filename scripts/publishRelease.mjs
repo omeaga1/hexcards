@@ -1,14 +1,16 @@
 import fs from 'fs';
 import path from 'path';
 
+const pkg = JSON.parse(fs.readFileSync(path.resolve('package.json'), 'utf8'));
+const VERSION = pkg.version;
+const TAG = `v${VERSION}`;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = 'omeaga1';
 const REPO = 'hexcards';
-const TAG = 'v1.0.0';
 
-const installerPath = fs.existsSync(path.resolve('dist-electron/HexCards-Setup-1.0.0.exe'))
-  ? path.resolve('dist-electron/HexCards-Setup-1.0.0.exe')
-  : path.resolve('dist-electron/HexCards Setup 1.0.0.exe');
+const installerPath = fs.existsSync(path.resolve(`dist-electron/HexCards-Setup-${VERSION}.exe`))
+  ? path.resolve(`dist-electron/HexCards-Setup-${VERSION}.exe`)
+  : path.resolve(`dist-electron/HexCards Setup ${VERSION}.exe`);
 const latestYmlPath = path.resolve('dist-electron/latest.yml');
 
 async function main() {
@@ -38,8 +40,8 @@ async function main() {
       body: JSON.stringify({
         tag_name: TAG,
         target_commitish: 'main',
-        name: `HexCards v1.0.0 - Windows Desktop Companion`,
-        body: `### HexCards Tactical League Companion v1.0.0\n\n- **Zero Slop & Zero RAM Bloat**: High performance, responsive companion.\n- **Direct Riot LCU Integration**: Auto-detects locked-in champions in Champion Select, identifies lane opponents, and injects item sets & rune pages with 1 click.\n- **Seamless Background Auto-Updates**: Automatically checks for updates and keeps your companion updated.\n- **100% Vanguard Safe**: Uses official Riot LCU local loopback REST API (no memory hooks, no overlays).\n\n#### Download:\n- **[HexCards-Setup-1.0.0.exe](https://github.com/omeaga1/hexcards/releases/download/${TAG}/HexCards-Setup-1.0.0.exe)** (Official Windows Installer with automatic updates)`,
+        name: `HexCards v${VERSION} - Windows Desktop Companion`,
+        body: `### HexCards Tactical League Companion v${VERSION}\n\n- **Zero Slop & Zero RAM Bloat**: High performance, responsive companion.\n- **Deadlock Uniform Squares**: All items in standard square format with 100% visible names.\n- **Direct Riot LCU Integration**: Auto-detects locked-in champions in Champion Select, identifies lane opponents, and injects item sets & rune pages with 1 click.\n- **Seamless Background Auto-Updates**: Automatically checks for updates and keeps your companion updated.\n- **100% Vanguard Safe**: Uses official Riot LCU local loopback REST API (no memory hooks, no overlays).\n\n#### Download:\n- **[HexCards-Setup-${VERSION}.exe](https://github.com/omeaga1/hexcards/releases/download/${TAG}/HexCards-Setup-${VERSION}.exe)** (Official Windows Installer with automatic updates)`,
         draft: false,
         prerelease: false
       })
@@ -56,7 +58,7 @@ async function main() {
 
   // Upload assets
   const assetsToUpload = [
-    { name: 'HexCards-Setup-1.0.0.exe', filePath: installerPath },
+    { name: `HexCards-Setup-${VERSION}.exe`, filePath: installerPath },
     { name: 'latest.yml', filePath: latestYmlPath }
   ];
 
