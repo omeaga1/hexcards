@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Search, BookOpen, Shield, Zap, X, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { ChampionSummary } from '../types';
 import { getChampionIconUrl } from '../services/ddragon';
@@ -259,15 +259,15 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">Glossary</span>
           </button>
 
-          {/* Download App Button (Desktop Companion only, hidden on mobile) */}
-          {!isMobile && onOpenDownloadModal && (
+          {/* Download App Button */}
+          {onOpenDownloadModal && (
             <button
               onClick={onOpenDownloadModal}
-              className="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
-              title="Download standalone Windows desktop app"
+              className="px-2 sm:px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+              title="Download standalone Windows desktop executable (.exe)"
             >
               <Download className="w-3 h-3" />
-              <span>Download App</span>
+              <span>{isMobile ? 'App' : 'Download .exe'}</span>
             </button>
           )}
         </div>

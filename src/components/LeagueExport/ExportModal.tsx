@@ -254,21 +254,51 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   )}
                 </div>
               ) : (
-                <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
-                  <div className="text-xs font-bold text-amber-800 uppercase tracking-wider font-['Barlow_Condensed'] flex items-center gap-1.5">
-                    <Terminal className="w-3.5 h-3.5 text-amber-600" />
-                    Start the HexCards Desktop Bridge (1-Second Setup)
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-black text-slate-900 uppercase tracking-wider font-['Barlow_Condensed'] flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-emerald-600" />
+                      Connect HexCards to League of Legends
+                    </div>
+                    <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-300 px-1.5 py-0.5 rounded font-sans">
+                      Setup Required
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    The local bridge runs in your terminal and communicates directly with Riot's LCU on your PC without video ads, tracking, or heavy RAM usage.
+
+                  <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                    Web browsers cannot directly inspect local game client processes. Download the standalone <strong>HexCards Windows Companion (.exe)</strong> to enable <strong>1-click in-game shop injection</strong>, <strong>automatic Champion Select detection</strong>, and <strong>live lane opponent intelligence</strong>.
                   </p>
-                  <div className="p-2 rounded bg-white border border-slate-300 font-mono text-xs text-emerald-700 flex items-center justify-between select-all shadow-2xs">
-                    <span>npm run bridge</span>
-                    <span className="text-[10px] text-slate-400 font-sans">Run in terminal</span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <a
+                      href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe"
+                      download="HexCards-Setup-1.0.0.exe"
+                      className="py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Download Installer (.exe)</span>
+                    </a>
+
+                    <a
+                      href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-1.0.0-portable.exe"
+                      download="HexCards-1.0.0-portable.exe"
+                      className="py-2.5 px-3 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-['Barlow_Condensed'] font-black uppercase text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95"
+                    >
+                      <Zap className="w-4 h-4 text-emerald-600" />
+                      <span>Portable (No Install)</span>
+                    </a>
                   </div>
-                  <p className="text-[11px] text-slate-500 italic">
-                    Once started, this panel will instantly light up green with your summoner profile.
-                  </p>
+
+                  <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 font-sans">
+                    <span>100% Vanguard Safe • Zero Ads • Riot LCU Loopback</span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('clipboard')}
+                      className="text-emerald-700 font-bold hover:underline cursor-pointer"
+                    >
+                      Or copy JSON manually ➔
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
