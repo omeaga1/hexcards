@@ -423,7 +423,8 @@ ipcMain.handle("window:toggleAlwaysOnTop", () => {
   return !isTop;
 });
 ipcMain.on("update:installNow", () => {
-  autoUpdater.quitAndInstall();
+  // isSilent = true, isForceRunAfter = true (Seamless update with zero wizard prompts)
+  autoUpdater.quitAndInstall(true, true);
 });
 ipcMain.handle("update:checkForUpdates", async () => {
   if (!app.isPackaged) {
