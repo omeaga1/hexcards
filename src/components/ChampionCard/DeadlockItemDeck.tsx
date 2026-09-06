@@ -837,17 +837,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           </div>
         </div>
 
-        {/* Bottom Tag / Swap Signal - Complete Readable Explanation */}
-        {isTarget ? (
-          <div className="w-full bg-rose-600 py-1.5 px-2 rounded text-center shadow-xs mt-1">
+        {/* Swap Signal overlay if targeted during hover */}
+        {isTarget && (
+          <div className="w-full bg-rose-600 py-1 px-2 rounded text-center shadow-xs mt-1">
             <span className="text-xs font-black uppercase tracking-wider text-white block">
               REPLACE WITH PIVOT
-            </span>
-          </div>
-        ) : (
-          <div className="w-full bg-slate-50 py-1.5 px-2 rounded border border-slate-200 mt-1 min-h-[36px] flex items-center justify-center">
-            <span className="text-xs font-medium text-slate-700 line-clamp-2 leading-tight font-sans text-center">
-              {card.whatItDoes}
             </span>
           </div>
         )}
