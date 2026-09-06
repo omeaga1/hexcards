@@ -934,21 +934,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           </div>
         </div>
 
-        {/* Slanted Version Tag & Inspector Toggle */}
+        {/* Slanted Version Tag */}
         <div className="flex items-center gap-2">
-          <span className="hidden md:inline-block -rotate-1 bg-[#182319] text-[#7de39b] font-mono font-black text-[11px] px-2.5 py-1 rounded shadow-2xs border border-[#2a3c2c]">
+          <span className="inline-block -rotate-1 bg-[#182319] text-[#7de39b] font-mono font-black text-[11px] px-2.5 py-1 rounded shadow-2xs border border-[#2a3c2c]">
             PATCH 15.x COMPLIANT
           </span>
-          <button
-            onClick={() => setShowInspector(!showInspector)}
-            className={`px-3 py-1 rounded-md border text-xs sm:text-sm font-black uppercase tracking-wider transition-colors cursor-pointer shadow-xs ${
-              showInspector
-                ? 'bg-[#182319] border-[#2e4030] text-[#7de39b]'
-                : 'bg-[#edf2e8] border-[#b5c2af] text-[#2c372a] hover:bg-white'
-            }`}
-          >
-            {showInspector ? 'INSPECTOR: OPEN' : 'INSPECTOR: CLOSED'}
-          </button>
         </div>
       </div>
 
@@ -956,11 +946,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       {isMobile && (
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2.5 border-b border-[#bcc7b6]">
           {[
-            { id: 'all', label: 'All 4 Tiers' },
-            { id: 'early', label: '$800 Tier 1' },
-            { id: 'core', label: '$3200 Tier 2' },
-            { id: 'boots', label: '$3200 Tier 3' },
-            { id: 'counters', label: '$6400 Tier 4 (Experts)' },
+            { id: 'all', label: 'All Build Steps' },
+            { id: 'early', label: '1: Early & Back' },
+            { id: 'core', label: '2: Core Highway' },
+            { id: 'boots', label: '3: Boots' },
+            { id: 'counters', label: '4: Swappable Pivots' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -977,29 +967,30 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         </div>
       )}
 
-      {/* DEADLOCK 4-TIER QUADRANT GRID */}
+      {/* MAIN BUILD BLUEPRINT & SWAPPABLE PIVOTS */}
       <div className="relative flex-col justify-between space-y-3.5">
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-stretch">
+        
+        {/* ============================================================ */}
+        {/* SECTION 1: THE RECOMMENDED BUILD PATH (CHRONOLOGICAL FLOW)   */}
+        {/* ============================================================ */}
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
 
-          {/* ============================================================ */}
-          {/* QUADRANT 1: $800 TIER 1 • EARLY LANING & 1ST RECALL */}
-          {/* ============================================================ */}
+          {/* SUB-STAGE A: EARLY GAME & 1ST RECALL (3 COLS) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
-            <div className="rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative">
-              {/* Tier Header with Tilted Price Tag */}
+            <div className="lg:col-span-3 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative">
               <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
                 <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
-                    $800
+                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs px-2 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
+                    0:00 - 5:00
                   </span>
                   <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                    TIER 1 • EARLY LANING (0:00 - 5:00)
+                    Early Game & Back
                   </h3>
                 </div>
               </div>
 
               {/* Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-1">
+              <div className="space-y-2.5 my-1">
                 {/* Starters Sub-Group */}
                 <div className="bg-[#e4ebde] p-2 rounded-lg border border-[#c4d0be]">
                   <span className="text-[11px] font-bold text-[#4d5d4a] uppercase block mb-1.5 font-sans">
@@ -1025,17 +1016,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
               <div className="mt-2 pt-1.5 border-t border-[#c8d4c2] text-center">
                 <span className="text-[11px] text-[#556652] font-sans font-medium">
-                  Establish lane wave-control and recall immediately at 1100–1300g spike
+                  Establish lane wave-control and recall immediately at 1100–1300g
                 </span>
               </div>
             </div>
           )}
 
-          {/* ============================================================ */}
-          {/* QUADRANT 2: $3200 TIER 2 • THE CORE HIGHWAY & BOOTS */}
-          {/* ============================================================ */}
+          {/* SUB-STAGE B: THE CORE BUILD HIGHWAY (6 COLS - RUSH 1 -> 2 -> 3) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
-            <div className="rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative overflow-hidden">
+            <div className="lg:col-span-6 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative overflow-hidden">
               {/* Radar Circles Watermark */}
               <div 
                 className="absolute inset-0 pointer-events-none opacity-20"
@@ -1045,14 +1034,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 }}
               />
 
-              {/* Tier Header with Tilted Price Tag */}
               <div className="relative z-10 flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
                 <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
-                    $3200
-                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
                   <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                    TIER 2 • THE CORE HIGHWAY
+                    The Core Build Highway
                   </h3>
                 </div>
                 <span className="text-[10px] font-black uppercase text-[#1a231b] bg-[#c8d8c2] px-2 py-0.5 rounded border border-[#a8be9e]">
@@ -1061,7 +1047,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
               </div>
 
               {/* The 3 Core Items with Chevrons */}
-              <div className="relative z-10 flex items-center justify-between gap-1.5 sm:gap-2 my-1">
+              <div className="relative z-10 flex items-center justify-between gap-1.5 sm:gap-2 my-1 overflow-x-auto no-scrollbar">
                 {renderFeaturedCoreNode(core1Card, '#1 RUSH', 'Primary Spike')}
                 <ArrowRight className="w-5 h-5 text-[#2f3d2d] flex-shrink-0 animate-pulse" />
                 {renderFeaturedCoreNode(core2Card, '#2 SPIKE', 'Kit Synergy')}
@@ -1069,169 +1055,57 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 {renderFeaturedCoreNode(core3Card, '#3 PEAK', 'Capstone Spike')}
               </div>
 
-              {/* Boots Engine & Alternatives Bar */}
-              <div className="relative z-10 mt-2 pt-2 border-t border-[#c8d4c2] flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-[#4d5d4a] uppercase font-sans">
-                    Boots:
+              {/* Flex Alternatives Pill Bar */}
+              <div className="relative z-10 mt-2.5 pt-2 border-t border-[#c8d4c2] flex flex-wrap items-center justify-between gap-1 text-[11px] text-[#4d5d4a] font-sans">
+                <span className="font-bold uppercase text-[#4d5d4a] font-['Barlow_Condensed'] text-xs">
+                  Tempo Alternatives:
+                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold uppercase text-[#293527] bg-[#dae4d4] px-2 py-0.5 rounded border border-[#b8c6b2]">
+                    Flex 2nd: <strong className="text-emerald-900 font-black">{altCoreCard.name}</strong>
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    {renderCardNode(defaultBootsCard)}
-                    <ArrowLeftRight className="w-3.5 h-3.5 text-[#3a4938]" />
-                    {renderCardNode(altBootsCard)}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-bold uppercase text-[#313e2e] bg-[#dae4d4] px-1.5 py-0.5 rounded border border-[#b8c6b2]">
-                    Flex 2: <strong className="text-emerald-900">{altCoreCard.name}</strong>
-                  </span>
-                  <span className="text-[10px] font-bold uppercase text-[#313e2e] bg-[#dae4d4] px-1.5 py-0.5 rounded border border-[#b8c6b2]">
-                    Flex 3: <strong className="text-emerald-900">{altCapstoneCard.name}</strong>
+                  <span className="font-bold uppercase text-[#293527] bg-[#dae4d4] px-2 py-0.5 rounded border border-[#b8c6b2]">
+                    Flex 3rd: <strong className="text-emerald-900 font-black">{altCapstoneCard.name}</strong>
                   </span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* ============================================================ */}
-          {/* QUADRANT 3: $3200 TIER 3 • DEFENSE & ANTI-HEAL PIVOTS */}
-          {/* ============================================================ */}
+          {/* SUB-STAGE C: BOOTS ENGINE (3 COLS) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
-            <div className="rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative">
-              {/* Tier Header with Tilted Price Tag */}
+            <div className="lg:col-span-3 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between relative">
               <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
                 <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
-                    $3200
+                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs px-2 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
+                    T2 BOOTS
                   </span>
                   <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                    TIER 3 • DEFENSE & SUSTAIN PIVOTS
+                    Boots Engine
                   </h3>
                 </div>
               </div>
 
-              {/* Two Threat Pods Aligned Side-by-Side */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-1">
-                {/* Pod 1: Anti-Heal */}
-                <div className="rounded-lg border-2 border-rose-400/80 bg-rose-50/20 p-2 flex flex-col justify-between shadow-2xs">
-                  <div className="pb-1 mb-1 border-b border-rose-200/50 flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-wide text-rose-900 flex items-center gap-1">
-                      <span>🩸</span> Anti-Heal (Grievous)
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 py-1">
-                    {renderCardNode(antiHeal800g)}
-                    {renderCardNode(antiHealFull)}
-                  </div>
-                  <span className="text-[10px] text-slate-600 font-sans text-center font-medium mt-1">
-                    vs Heavy Sustain & Drain Healers
-                  </span>
+              {/* Default vs Situational Boots */}
+              <div className="flex items-center justify-around gap-2 my-1">
+                <div className="flex flex-col items-center">
+                  <span className="text-[10px] font-black uppercase text-emerald-800 mb-1">Standard</span>
+                  {renderCardNode(defaultBootsCard)}
                 </div>
 
-                {/* Pod 2: Anti-Physical & Armor */}
-                <div className="rounded-lg border-2 border-amber-400/80 bg-amber-50/20 p-2 flex flex-col justify-between shadow-2xs">
-                  <div className="pb-1 mb-1 border-b border-amber-200/50 flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-wide text-amber-900 flex items-center gap-1">
-                      <span>🛡️</span> Anti-Physical & Armor
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 py-1">
-                    {renderCardNode(antiBurst3)}
-                    {renderCardNode(flex2)}
-                  </div>
-                  <span className="text-[10px] text-slate-600 font-sans text-center font-medium mt-1">
-                    vs AD Burst, Lethality & Auto-Carries
-                  </span>
+                <div className="flex flex-col items-center">
+                  <ArrowLeftRight className="w-4 h-4 text-[#3a4938] animate-pulse my-1" />
+                  <span className="text-[9px] font-black uppercase text-[#5a6c56]">SWAP</span>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <span className="text-[10px] font-black uppercase text-sky-800 mb-1">Alternative</span>
+                  {renderCardNode(altBootsCard)}
                 </div>
               </div>
 
-              <div className="mt-2 pt-1.5 border-t border-[#c8d4c2] text-center">
-                <span className="text-[11px] text-[#556652] font-sans font-medium">
-                  Substitutions for Core #2 or Core #3 when facing high physical threat
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* ============================================================ */}
-          {/* QUADRANT 4: $6400 TIER 4 • EXPERTS ONLY ★★★ (DARK INVERTED THEME) */}
-          {/* ============================================================ */}
-          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
-            <div className="rounded-xl bg-[#0d1612] border-2 border-[#1c2e24] p-3 sm:p-3.5 shadow-inner flex flex-col justify-between text-white relative overflow-hidden">
-              {/* Corner Ambient Glow */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#34d399]/5 rounded-full blur-2xl pointer-events-none" />
-
-              {/* Tier Header with Inverted Price Tag */}
-              <div className="relative z-10 flex items-center justify-between pb-2 mb-2.5 border-b border-[#1d2f25]">
-                <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-2 bg-black text-[#34d399] font-mono font-black text-xs sm:text-sm px-2.5 py-0.5 rounded shadow-sm border border-[#34d399]/40">
-                    $6400
-                  </span>
-                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#c6eed8] flex items-center gap-1">
-                    TIER 4 • EXPERTS ONLY <span className="text-emerald-400 text-xs">★★★</span>
-                  </h3>
-                </div>
-                <span className="text-[10px] font-mono font-bold text-[#86efac] uppercase bg-[#14231b] px-2 py-0.5 rounded border border-[#25392d]">
-                  HIGH-THREAT ADAPTATIONS
-                </span>
-              </div>
-
-              {/* Three Threat Pods Rendered in Deadlock Dark Theme */}
-              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-2 my-1">
-                {/* Pod 1: Magic Resist */}
-                <div className="rounded-lg border border-[#2b3e32] bg-[#131d17] p-2 flex flex-col justify-between shadow-2xs">
-                  <div className="pb-1 mb-1 border-b border-[#213027] flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-wide text-[#b5e0ca] flex items-center gap-1">
-                      <span>🔮</span> Magic Resist
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1.5 py-1">
-                    {renderCardNode(antiBurst1, true)}
-                    {renderCardNode(antiBurst2, true)}
-                  </div>
-                  <span className="text-[9px] text-[#7ea08f] font-sans text-center font-medium mt-1 leading-tight">
-                    vs Fed AP & Poke
-                  </span>
-                </div>
-
-                {/* Pod 2: Resistance Shred */}
-                <div className="rounded-lg border border-[#2b3e32] bg-[#131d17] p-2 flex flex-col justify-between shadow-2xs">
-                  <div className="pb-1 mb-1 border-b border-[#213027] flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-wide text-[#b5e0ca] flex items-center gap-1">
-                      <span>⚔️</span> % Shred
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1.5 py-1">
-                    {renderCardNode(shred1, true)}
-                    {renderCardNode(shred2, true)}
-                  </div>
-                  <span className="text-[9px] text-[#7ea08f] font-sans text-center font-medium mt-1 leading-tight">
-                    vs Stacking Tanks
-                  </span>
-                </div>
-
-                {/* Pod 3: Cleanse & Utility */}
-                <div className="rounded-lg border border-[#2b3e32] bg-[#131d17] p-2 flex flex-col justify-between shadow-2xs">
-                  <div className="pb-1 mb-1 border-b border-[#213027] flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-wide text-[#b5e0ca] flex items-center gap-1">
-                      <span>⚡</span> Cleanse & Shield
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1.5 py-1">
-                    {renderCardNode(antiCC1, true)}
-                    {renderCardNode(flex1, true)}
-                  </div>
-                  <span className="text-[9px] text-[#7ea08f] font-sans text-center font-medium mt-1 leading-tight">
-                    vs Hard CC & Shields
-                  </span>
-                </div>
-              </div>
-
-              <div className="relative z-10 mt-2 pt-1.5 border-t border-[#1d2f25] text-center">
-                <span className="text-[10px] text-[#86a695] font-sans font-medium">
-                  Late-game dynamic pivots to break enemy frontline or survive lethal crowd control
-                </span>
+              <div className="p-2 rounded-lg bg-[#e4ebde] border border-[#c4d0be] text-xs text-[#4d5d4a] leading-snug mt-1 text-center font-sans">
+                {bootsRec.alternative}
               </div>
             </div>
           )}
@@ -1239,130 +1113,59 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         </div>
 
         {/* ============================================================ */}
-        {/* DEADLOCK TELEMETRY RIBBON: REAL-TIME SWAP PATH FINDER */}
+        {/* SECTION 2: SWAPPABLE SITUATIONAL PIVOTS (THREAT ARSENAL)     */}
         {/* ============================================================ */}
-        <div className="relative z-10 px-3.5 py-2 rounded-lg bg-[#141f17] border border-[#253629] text-[#7de39b] flex items-center justify-between text-xs select-none shadow-sm font-mono">
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#4ade80] animate-pulse flex-shrink-0" />
-            {hoveredCard && hoveredCard.replacesSlot ? (
-              <div className="flex items-center gap-2 truncate text-xs sm:text-sm font-sans">
-                <span className="text-white font-black uppercase tracking-wide font-['Barlow_Condensed']">
-                  {hoveredCard.name}
-                </span>
-                <span className="text-amber-400 font-mono">➔</span>
-                <span className="text-[#86efac] font-bold">
-                  {hoveredCard.swapReason || `Substitute for ${hoveredCard.replacesItemName || hoveredCard.replacesSlot}`}
+        {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
+          <div className="relative z-10 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-3 sm:p-3.5 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[#c8d4c2]">
+              <div className="flex items-center gap-2.5">
+                <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
+                  Swappable Situational Pivots
+                </h3>
+                <span className="text-xs font-bold text-[#576854] font-sans hidden sm:inline">
+                  — Substitute into Core #2, Core #3, or Early Recall when facing specific enemy threats
                 </span>
               </div>
-            ) : hoveredCard && cardHasSwapConnection(hoveredCard) ? (
-              <div className="flex items-center gap-2 truncate text-xs sm:text-sm font-sans">
-                <span className="text-[#86efac] font-black uppercase tracking-wide font-['Barlow_Condensed']">
-                  {hoveredCard.name}
-                </span>
-                <span className="text-slate-400 font-mono">➔</span>
-                <span className="text-slate-200 font-medium">
-                  Situational counter alternatives highlighted above
-                </span>
-              </div>
-            ) : (
-              <span className="text-[#a4cca8] uppercase tracking-wider text-xs sm:text-sm font-bold font-['Barlow_Condensed']">
-                {isMobile ? 'Tactical Catalog • Tap any item to inspect stats and swap paths' : 'Tactical Catalog • Hover any item to trace dynamic combat substitution paths'}
+              <span className="text-[10px] font-mono font-bold text-[#1f281d] uppercase bg-[#dae4d4] px-2 py-0.5 rounded border border-[#b8c6b2]">
+                5 Threat Profiles
               </span>
-            )}
-          </div>
-          <span className="text-xs font-mono text-[#4ade80] uppercase tracking-wider hidden sm:inline flex-shrink-0 font-bold">
-            DEADLOCK HUD ACTIVE
-          </span>
-        </div>
+            </div>
 
-          {/* DOCKED INSPECTOR */}
-          {showInspector && activeInspectorCard && (
-            <div className="relative z-20 mt-2 p-3 rounded-xl bg-slate-50 border-2 border-slate-200 shadow-sm font-sans animate-in fade-in duration-150">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg border-2 border-emerald-500 overflow-hidden bg-white flex-shrink-0 shadow-xs">
-                    <img
-                      src={getItemIconUrl(version, activeInspectorCard.id)}
-                      alt={activeInspectorCard.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-base font-black text-slate-900 leading-none uppercase tracking-wide font-['Barlow_Condensed']">
-                        {activeInspectorCard.name}
-                      </h4>
-                      {activeInspectorCard.isCore ? (
-                        <span className="deadlock-badge px-2 py-0 text-[10px] text-emerald-700 bg-emerald-50 border-emerald-300">
-                          <span>CORE #{activeInspectorCard.coreOrder || '1'}</span>
-                        </span>
-                      ) : activeInspectorCard.replacesSlot ? (
-                        <span className="deadlock-badge px-2 py-0 text-[10px] text-rose-700 border-rose-300 bg-rose-50">
-                          <span>REPLACES {activeInspectorCard.replacesSlot}</span>
-                        </span>
-                      ) : (
-                        <span className="deadlock-badge px-2 py-0 text-[10px] text-slate-700">
-                          <span>{activeInspectorCard.tag || 'SITUATIONAL'}</span>
-                        </span>
-                      )}
-                      {activeInspectorCard.isActive && (
-                        <span className="deadlock-active-tag text-[8px] py-0 px-1.5">
-                          ACTIVE
-                        </span>
-                      )}
-                      {inspectedGold && (
-                        <span className="text-amber-900 font-mono font-bold text-xs bg-amber-100 px-1.5 py-0.2 rounded border border-amber-300">
-                          {inspectedGold}g
-                        </span>
-                      )}
+            {/* 5 Balanced Threat Pods */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              {situationalPods.map((pod, idx) => (
+                <div
+                  key={idx}
+                  className={`rounded-xl border-2 ${pod.accent} p-3 flex flex-col justify-between shadow-2xs bg-white hover:shadow-md transition-shadow`}
+                >
+                  {/* Category Header */}
+                  <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-base flex-shrink-0">{pod.icon}</span>
+                      <span className="text-xs sm:text-[13px] font-black uppercase tracking-wide text-slate-900 truncate">
+                        {pod.title}
+                      </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2 text-xs">
-                  {activeInspectorCard.timing && (
-                    <span className="text-slate-500 text-[11px] font-medium italic">
-                      {activeInspectorCard.timing}
-                    </span>
-                  )}
-                  <button
-                    onClick={() => setShowInspector(false)}
-                    className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs sm:text-sm">
-                <div className="p-3 rounded-lg bg-white border border-slate-200">
-                  <span className="text-xs font-black uppercase tracking-wider text-emerald-800 block mb-1 font-['Barlow_Condensed']">
-                    Kit Synergy & Combat Function
-                  </span>
-                  <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
-                    <GlossaryText text={activeInspectorCard.whatItDoes} />
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-xs font-black uppercase tracking-wider text-amber-900 font-['Barlow_Condensed']">
-                      Tactical Purchase Trigger
-                    </span>
-                    {activeInspectorCard.replacesItemName && (
-                      <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200 font-sans">
-                        Sub for {activeInspectorCard.replacesItemName}
-                      </span>
-                    )}
+                  {/* Centered Symmetrical 2-Card Row */}
+                  <div className="flex items-center justify-center gap-2 py-1">
+                    {pod.cards.map((card) => renderCardNode(card, false))}
                   </div>
-                  <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
-                    <GlossaryText text={activeInspectorCard.swapReason || activeInspectorCard.whenToBuy} />
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
 
-        </div>
+                  {/* Threat Subtitle Footer */}
+                  <div className="mt-2 pt-2 border-t border-slate-100 text-center">
+                    <span className="text-[11px] text-slate-500 font-sans leading-tight block font-semibold truncate">
+                      {pod.subtitle}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
 
       {/* MOBILE BOTTOM SHEET ITEM INSPECTOR */}
       {isMobile && showMobileDrawer && activeInspectorCard && (

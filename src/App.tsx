@@ -295,7 +295,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className={`flex-1 w-full mx-auto py-1.5 sm:py-2 space-y-2 ${isMobile ? 'pb-16 px-1.5' : activeTab === 'items' ? 'max-w-[99vw] px-2 sm:px-3 lg:px-5' : 'max-w-7xl px-3 sm:px-4'}`}>
+      <main className={`flex-1 w-full max-w-7xl mx-auto py-2 sm:py-3 space-y-3 ${isMobile ? 'pb-16 px-2' : 'px-3 sm:px-4 lg:px-6'}`}>
         
         {/* Collapsible Champion Drawer (controlled via Header CHAMPS trigger) */}
         {isSelectorExpanded && (
