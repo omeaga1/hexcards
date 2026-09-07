@@ -14,7 +14,11 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { execSync, exec } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Allow local LCU self-signed TLS certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -626,6 +630,21 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ inChampSelect: false }));
       }
+      return;
+    }
+
+    // 4. Trigger Meta Builds Sync on demand
+    if (url.pathname === '/api/sync-builds' && req.method === 'POST') {
+      const scriptPath = path.resolve(__dirname, 'generateAllChampionBuilds.mjs');
+      exec(`node "${scriptPath}"`, (error, stdout, stderr) => {
+        if (error) {
+          console.error('[Bridge] Error during sync-builds:', error);
+        } else {
+          console.log('[Bridge] Successfully synced meta builds via OP.GG!');
+        }
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: 'Build generation initiated via OP.GG live API.' }));
       return;
     }
 

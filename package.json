@@ -3,7 +3,7 @@
   "description": "HexCards - Anti-Slop League of Legends Tactical Companion",
   "author": "HexCards Team",
   "private": true,
-  "version": "1.0.9",
+  "version": "1.0.10",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
