@@ -266,20 +266,25 @@ function startLocalBridgeServer() {
         try {
           const itemSet = JSON.parse(body);
           const sum = await requestLcu("/lol-summoner/v1/current-summoner");
-          if (!sum.ok || !sum.data?.accountId) {
+          if (!sum.ok || !sum.data) {
             res.writeHead(400, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify({ success: false, message: "Could not retrieve summoner account." }));
+            return res.end(JSON.stringify({ success: false, message: "Could not retrieve summoner info." }));
           }
-          const putRes = await requestLcu(`/lol-item-sets/v1/item-sets/${sum.data.accountId}`, "PUT", itemSet);
+          const summonerId = sum.data.summonerId || sum.data.accountId;
+          if (!summonerId) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ success: false, message: "Summoner ID not found." }));
+          }
+          // LCU expects { itemSets: [...] } wrapper
+          const lcuBody = { itemSets: [itemSet] };
+          const putRes = await requestLcu(`/lol-item-sets/v1/item-sets/${summonerId}`, "PUT", lcuBody);
           res.writeHead(putRes.ok ? 200 : 400, { "Content-Type": "application/json" });
-          return res.end(
-            JSON.stringify({
-              success: putRes.ok,
-              message: putRes.ok
-                ? `Item set "${itemSet.title}" injected directly into your in-game shop!`
-                : "Failed to push item set to League client."
-            })
-          );
+          return res.end(JSON.stringify({
+            success: putRes.ok,
+            message: putRes.ok
+              ? `Item set "${itemSet.title}" injected into your in-game shop!`
+              : `Failed to push item set. (Status: ${putRes.status})`
+          }));
         } catch (err) {
           res.writeHead(500, { "Content-Type": "application/json" });
           return res.end(JSON.stringify({ success: false, message: err.message }));
@@ -378,15 +383,49 @@ ipcMain.handle("lcu:checkChampSelect", async () => {
 ipcMain.handle("lcu:importItemSet", async (_event, itemSet) => {
   try {
     const sum = await requestLcu("/lol-summoner/v1/current-summoner");
-    if (!sum.ok || !sum.data?.accountId) {
-      return { success: false, message: "Could not retrieve summoner account." };
+    if (!sum.ok || !sum.data) {
+      return { success: false, message: "Could not retrieve summoner info — is League client running?" };
     }
-    const putRes = await requestLcu(`/lol-item-sets/v1/item-sets/${sum.data.accountId}`, "PUT", itemSet);
+    const accountId = sum.data.accountId || sum.data.summonerId;
+    if (!accountId) {
+      return { success: false, message: "Summoner account ID missing." };
+    }
+
+    const formattedSet = {
+      title: itemSet.title || "HexCards Build",
+      type: "custom",
+      map: "any",
+      mode: "any",
+      priority: false,
+      sortrank: 1,
+      associatedMaps: itemSet.associatedMaps || [11, 12],
+      associatedChampions: itemSet.associatedChampions || [],
+      blocks: itemSet.blocks || []
+    };
+
+    // Fetch existing item sets to preserve user sets
+    let existingSets = [];
+    const getRes = await requestLcu(`/lol-item-sets/v1/item-sets/${accountId}/sets`);
+    if (getRes.ok && getRes.data && Array.isArray(getRes.data.itemSets)) {
+      existingSets = getRes.data.itemSets;
+    }
+
+    // Replace any set with the same title or prepend new set
+    const filtered = existingSets.filter((s) => s.title !== formattedSet.title);
+    filtered.unshift(formattedSet);
+
+    const body = {
+      accountId: Number(accountId),
+      itemSets: filtered,
+      timestamp: Date.now()
+    };
+
+    const putRes = await requestLcu(`/lol-item-sets/v1/item-sets/${accountId}/sets`, "PUT", body);
     return {
       success: putRes.ok,
       message: putRes.ok
-        ? `Item set "${itemSet.title}" injected directly into your in-game shop!`
-        : "Failed to push item set to League client."
+        ? `Item set "${formattedSet.title}" injected into your in-game shop!`
+        : `Failed to push item set. (Status: ${putRes.status})`
     };
   } catch (err) {
     return { success: false, message: err.message };
@@ -395,12 +434,74 @@ ipcMain.handle("lcu:importItemSet", async (_event, itemSet) => {
 
 ipcMain.handle("lcu:importRunes", async (_event, runePage) => {
   try {
-    const postRes = await requestLcu("/lol-perks/v1/pages", "POST", runePage);
+    // 1. Fetch current perk pages
+    const pagesRes = await requestLcu("/lol-perks/v1/pages");
+    if (!pagesRes.ok || !Array.isArray(pagesRes.data)) {
+      return { success: false, message: "Could not access rune pages from League client." };
+    }
+
+    const pages = pagesRes.data;
+    // Find an existing HexCards page, or any editable user page to recycle
+    const hexPage = pages.find((p) => p.isEditable && p.name && p.name.includes("HexCards"));
+    const editablePage = hexPage || pages.find((p) => p.isEditable);
+
+    // Sanitize title length (League has a strict 30-character limit)
+    let sanitizedName = (runePage.name || "HexCards Build").trim();
+    if (sanitizedName.length > 30) {
+      sanitizedName = sanitizedName.substring(0, 30).trim();
+    }
+
+    const payload = {
+      name: sanitizedName,
+      primaryStyleId: runePage.primaryStyleId,
+      subStyleId: runePage.subStyleId,
+      selectedPerkIds: runePage.selectedPerkIds,
+      current: true
+    };
+
+    let targetPageId = null;
+
+    if (editablePage) {
+      targetPageId = editablePage.id;
+      // Try updating the existing editable page
+      const putRes = await requestLcu(`/lol-perks/v1/pages/${editablePage.id}`, "PUT", {
+        ...payload,
+        id: editablePage.id
+      });
+
+      if (!putRes.ok) {
+        // Fallback: delete and recreate if PUT was rejected
+        await requestLcu(`/lol-perks/v1/pages/${editablePage.id}`, "DELETE");
+        const postFallback = await requestLcu("/lol-perks/v1/pages", "POST", payload);
+        if (postFallback.ok && postFallback.data) {
+          targetPageId = postFallback.data.id;
+        } else {
+          return { success: false, message: `Failed to apply rune page. (Status: ${postFallback.status})` };
+        }
+      }
+    } else {
+      // No editable page exists; create a new one
+      const postRes = await requestLcu("/lol-perks/v1/pages", "POST", payload);
+      if (postRes.ok && postRes.data) {
+        targetPageId = postRes.data.id;
+      } else {
+        return {
+          success: false,
+          message: postRes.data?.message === "Max pages reached"
+            ? "Rune page limit reached. Please delete one page in your League client."
+            : `Failed to create rune page. (Status: ${postRes.status})`
+        };
+      }
+    }
+
+    // Set page as active in champion select
+    if (targetPageId) {
+      await requestLcu("/lol-perks/v1/currentpage", "PUT", targetPageId.toString());
+    }
+
     return {
-      success: postRes.ok,
-      message: postRes.ok
-        ? `Rune page "${runePage.name}" applied directly to active rune kit!`
-        : "Failed to apply rune page."
+      success: true,
+      message: `Rune page "${sanitizedName}" applied directly to active rune kit!`
     };
   } catch (err) {
     return { success: false, message: err.message };
@@ -437,19 +538,24 @@ ipcMain.handle("update:checkForUpdates", async () => {
     return { status: "dev", message: "Development mode (updates disabled)" };
   }
   try {
+    // Clear the updater cache so stale downloaded-but-not-installed packages
+    // don't prevent detection of a newer release published after the cached one.
+    const updaterCacheDir = path.join(app.getPath("appData"), "..", "Local", "lol-quick-cards-updater");
+    if (fs.existsSync(updaterCacheDir)) {
+      fs.rmSync(updaterCacheDir, { recursive: true, force: true });
+      console.log("[AutoUpdater] Cleared stale updater cache before check.");
+    }
+
     const res = await autoUpdater.checkForUpdates();
-    const isNewer = Boolean(res?.updateInfo && res.updateInfo.version !== app.getVersion());
+    const remoteVersion = res?.updateInfo?.version;
+    const isNewer = Boolean(remoteVersion && remoteVersion !== app.getVersion());
     if (isNewer) {
-      currentUpdateState = {
-        status: "available",
-        version: res?.updateInfo?.version,
-        percent: 0
-      };
+      currentUpdateState = { status: "available", version: remoteVersion, percent: 0 };
     }
     return {
       status: "ok",
       isNewer,
-      version: res?.updateInfo?.version,
+      version: remoteVersion,
       currentVersion: app.getVersion()
     };
   } catch (err) {
@@ -490,14 +596,19 @@ function setupAutoUpdater() {
     console.warn("[AutoUpdater] Update check failed:", err.message);
   });
 
-  // Check 3 seconds after launch, then check periodically
-  setTimeout(() => {
+  function clearUpdaterCacheAndCheck() {
+    try {
+      const updaterCacheDir = path.join(app.getPath("appData"), "..", "Local", "lol-quick-cards-updater");
+      if (fs.existsSync(updaterCacheDir)) {
+        fs.rmSync(updaterCacheDir, { recursive: true, force: true });
+      }
+    } catch { /* non-fatal */ }
     autoUpdater.checkForUpdatesAndNotify().catch(() => {});
-  }, 3000);
+  }
 
-  setInterval(() => {
-    autoUpdater.checkForUpdatesAndNotify().catch(() => {});
-  }, 30 * 60 * 1000);
+  // Check 3 seconds after launch, then every 30 minutes
+  setTimeout(() => clearUpdaterCacheAndCheck(), 3000);
+  setInterval(() => clearUpdaterCacheAndCheck(), 30 * 60 * 1000);
 }
 
 // App Lifecycle

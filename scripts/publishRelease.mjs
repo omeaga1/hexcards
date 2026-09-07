@@ -1,10 +1,25 @@
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 const pkg = JSON.parse(fs.readFileSync(path.resolve('package.json'), 'utf8'));
 const VERSION = pkg.version;
 const TAG = `v${VERSION}`;
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
+let GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+if (!GITHUB_TOKEN) {
+  try {
+    const creds = execSync('git credential fill', {
+      input: 'protocol=https\nhost=github.com\n\n',
+      encoding: 'utf8'
+    });
+    const passLine = creds.split('\n').find(l => l.startsWith('password='));
+    if (passLine) {
+      GITHUB_TOKEN = passLine.replace('password=', '').trim();
+    }
+  } catch {}
+}
+
 const OWNER = 'omeaga1';
 const REPO = 'hexcards';
 
@@ -12,6 +27,8 @@ const installerPath = fs.existsSync(path.resolve(`dist-electron/HexCards-Setup-$
   ? path.resolve(`dist-electron/HexCards-Setup-${VERSION}.exe`)
   : path.resolve(`dist-electron/HexCards Setup ${VERSION}.exe`);
 const latestYmlPath = path.resolve('dist-electron/latest.yml');
+
+const blockmapPath = `${installerPath}.blockmap`;
 
 async function main() {
   if (!fs.existsSync(installerPath)) {
@@ -58,7 +75,8 @@ async function main() {
 
   // Upload assets
   const assetsToUpload = [
-    { name: `HexCards-Setup-${VERSION}.exe`, filePath: installerPath },
+    { name: path.basename(installerPath), filePath: installerPath },
+    { name: `${path.basename(installerPath)}.blockmap`, filePath: blockmapPath },
     { name: 'latest.yml', filePath: latestYmlPath }
   ];
 

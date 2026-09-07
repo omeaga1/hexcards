@@ -48,8 +48,95 @@ export const KEYSTONE_IDS: Record<string, number> = {
   'Aftershock': 8439,
   'Guardian': 8465,
   'Glacial Augment': 8351,
-  'First Strike': 8360
+  'First Strike': 8369,
+  'Unsealed Spellbook': 8360
 };
+
+// Full minor rune name → ID map (all trees)
+export const RUNE_IDS: Record<string, number> = {
+  // Precision row 1
+  'Absorb Life': 9101,
+  'Overheal': 9101,
+  'Triumph': 9111,
+  'Presence of Mind': 8009,
+  // Precision row 2
+  'Legend: Alacrity': 9104,
+  'Legend: Haste': 9105,
+  'Legend: Bloodline': 9103,
+  // Precision row 3
+  'Coup de Grace': 8014,
+  'Cut Down': 8017,
+  'Last Stand': 8299,
+
+  // Domination row 1
+  'Cheap Shot': 8126,
+  'Taste of Blood': 8139,
+  'Sudden Impact': 8143,
+  // Domination row 2
+  'Zombie Ward': 8136,
+  'Ghost Poro': 8120,
+  'Eyeball Collection': 8138,
+  'Sixth Sense': 8137,
+  'Grisly Mementos': 8140,
+  'Deep Ward': 8141,
+  // Domination row 3
+  'Treasure Hunter': 8135,
+  'Ingenious Hunter': 8134,
+  'Relentless Hunter': 8105,
+  'Ultimate Hunter': 8106,
+
+  // Sorcery row 1
+  'Nullifying Orb': 8224,
+  'Manaflow Band': 8226,
+  'Nimbus Cloak': 8275,
+  // Sorcery row 2
+  'Transcendence': 8210,
+  'Celerity': 8234,
+  'Absolute Focus': 8233,
+  // Sorcery row 3
+  'Scorch': 8237,
+  'Waterwalking': 8232,
+  'Gathering Storm': 8236,
+
+  // Resolve row 1
+  'Demolish': 8446,
+  'Font of Life': 8463,
+  'Shield Bash': 8401,
+  // Resolve row 2
+  'Conditioning': 8429,
+  'Second Wind': 8444,
+  'Bone Plating': 8473,
+  // Resolve row 3
+  'Overgrowth': 8451,
+  'Revitalize': 8453,
+  'Unflinching': 8242,
+
+  // Inspiration row 1
+  'Hextech Flashtraption': 8306,
+  'Magical Footwear': 8304,
+  'Cash Back': 8321,
+  // Inspiration row 2
+  'Triple Tonic': 8313,
+  'Time Warp Tonic': 8352,
+  'Biscuit Delivery': 8345,
+  'Biscuits of Everlasting Will': 8345,
+  // Inspiration row 3
+  'Cosmic Insight': 8347,
+  'Approach Velocity': 8410,
+  'Jack of All Trades': 8316,
+};
+
+// Stat shard IDs (Modern Season 14+ rework)
+// Offense (Slot 4): Adaptive Force=5008, Attack Speed=5005, Ability Haste=5007
+// Flex (Slot 5): Adaptive Force=5008, Move Speed=5010, Scaling Health=5001
+// Defense (Slot 6): Flat Health=5011, Tenacity & Slow Resist=5013, Scaling Health=5001
+export const STAT_SHARD_ADAPTIVE = 5008;
+export const STAT_SHARD_ATTACK_SPEED = 5005;
+export const STAT_SHARD_ABILITY_HASTE = 5007;
+export const STAT_SHARD_MOVE_SPEED = 5010;
+export const STAT_SHARD_HEALTH_SCALING = 5001;
+export const STAT_SHARD_HEALTH_FLAT = 5011;
+export const STAT_SHARD_TENACITY = 5013;
 
 const BRIDGE_API_URL = 'http://127.0.0.1:4173';
 
@@ -269,19 +356,67 @@ export async function autoImportToLeague(
   if (typeof window !== 'undefined' && window.electronAPI) {
     try {
       const itemResult = await window.electronAPI.importItemSet(itemSet);
+      let runeResult: { success: boolean; message: string } | null = null;
+
       if (runeKit && window.electronAPI.importRunes) {
+        // Build selectedPerkIds from the actual runeKit data:
+        // [keystone, primary1, primary2, primary3, secondary1, secondary2, shard1, shard2, shard3]
+        const keystoneId = KEYSTONE_IDS[runeKit.keystone.name] || 8010;
+        const primary1 = RUNE_IDS[runeKit.primaryMinors[0]?.name] || 9111;
+        const primary2 = RUNE_IDS[runeKit.primaryMinors[1]?.name] || 9104;
+        const primary3 = RUNE_IDS[runeKit.primaryMinors[2]?.name] || 8299;
+        const secondary1 = RUNE_IDS[runeKit.secondaryMinors[0]?.name] || 8444;
+        const secondary2 = RUNE_IDS[runeKit.secondaryMinors[1]?.name] || 8451;
+
+        // Stat shards — parse from the statShards string across the 3 modern slots
+        // Format is typically "+8 Adaptive Force • +2% Movement Speed • +65 Health"
+        const shardsStr = runeKit.statShards || '';
+        const shard1 = shardsStr.includes('Attack Speed') ? STAT_SHARD_ATTACK_SPEED
+          : shardsStr.includes('Ability Haste') ? STAT_SHARD_ABILITY_HASTE
+          : STAT_SHARD_ADAPTIVE;
+
+        const shard2 = shardsStr.includes('Movement Speed') || shardsStr.includes('Move Speed')
+          ? STAT_SHARD_MOVE_SPEED
+          : shardsStr.includes('Scaling Health')
+          ? STAT_SHARD_HEALTH_SCALING
+          : STAT_SHARD_ADAPTIVE;
+
+        const shard3 = shardsStr.includes('Tenacity') ? STAT_SHARD_TENACITY
+          : shardsStr.includes('Scaling Health') ? STAT_SHARD_HEALTH_SCALING
+          : STAT_SHARD_HEALTH_FLAT;
+
+        // Strip existing prefix if present so title stays clean and <= 30 chars
+        const cleanTitle = (itemSet.title || 'Build').replace(/^HexCards:\s*/i, '');
+        const pageName = `HexCards: ${cleanTitle}`.slice(0, 30);
+
         const runePage = {
-          name: `HexCards: ${itemSet.title}`,
+          name: pageName,
           primaryStyleId: RUNE_STYLE_IDS[runeKit.primaryTree] || 8000,
           subStyleId: RUNE_STYLE_IDS[runeKit.secondaryTree] || 8400,
-          selectedPerkIds: [
-            KEYSTONE_IDS[runeKit.keystone.name] || 8010,
-            8009, 9104, 8299, 8444, 8451, 5008, 5008, 5002
-          ],
+          selectedPerkIds: [keystoneId, primary1, primary2, primary3, secondary1, secondary2, shard1, shard2, shard3],
           current: true
         };
-        await window.electronAPI.importRunes(runePage).catch(() => null);
+
+        runeResult = await window.electronAPI.importRunes(runePage).catch((err: any) => ({
+          success: false,
+          message: err?.message || 'Failed to apply runes'
+        }));
       }
+
+      if (itemResult.success && runeResult) {
+        if (runeResult.success) {
+          return {
+            success: true,
+            message: `Injected Item Set & Runes into League Client!`
+          };
+        } else {
+          return {
+            success: false,
+            message: `Item set injected, but runes failed: ${runeResult.message}`
+          };
+        }
+      }
+
       return itemResult;
     } catch (err: any) {
       return {

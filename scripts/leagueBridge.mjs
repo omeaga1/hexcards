@@ -159,18 +159,17 @@ const PERK_NAME_TO_ID = {
   'Electrocute': 8112, 'Dark Harvest': 8128, 'Hail of Blades': 9923,
   'Summon Aery': 8214, 'Arcane Comet': 8229, 'Phase Rush': 8230,
   'Grasp of the Undying': 8437, 'Aftershock': 8439, 'Guardian': 8465,
-  'Glacial Augment': 8351, 'First Strike': 8360, 'Unsealed Spellbook': 8360,
+  'Glacial Augment': 8351, 'First Strike': 8369, 'Unsealed Spellbook': 8360,
 
   // Precision minors
-  'Overheal': 9101, 'Triumph': 9111, 'Presence of Mind': 8009,
-  'Legend: Alacrity': 9104, 'Legend: Tenacity': 9105, 'Legend: Bloodline': 9103,
-  'Legend: Haste': 9104,
+  'Absorb Life': 9101, 'Overheal': 9101, 'Triumph': 9111, 'Presence of Mind': 8009,
+  'Legend: Alacrity': 9104, 'Legend: Haste': 9105, 'Legend: Bloodline': 9103,
   'Coup de Grace': 8014, 'Cut Down': 8017, 'Last Stand': 8299,
-  'Absorb Life': 9111,
 
   // Domination minors
   'Cheap Shot': 8126, 'Taste of Blood': 8139, 'Sudden Impact': 8143,
   'Zombie Ward': 8136, 'Ghost Poro': 8120, 'Eyeball Collection': 8138,
+  'Sixth Sense': 8137, 'Grisly Mementos': 8140, 'Deep Ward': 8141,
   'Treasure Hunter': 8135, 'Relentless Hunter': 8105, 'Ultimate Hunter': 8106,
   'Ingenious Hunter': 8134,
 
@@ -187,13 +186,14 @@ const PERK_NAME_TO_ID = {
   // Inspiration minors
   'Hextech Flashtraption': 8306, 'Magical Footwear': 8304, 'Cash Back': 8321,
   'Triple Tonic': 8313, 'Time Warp Tonic': 8352, 'Biscuit Delivery': 8345,
-  "Biscuits of Everlasting Will": 8345,
-  'Cosmic Insight': 8347, 'Approach Velocity': 8410, 'Jack of All Trades': 8352,
+  'Biscuits of Everlasting Will': 8345,
+  'Cosmic Insight': 8347, 'Approach Velocity': 8410, 'Jack of All Trades': 8316,
 
-  // Stat shards (flex slots)
+  // Stat shards (Modern Season 14+ rework)
   'Adaptive Force': 5008, 'Attack Speed': 5005, 'Ability Haste': 5007,
-  'Move Speed': 5010, 'Movement Speed': 5010, 'Health (Scaling)': 5001, 'Tenacity and Slow Resist': 5013,
-  'Health': 5011, 'Armor': 5002, 'Magic Resist': 5003
+  'Move Speed': 5010, 'Movement Speed': 5010, 'Health (Scaling)': 5001, 'Scaling Health': 5001,
+  'Tenacity and Slow Resist': 5013, 'Tenacity': 5013,
+  'Health': 5011, 'Flat Health': 5011
 };
 
 function resolveRunePerkId(name) {
@@ -384,18 +384,26 @@ const server = http.createServer(async (req, res) => {
               current: true
             };
 
+            let targetPageId = null;
             if (editablePage) {
+              targetPageId = editablePage.id;
               try {
-                await callLcu(`/lol-perks/v1/pages/${editablePage.id}`, 'PUT', pagePayload);
+                await callLcu(`/lol-perks/v1/pages/${editablePage.id}`, 'PUT', { ...pagePayload, id: editablePage.id });
                 runeSuccess = true;
               } catch {
                 await callLcu(`/lol-perks/v1/pages/${editablePage.id}`, 'DELETE');
-                await callLcu('/lol-perks/v1/pages', 'POST', pagePayload);
+                const created = await callLcu('/lol-perks/v1/pages', 'POST', pagePayload);
+                targetPageId = created?.id;
                 runeSuccess = true;
               }
             } else {
-              await callLcu('/lol-perks/v1/pages', 'POST', pagePayload);
+              const created = await callLcu('/lol-perks/v1/pages', 'POST', pagePayload);
+              targetPageId = created?.id;
               runeSuccess = true;
+            }
+
+            if (targetPageId) {
+              await callLcu('/lol-perks/v1/currentpage', 'PUT', targetPageId.toString()).catch(() => null);
             }
             console.log(`[Bridge] Runes imported: ${lcuPerks.selectedPerkIds.length} perks set.`);
           } catch (runeErr) {

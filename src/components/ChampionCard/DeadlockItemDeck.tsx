@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo } from 'react';
 import { TacticalGuide, ItemData } from '../../types';
 import { getItemIconUrl } from '../../services/ddragon';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
-import { X, ArrowRight, ArrowLeftRight, Sparkles, Shield, Zap } from 'lucide-react';
+import { X, ArrowRight, ArrowLeftRight, Shield, Zap } from 'lucide-react';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 import { useDevice } from '../../hooks/useDevice';
 
@@ -398,23 +398,61 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: '2nd or 3rd item slot vs heavy AP'
   }), [isSupport, isMage, isTank, core2Card.name]);
 
-  const antiBurst3: TacticalCard = useMemo(() => ({
-    id: isMage ? '3157' : isSupport ? '3190' : '3026',
-    name: isMage ? "Zhonya's Hourglass" : isSupport ? 'Locket of the Iron Solari' : 'Guardian Angel',
-    category: isMage ? 'spirit' : isSupport ? 'utility' : 'weapon',
-    buyOrderBadge: isMage || isSupport ? 'CORE #2' : 'CORE #3',
-    replacesSlot: isMage || isSupport ? 'Core #2' : 'Core #3',
-    replacesItemName: isMage || isSupport ? core2Card.name : core3Card.name,
-    swapReason: isMage ? 'Rush Zhonya 2nd vs AD assassins for Golden Stasis' : 'Insurance revive / shield against lethal burst',
-    isActive: isMage || isSupport,
-    whatItDoes: isMage
-      ? 'Active: Completely invulnerable and untargetable for 2.5 seconds in golden Stasis.'
-      : isSupport
-      ? 'Active: Grants instant 200–360 shield to all 5 allies simultaneously.'
-      : 'Upon death, revive with 50% base HP and 30% max mana.',
-    whenToBuy: 'Enemy team has heavy burst elimination threats.',
-    timing: isMage ? 'Rush 2nd item' : 'Insurance item 3rd/4th'
-  }), [isMage, isSupport, core2Card.name, core3Card.name]);
+  const antiBurst3: TacticalCard = useMemo(() => {
+    // Determine what GA-tier item to use based on role
+    let id: string;
+    let name: string;
+    let category: 'weapon' | 'spirit' | 'vitality' | 'utility';
+    let buyOrderBadge: string;
+    let replacesSlot: '1st Back' | 'Core #1' | 'Core #2' | 'Core #3' | 'Boots' | undefined;
+    let replacesItemName: string;
+    let swapReason: string;
+    let isActive: boolean;
+    let whatItDoes: string;
+    let whenToBuy: string;
+    let timing: string;
+
+    if (isMage) {
+      id = '3157'; name = "Zhonya's Hourglass"; category = 'spirit';
+      buyOrderBadge = 'CORE #2'; replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
+      swapReason = 'Rush Zhonya 2nd vs AD assassins for Golden Stasis';
+      isActive = true;
+      whatItDoes = 'Active: Completely invulnerable and untargetable for 2.5 seconds in golden Stasis.';
+      whenToBuy = 'Enemy team has heavy burst elimination threats.';
+      timing = 'Rush 2nd item';
+    } else if (isSupport) {
+      id = '3190'; name = 'Locket of the Iron Solari'; category = 'utility';
+      buyOrderBadge = 'CORE #2'; replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
+      swapReason = 'Insurance revive / shield against lethal burst';
+      isActive = true;
+      whatItDoes = 'Active: Grants instant 200–360 shield to all 5 allies simultaneously.';
+      whenToBuy = 'Enemy team has heavy burst elimination threats.';
+      timing = 'Insurance item 3rd/4th';
+    } else {
+      // Non-mage, non-support: Guardian Angel OR collision fallback
+      const gaIsCore3 = core3.itemId === '3026' || core3.name === 'Guardian Angel';
+      if (gaIsCore3) {
+        // core3 is already GA — use Randuin's Omen instead (physical & crit mitigation, unique to this pod)
+        id = '3143'; name = "Randuin's Omen"; category = 'vitality';
+        whatItDoes = 'Massive armor + reduces critical strike damage taken by 20%. Active slows nearby enemies.';
+        whenToBuy = 'Enemy team has multiple crit-based carries (Jinx, Jhin, Yasuo, Yone).';
+        swapReason = 'Hard counter to crit-heavy comps — cuts their effective burst by 20% and slows their engage.';
+      } else {
+        id = '3026'; name = 'Guardian Angel'; category = 'weapon';
+        whatItDoes = 'Upon death, revive with 50% base HP and 30% max mana.';
+        whenToBuy = 'Enemy team has heavy burst elimination threats.';
+        swapReason = 'Insurance revive / shield against lethal burst';
+      }
+      buyOrderBadge = 'CORE #3'; replacesSlot = 'Core #3'; replacesItemName = core3Card.name;
+      isActive = false;
+      timing = 'Insurance item 3rd/4th';
+    }
+
+    return {
+      id, name, category, buyOrderBadge, replacesSlot, replacesItemName,
+      swapReason, isActive, whatItDoes, whenToBuy, timing
+    };
+  }, [isMage, isSupport, core2Card.name, core3Card.name, core3.itemId, core3.name]);
 
   const shred1: TacticalCard = useMemo(() => ({
     id: isSupport ? '8020' : isMage ? '3135' : isADC ? '3036' : isBruiser ? '3071' : '6665',
@@ -594,6 +632,22 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       };
     }
     if (isBruiser) {
+      // Collision guard: if core3 is already Death's Dance (e.g. Darius), use Sterak's Gage instead
+      const isDDcore = core3Card.id === '6333' || core3Card.name === "Death's Dance";
+      if (isDDcore) {
+        return {
+          id: '3053',
+          name: "Sterak's Gage",
+          category: 'vitality',
+          buyOrderBadge: 'CORE #3',
+          replacesSlot: 'Core #3',
+          replacesItemName: core3Card.name,
+          swapReason: 'Lifeline shield (100% base AD) + 40% Tenacity when burst attempts to kill you. Best vs mixed burst comps.',
+          whatItDoes: 'Triggers a decaying shield equal to 100% base AD and grants 40% Tenacity for 4 seconds when dropping below 30% HP.',
+          whenToBuy: 'Mixed burst comps — one physical and one magical assassin.',
+          timing: '3rd or 4th item slot'
+        };
+      }
       return {
         id: '6333',
         name: "Death's Dance",
@@ -1256,33 +1310,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   </div>
                 </div>
 
-                {/* Tempo Flex Alternatives */}
-                <div className="bg-[#e4ebde] p-1.5 rounded-lg border border-[#c4d0be] mt-1.5">
-                  <div className="flex items-center justify-between px-1 mb-1">
-                    <span className="text-[10px] font-black uppercase text-[#384835] font-['Barlow_Condensed'] tracking-wider flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-amber-600" />
-                      TEMPO FLEX ALTERNATIVES
-                    </span>
-                    <span className="text-[9.5px] font-medium text-[#5a6b57] font-sans">
-                      Situational Swaps for Core #2 & #3
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-6 py-0.5">
-                    <div className="flex flex-col items-center">
-                      {renderCardNode(altCoreCard)}
-                      <span className="text-[9.5px] font-bold text-[#4d5d4a] uppercase mt-0.5 font-sans">
-                        Flex 2nd Spike
-                      </span>
-                    </div>
 
-                    <div className="flex flex-col items-center">
-                      {renderCardNode(altCapstoneCard)}
-                      <span className="text-[9.5px] font-bold text-[#4d5d4a] uppercase mt-0.5 font-sans">
-                        Flex 3rd Capstone
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           )}
