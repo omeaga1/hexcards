@@ -1,6 +1,7 @@
 import { TacticalGuide, RuneKitGuide } from '../types';
 import { getMetaBuildForChampion } from '../services/metaBuildService';
 import { synthesizeItemRationale } from './itemEssence';
+import { getRuneByName, getRuneFourWords } from './runeTrees';
 
 export const CHAMPION_TACTICS: Record<string, TacticalGuide> = {
   // === TOP LANERS ===
@@ -907,33 +908,27 @@ export function generateDynamicTactics(championId: string, tags: string[], name:
     powerSpikes: ['Level 3 All-in Window', 'Level 6 Ultimate Spike', '1st Item Completion'],
     skillMaxOrder: 'Q > E > W',
     skillMaxReason: 'Max primary damage skill first for waveclear and cooldown reduction.',
-    combos: [
-      {
-        name: 'Standard Engagement',
-        sequence: ['Lead with CC / Gapcloser', 'Follow up with Primary Damage spell', 'Weave basic attacks'],
-        tip: 'Always hold your defensive or escape ability until the enemy retaliates.'
-      }
-    ],
+    combos: [],
     plainAbilities: {
       passive: {
-        tldr: 'Innate passive ability granting combat bonuses or unique mechanics.',
-        whenToUse: 'Track passive cooldowns and stacks before choosing to commit to a trade.'
+        tldr: '',
+        whenToUse: 'Track status and stack counters to time favorable trading windows.'
       },
       q: {
-        tldr: 'Primary bread-and-butter skill for trading, farming, or poke.',
-        whenToUse: 'Use frequently for last hitting minions and establishing lane dominance.'
+        tldr: '',
+        whenToUse: 'Cast to poke, contest minion waves, or initiate short trades.'
       },
       w: {
-        tldr: 'Secondary utility, defensive tool, or secondary damage spell.',
-        whenToUse: 'Activate reactively when the enemy initiates an exchange.'
+        tldr: '',
+        whenToUse: 'Deploy reactively to counter enemy advances or peel threats.'
       },
       e: {
-        tldr: 'Mobility dash, crowd control trigger, or repositioning tool.',
-        whenToUse: 'Save for disengaging from ganks or securing fleeing targets.'
+        tldr: '',
+        whenToUse: 'Save for crucial repositioning or disengaging from incoming ganks.'
       },
       r: {
-        tldr: 'High-impact ultimate ability capable of deciding teamfights.',
-        whenToUse: 'Coordinate with your team or use to guarantee an elimination on a high-value carry.'
+        tldr: '',
+        whenToUse: 'Deploy in teamfight clashes to turn skirmishes and secure decisive advantages.'
       }
     },
     coreBuild: {
@@ -985,13 +980,83 @@ export function generateDynamicTactics(championId: string, tags: string[], name:
 }
 
 export function getTacticsForChampion(championId: string, tags: string[] = [], name: string = championId): TacticalGuide {
-  // Tier 1: Hand-crafted deep mastery tactics
-  if (CHAMPION_TACTICS[championId]) {
-    return CHAMPION_TACTICS[championId];
+  const meta = getMetaBuildForChampion(championId);
+  const handcrafted = CHAMPION_TACTICS[championId];
+
+  // If we have both handcrafted depth and live meta build, merge them!
+  // Live meta supplies up-to-date items, runes, and max order;
+  // Handcrafted supplies deep combos, ability secrets, identity, and matchup swaps.
+  if (handcrafted && meta) {
+    return {
+      ...handcrafted,
+      role: meta.role || handcrafted.role,
+      damageType: meta.damageType || handcrafted.damageType,
+      skillMaxOrder: meta.skillMaxOrder || handcrafted.skillMaxOrder,
+      skillMaxReason: meta.skillMaxReason || handcrafted.skillMaxReason,
+      coreBuild: {
+        starter: meta.starter || handcrafted.coreBuild.starter,
+        firstItem: {
+          itemId: meta.firstItemId || handcrafted.coreBuild.firstItem.itemId,
+          name: meta.firstItemName || handcrafted.coreBuild.firstItem.name,
+          why: synthesizeItemRationale(meta.firstItemId, meta.firstItemName, meta.role, handcrafted.playstyle, meta.damageType, 1),
+          order: 1
+        },
+        secondItem: {
+          itemId: meta.secondItemId || handcrafted.coreBuild.secondItem.itemId,
+          name: meta.secondItemName || handcrafted.coreBuild.secondItem.name,
+          why: synthesizeItemRationale(meta.secondItemId, meta.secondItemName, meta.role, handcrafted.playstyle, meta.damageType, 2),
+          order: 2
+        },
+        thirdItem: {
+          itemId: meta.thirdItemId || handcrafted.coreBuild.thirdItem.itemId,
+          name: meta.thirdItemName || handcrafted.coreBuild.thirdItem.name,
+          why: synthesizeItemRationale(meta.thirdItemId, meta.thirdItemName, meta.role, handcrafted.playstyle, meta.damageType, 3),
+          order: 3
+        },
+        bootsRecommendation: {
+          defaultId: meta.bootsId || handcrafted.coreBuild.bootsRecommendation.defaultId,
+          defaultName: meta.bootsName || handcrafted.coreBuild.bootsRecommendation.defaultName,
+          why: meta.bootsWhy || handcrafted.coreBuild.bootsRecommendation.why,
+          alternative: handcrafted.coreBuild.bootsRecommendation.alternative
+        }
+      },
+      runeKit: {
+        primaryTree: meta.primaryTree,
+        keystone: {
+          name: meta.keystoneName,
+          tldr: meta.keystoneTldr,
+          why: meta.keystoneWhy
+        },
+        primaryMinors: (meta.primaryRunes && meta.primaryRunes.length >= 4
+          ? meta.primaryRunes.slice(1)
+          : handcrafted.runeKit.primaryMinors.map(m => m.name)
+        ).map((rName, idx) => ({
+          name: rName,
+          slot: `Slot ${idx + 1}`,
+          effect: getRuneByName(rName)?.details || 'Optimal minor rune.',
+          fourWords: getRuneFourWords(rName)
+        })),
+        secondaryTree: meta.secondaryTree,
+        secondaryMinors: (meta.secondaryRunes && meta.secondaryRunes.length >= 2
+          ? meta.secondaryRunes
+          : handcrafted.runeKit.secondaryMinors.map(m => m.name)
+        ).map((rName) => ({
+          name: rName,
+          effect: getRuneByName(rName)?.details || 'Secondary tactical utility.',
+          fourWords: getRuneFourWords(rName)
+        })),
+        swapRule: handcrafted.runeKit.swapRule,
+        statShards: meta.statShards || handcrafted.runeKit.statShards
+      }
+    };
+  }
+
+  // Tier 1: Hand-crafted deep mastery tactics (if meta builds not yet loaded)
+  if (handcrafted) {
+    return handcrafted;
   }
 
   // Tier 2: Patch Meta Build
-  const meta = getMetaBuildForChampion(championId);
   if (meta) {
     return {
       championId,
@@ -1002,34 +1067,28 @@ export function getTacticsForChampion(championId: string, tags: string[] = [], n
       winCondition: meta.winCondition,
       powerSpikes: meta.powerSpikes,
       skillMaxOrder: meta.skillMaxOrder,
-      skillMaxReason: meta.skillMaxReason,
-      combos: [
-        {
-          name: 'Core Engagement Combo',
-          sequence: ['Initiate with CC / Gap Closer', 'Execute Primary Ability Rotation', 'Weave basic attacks for passive triggers'],
-          tip: 'Track key cooldowns and play around your core item power spikes before committing to full trades.'
-        }
-      ],
+      skillMaxReason: meta.skillMaxReason || 'Provides optimal damage scaling and cooldown reduction.',
+      combos: [],
       plainAbilities: {
         passive: {
-          tldr: 'Innate passive providing combat scaling or unique mechanics.',
-          whenToUse: 'Monitor cooldown and stack indicators before committing to an engagement.'
+          tldr: '',
+          whenToUse: 'Track status and stack counters to time favorable trading windows.'
         },
         q: {
-          tldr: 'Core bread-and-butter skill for trading, farming, or poke.',
-          whenToUse: 'Cast frequently to harass opponent and establish lane control.'
+          tldr: '',
+          whenToUse: 'Cast to poke, contest minion waves, or initiate short trades.'
         },
         w: {
-          tldr: 'Tactical utility, survivability, or secondary damage burst.',
-          whenToUse: 'Deploy reactively to counter enemy aggression or reset attack flow.'
+          tldr: '',
+          whenToUse: 'Deploy reactively to counter enemy advances or peel threats.'
         },
         e: {
-          tldr: 'Mobility dash, crowd control trigger, or repositioning ability.',
-          whenToUse: 'Hold for critical dodge timings or securing escaping enemies.'
+          tldr: '',
+          whenToUse: 'Save for crucial repositioning or disengaging from incoming ganks.'
         },
         r: {
-          tldr: 'Game-altering ultimate ability capable of winning teamfights.',
-          whenToUse: 'Combine with allied crowd control or execute vulnerable carries.'
+          tldr: '',
+          whenToUse: 'Deploy in teamfight clashes to turn skirmishes and secure decisive advantages.'
         }
       },
       coreBuild: {
@@ -1063,15 +1122,39 @@ export function getTacticsForChampion(championId: string, tags: string[] = [], n
         primaryTree: meta.primaryTree,
         keystone: {
           name: meta.keystoneName,
-          tldr: meta.keystoneTldr,
+          tldr: meta.keystoneTldr || getRuneFourWords(meta.keystoneName),
           why: meta.keystoneWhy
         },
-        primaryMinors: TREE_MINORS[meta.primaryTree] || TREE_MINORS.Precision,
+        primaryMinors: (meta.primaryRunes && meta.primaryRunes.length >= 4)
+          ? meta.primaryRunes.slice(1).map(name => {
+              const def = getRuneByName(name);
+              return {
+                name,
+                effect: def ? def.details : getRuneFourWords(name),
+                fourWords: getRuneFourWords(name)
+              };
+            })
+          : (TREE_MINORS[meta.primaryTree] || TREE_MINORS.Precision).map(m => ({
+              ...m,
+              fourWords: getRuneFourWords(m.name)
+            })),
         secondaryTree: meta.secondaryTree,
-        secondaryMinors: TREE_MINORS[meta.secondaryTree]?.slice(0, 2) || [
-          { name: 'Conditioning', effect: 'Gain bonus Armor and Magic Resist after 12 minutes.' },
-          { name: 'Overgrowth', effect: 'Gain maximum health when minions die near you.' }
-        ],
+        secondaryMinors: (meta.secondaryRunes && meta.secondaryRunes.length >= 2)
+          ? meta.secondaryRunes.map(name => {
+              const def = getRuneByName(name);
+              return {
+                name,
+                effect: def ? def.details : getRuneFourWords(name),
+                fourWords: getRuneFourWords(name)
+              };
+            })
+          : (TREE_MINORS[meta.secondaryTree]?.slice(0, 2) || [
+              { name: 'Conditioning', effect: 'Gain bonus Armor and Magic Resist after 12 minutes.' },
+              { name: 'Overgrowth', effect: 'Gain maximum health when minions die near you.' }
+            ]).map(m => ({
+              ...m,
+              fourWords: getRuneFourWords(m.name)
+            })),
         swapRule: {
           trigger: 'Facing heavy lane poke or threat matchup',
           take: 'Second Wind',

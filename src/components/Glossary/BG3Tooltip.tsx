@@ -62,6 +62,36 @@ export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, chi
   );
 };
 
+// Precompiled module-level keyword rules & regex to avoid per-render recompilation
+const KEYWORD_RULES: { pattern: string; termId: string; regex: RegExp }[] = [
+  { pattern: 'Grievous Wounds', termId: 'grievous_wounds', regex: /^(?:Grievous Wounds)$/i },
+  { pattern: 'Anti-Heal', termId: 'grievous_wounds', regex: /^(?:Anti-Heal)$/i },
+  { pattern: 'Armor Penetration', termId: 'armor_penetration', regex: /^(?:Armor Penetration)$/i },
+  { pattern: 'Armor Pen', termId: 'armor_penetration', regex: /^(?:Armor Pen)$/i },
+  { pattern: 'Magic Penetration', termId: 'magic_penetration', regex: /^(?:Magic Penetration)$/i },
+  { pattern: 'Magic Pen', termId: 'magic_penetration', regex: /^(?:Magic Pen)$/i },
+  { pattern: 'Magic Resist', termId: 'magic_penetration', regex: /^(?:Magic Resist)$/i },
+  { pattern: 'Tenacity', termId: 'tenacity', regex: /^(?:Tenacity)$/i },
+  { pattern: 'Lethality', termId: 'lethality', regex: /^(?:Lethality)$/i },
+  { pattern: 'Omnivamp', termId: 'omnivamp_vs_lifesteal', regex: /^(?:Omnivamp)$/i },
+  { pattern: 'Lifesteal', termId: 'omnivamp_vs_lifesteal', regex: /^(?:Lifesteal)$/i },
+  { pattern: 'Adaptive Force', termId: 'adaptive_force', regex: /^(?:Adaptive Force)$/i },
+  { pattern: 'Suppression', termId: 'suppression', regex: /^(?:Suppression)$/i },
+  { pattern: 'True Damage', termId: 'true_damage', regex: /^(?:True Damage)$/i },
+  { pattern: 'Spell Shield', termId: 'spell_shield', regex: /^(?:Spell Shield)$/i },
+  { pattern: 'Shield Reave|Anti-Shield', termId: 'shield_reduction', regex: /^(?:Shield Reave|Anti-Shield)$/i },
+  { pattern: 'Ability Haste', termId: 'ability_haste', regex: /^(?:Ability Haste)$/i },
+  { pattern: 'Rooted|Root|Snare', termId: 'root_vs_stun', regex: /^(?:Rooted|Root|Snare)$/i },
+  { pattern: 'Stunned|Stun', termId: 'root_vs_stun', regex: /^(?:Stunned|Stun)$/i },
+  { pattern: 'Knocked up|Knockup|Airborne', termId: 'airborne', regex: /^(?:Knocked up|Knockup|Airborne)$/i },
+  { pattern: 'Crowd Control', termId: 'tenacity', regex: /^(?:Crowd Control)$/i }
+];
+
+const COMBINED_PATTERN = new RegExp(
+  `\\b(${KEYWORD_RULES.map(k => `(?:${k.pattern})`).join('|')})\\b`,
+  'gi'
+);
+
 /**
  * Automatically parses plain text and wraps recognized LoL keywords
  * with interactive Baldur's Gate 3 style hover & clickable subpanels!
@@ -69,45 +99,12 @@ export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, chi
 export const GlossaryText: React.FC<{ text: string }> = ({ text }) => {
   if (!text) return null;
 
-  // Build mapping with non-capturing groups, longer terms sorted first
-  const KEYWORD_RULES: { pattern: string; termId: string }[] = [
-    { pattern: 'Grievous Wounds', termId: 'grievous_wounds' },
-    { pattern: 'Anti-Heal', termId: 'grievous_wounds' },
-    { pattern: 'Armor Penetration', termId: 'armor_penetration' },
-    { pattern: 'Armor Pen', termId: 'armor_penetration' },
-    { pattern: 'Magic Penetration', termId: 'magic_penetration' },
-    { pattern: 'Magic Pen', termId: 'magic_penetration' },
-    { pattern: 'Magic Resist', termId: 'magic_penetration' },
-    { pattern: 'Tenacity', termId: 'tenacity' },
-    { pattern: 'Lethality', termId: 'lethality' },
-    { pattern: 'Omnivamp', termId: 'omnivamp_vs_lifesteal' },
-    { pattern: 'Lifesteal', termId: 'omnivamp_vs_lifesteal' },
-    { pattern: 'Adaptive Force', termId: 'adaptive_force' },
-    { pattern: 'Suppression', termId: 'suppression' },
-    { pattern: 'True Damage', termId: 'true_damage' },
-    { pattern: 'Spell Shield', termId: 'spell_shield' },
-    { pattern: 'Shield Reave|Anti-Shield', termId: 'shield_reduction' },
-    { pattern: 'Ability Haste', termId: 'ability_haste' },
-    { pattern: 'Rooted|Root|Snare', termId: 'root_vs_stun' },
-    { pattern: 'Stunned|Stun', termId: 'root_vs_stun' },
-    { pattern: 'Knocked up|Knockup|Airborne', termId: 'airborne' },
-    { pattern: 'Crowd Control', termId: 'tenacity' }
-  ];
-
-  // Exactly ONE outer capturing group, non-capturing inner groups
-  const combinedPattern = new RegExp(
-    `\\b(${KEYWORD_RULES.map(k => `(?:${k.pattern})`).join('|')})\\b`,
-    'gi'
-  );
-
-  const parts = text.split(combinedPattern);
+  const parts = text.split(COMBINED_PATTERN);
 
   return (
     <span>
       {parts.map((part, index) => {
-        const matched = KEYWORD_RULES.find(k =>
-          new RegExp(`^(?:${k.pattern})$`, 'i').test(part)
-        );
+        const matched = KEYWORD_RULES.find(k => k.regex.test(part));
         if (matched) {
           return (
             <BG3Tooltip key={index} termId={matched.termId} displayText={part} />

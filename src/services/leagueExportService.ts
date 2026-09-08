@@ -7,11 +7,21 @@ export interface RiotItemSetItem {
 
 export interface RiotItemSetBlock {
   type: string;
+  recMath?: boolean;
+  minSummonerLevel?: number;
+  maxSummonerLevel?: number;
+  showIfSummonerSpell?: string;
+  hideIfSummonerSpell?: string;
   items: RiotItemSetItem[];
 }
 
 export interface RiotItemSet {
   title: string;
+  type?: string;
+  map?: string;
+  mode?: string;
+  priority?: boolean;
+  sortrank?: number;
   associatedMaps: number[];
   associatedChampions: number[];
   blocks: RiotItemSetBlock[];
@@ -141,6 +151,67 @@ export const STAT_SHARD_TENACITY = 5013;
 const BRIDGE_API_URL = 'http://127.0.0.1:4173';
 
 /**
+ * Resolves an item ID to a valid purchasable shop item ID.
+ * Transforms unpurchasable items (e.g. Seraph's, Muramana, Diadem of Songs)
+ * back to their base purchasable recipe so the League shop displays them correctly.
+ */
+function toPurchasableItemId(itemId: string, allItems?: Record<string, ItemData>): string {
+  const UNPURCHASABLE_MAP: Record<string, string> = {
+    '3040': '3003', // Seraph's Embrace -> Archangel's Staff
+    '3042': '3004', // Muramana -> Manamune
+    '3121': '3119', // Fimbulwinter -> Winter's Approach
+    '2530': '2526', // Diadem of Songs -> base item
+  };
+
+  if (UNPURCHASABLE_MAP[itemId]) {
+    return UNPURCHASABLE_MAP[itemId];
+  }
+
+  if (allItems && allItems[itemId]) {
+    const item = allItems[itemId];
+    // If not purchasable and has a special recipe, use the base recipe item
+    if (item.gold && item.gold.purchasable === false && (item as any).specialRecipe) {
+      return String((item as any).specialRecipe);
+    }
+  }
+
+  return itemId;
+}
+
+/**
+ * Creates an official Riot Item Set Block with strict schema adherence.
+ * Avoids duplicate item IDs and ensures all standard Riot block properties are present.
+ */
+function createRiotBlock(
+  type: string,
+  rawItems: RiotItemSetItem[],
+  allItems?: Record<string, ItemData>,
+  recMath = false
+): RiotItemSetBlock {
+  const seen = new Set<string>();
+  const items: RiotItemSetItem[] = [];
+
+  for (const item of rawItems) {
+    if (!item || !item.id) continue;
+    const resolvedId = toPurchasableItemId(String(item.id), allItems);
+    if (!seen.has(resolvedId)) {
+      seen.add(resolvedId);
+      items.push({ id: resolvedId, count: Number(item.count) || 1 });
+    }
+  }
+
+  return {
+    type,
+    recMath,
+    minSummonerLevel: -1,
+    maxSummonerLevel: -1,
+    showIfSummonerSpell: '',
+    hideIfSummonerSpell: '',
+    items
+  };
+}
+
+/**
  * Generates an official Riot-compatible Item Set object from HexCards data.
  */
 export function generateRiotItemSet(
@@ -183,7 +254,10 @@ export function generateRiotItemSet(
     { id: tactics.coreBuild.bootsRecommendation.defaultId, count: 1 },
     { id: '3047', count: 1 }, // Steelcaps
     { id: '3111', count: 1 }, // Mercury's Treads
-    { id: '3158', count: 1 }  // Ionian Boots
+    { id: '3158', count: 1 }, // Ionian Boots
+    { id: '3020', count: 1 }, // Sorcerer's Shoes
+    { id: '3006', count: 1 }, // Berserker's Greaves
+    { id: '3009', count: 1 }  // Boots of Swiftness
   ];
 
   // 4. Situational & Threat Counter Pivots
@@ -217,29 +291,19 @@ export function generateRiotItemSet(
 
   return {
     title: `HexCards: ${champion.name} ${tactics.role}`,
+    type: 'custom',
+    map: 'any',
+    mode: 'any',
+    priority: false,
+    sortrank: 0,
     associatedMaps: [11, 12], // Summoner's Rift & ARAM
     associatedChampions: champKeyNum > 0 ? [champKeyNum] : [],
     blocks: [
-      {
-        type: `1. Early Starters (${tactics.role})`,
-        items: starterItems
-      },
-      {
-        type: `2. Core Spikes (Order: 1 > 2 > 3)`,
-        items: coreItems
-      },
-      {
-        type: `3. Boots Options`,
-        items: bootItems
-      },
-      {
-        type: `4. Situational Pivots & Counters`,
-        items: situationalItems
-      },
-      {
-        type: `5. Consumables & Vision`,
-        items: consumables
-      }
+      createRiotBlock('Starting Items', starterItems, allItems),
+      createRiotBlock('Core Build', coreItems, allItems),
+      createRiotBlock('Boots', bootItems, allItems),
+      createRiotBlock('Situational Items', situationalItems, allItems),
+      createRiotBlock('Consumables', consumables, allItems)
     ]
   };
 }

@@ -1,7 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChampionDetail, TacticalGuide } from '../../types';
 import { getPassiveIconUrl, getSpellIconUrl, cleanDDragonText } from '../../services/ddragon';
-import { Swords, Info, ArrowRight, Clock, Droplets, Zap, Shield, Sparkles } from 'lucide-react';
+import {
+  Swords,
+  Info,
+  ArrowRight,
+  Clock,
+  Droplets,
+  Target,
+  Zap,
+  Layers,
+  Crosshair
+} from 'lucide-react';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 import { useDevice } from '../../hooks/useDevice';
@@ -12,6 +22,189 @@ interface AbilityCardsProps {
   tactics: TacticalGuide;
 }
 
+type AbilityKey = 'PASSIVE' | 'Q' | 'W' | 'E' | 'R';
+
+// Generic filler words blacklist
+const isGenericSlop = (text: string): boolean => {
+  if (!text) return true;
+  const lower = text.toLowerCase();
+  return (
+    lower.includes('innate passive ability') ||
+    lower.includes('innate passive providing') ||
+    lower.includes('primary bread-and-butter') ||
+    lower.includes('core bread-and-butter') ||
+    lower.includes('bread-and-butter') ||
+    lower.includes('establishing lane dominance') ||
+    lower.includes('secondary utility, defensive') ||
+    lower.includes('mobility dash, crowd control') ||
+    lower.includes('high-impact ultimate ability') ||
+    lower.includes('game-altering ultimate') ||
+    lower.includes('tactical utility, survivability') ||
+    lower.includes('execute primary ability rotation') ||
+    lower.includes('initiate with cc / gap closer') ||
+    lower.includes('track passive cooldowns') ||
+    lower.includes('use frequently for last hitting')
+  );
+};
+
+// Deadlock-inspired mechanic tags detector
+const detectAbilityTags = (
+  key: AbilityKey,
+  spell: any,
+  description: string
+): string[] => {
+  const d = (description || '').toLowerCase();
+  const tags: string[] = [];
+
+  if (key === 'PASSIVE') {
+    tags.push('PASSIVE');
+    if (/\b(?:heal|healing|lifesteal|vamp|health)\b/.test(d) && !/missing health/.test(d)) {
+      tags.push('SUSTAIN');
+    }
+    if (/\b(?:movement speed|bonus move|dash)\b/.test(d)) {
+      tags.push('MOBILITY');
+    }
+    if (/\b(?:attack speed|stacks|ramping|stacking)\b/.test(d)) {
+      tags.push('BUFF / RAMP');
+    }
+    return tags;
+  }
+
+  const range = spell?.rangeBurn || '';
+  if (range === '25000' || range.toLowerCase() === 'global' || /across the map|global/.test(d)) {
+    tags.push('GLOBAL');
+  } else if (parseInt(range, 10) >= 1000) {
+    tags.push('LONG RANGE');
+  }
+
+  if (/\b(?:stun|stuns|stunned)\b/.test(d)) tags.push('STUN');
+  if (/\b(?:root|roots|rooted|snare|snares)\b/.test(d)) tags.push('ROOT');
+  if (/\b(?:knockup|knock up|knocks up|airborne|displaces?)\b/.test(d)) tags.push('DISPLACEMENT');
+  if (/\b(?:charm|charms|charmed)\b/.test(d)) tags.push('CHARM');
+  if (/\b(?:fear|fears|feared|flee)\b/.test(d)) tags.push('FEAR');
+  if (/\b(?:suppress|suppresses|suppression)\b/.test(d)) tags.push('SUPPRESSION');
+  if (/\b(?:slows|slowed|slowing)\b/.test(d) && !/attacks slower|slows self/.test(d)) tags.push('SLOW');
+  if (/\b(?:dash|dashes|leap|leaps|blink|blinks|teleport)\b/.test(d)) tags.push('MOBILITY');
+  if (/\b(?:shield|shields|barrier|damage reduction)\b/.test(d)) tags.push('SHIELD');
+  if (/\b(?:heals|healing|restores health)\b/.test(d)) tags.push('HEAL');
+  if (/\b(?:execute|missing health|true damage)\b/.test(d)) tags.push('TRUE DMG / EXECUTE');
+  if (/\b(?:skillshot|projectile|fires a|fires an|launches|shoots|sends out)\b/.test(d)) tags.push('SKILLSHOT');
+  if (/\b(?:area of effect|nearby enemies|aoe|all enemies in|radius|surrounding)\b/.test(d)) tags.push('AOE');
+
+  if (tags.length === 0) tags.push('TARGET / COMBAT');
+  return tags.slice(0, 4);
+};
+
+// Tag styling helper
+const getTagBadgeStyle = (tag: string): string => {
+  switch (tag) {
+    case 'PASSIVE':
+      return 'bg-purple-100/90 text-purple-900 border-purple-300';
+    case 'SKILLSHOT':
+      return 'bg-sky-100/90 text-sky-900 border-sky-300';
+    case 'AOE':
+      return 'bg-amber-100/90 text-amber-900 border-amber-300';
+    case 'SLOW':
+      return 'bg-teal-100/90 text-teal-900 border-teal-300';
+    case 'ROOT':
+    case 'STUN':
+    case 'SUPPRESSION':
+    case 'CHARM':
+    case 'FEAR':
+      return 'bg-rose-100/90 text-rose-900 border-rose-300 font-bold';
+    case 'DISPLACEMENT':
+      return 'bg-orange-100/90 text-orange-900 border-orange-300';
+    case 'MOBILITY':
+      return 'bg-emerald-100/90 text-emerald-900 border-emerald-300';
+    case 'SHIELD':
+    case 'HEAL':
+    case 'SUSTAIN':
+      return 'bg-green-100/90 text-green-900 border-green-300';
+    case 'TRUE DMG / EXECUTE':
+      return 'bg-red-100/90 text-red-900 border-red-300 font-bold';
+    case 'GLOBAL':
+    case 'LONG RANGE':
+      return 'bg-indigo-100/90 text-indigo-900 border-indigo-300 font-bold';
+    case 'BUFF / RAMP':
+      return 'bg-yellow-100/90 text-yellow-900 border-yellow-300';
+    default:
+      return 'bg-slate-100 text-slate-800 border-slate-300';
+  }
+};
+
+// Stat formatting helpers
+const formatCooldown = (cd?: string): string => {
+  if (!cd || cd === '0') return 'No CD';
+  const parts = cd.split('/');
+  if (parts.length > 1 && parts[0] !== parts[parts.length - 1]) {
+    return `${parts[0]}s ➔ ${parts[parts.length - 1]}s`;
+  }
+  return `${parts[0]}s`;
+};
+
+const formatCost = (cost?: string, costType?: string, partype?: string): string => {
+  if (!cost || cost === '0') return 'No Cost';
+  const trimmedType = (costType || '').trim();
+  const resource = trimmedType && !trimmedType.startsWith('{{') ? trimmedType : (partype || 'Mana');
+  const parts = cost.split('/');
+  if (parts.length > 1 && parts[0] !== parts[parts.length - 1]) {
+    return `${parts[0]} ➔ ${parts[parts.length - 1]} ${resource}`;
+  }
+  return `${parts[0]} ${resource}`;
+};
+
+const formatRange = (range?: string): string => {
+  if (!range || range === '0' || range.toLowerCase() === 'self') return 'Self';
+  if (range === '25000' || range.toLowerCase() === 'global') return 'Global';
+  return `${range} Range`;
+};
+
+// Dynamic tactical cue synthesizer (when no handcrafted cue exists)
+const getCombatApplication = (
+  key: AbilityKey,
+  tags: string[],
+  handcraftedWhenToUse?: string
+): string => {
+  if (handcraftedWhenToUse && !isGenericSlop(handcraftedWhenToUse)) {
+    return handcraftedWhenToUse;
+  }
+
+  if (
+    tags.includes('STUN') ||
+    tags.includes('ROOT') ||
+    tags.includes('CHARM') ||
+    tags.includes('SUPPRESSION') ||
+    tags.includes('DISPLACEMENT')
+  ) {
+    return 'Lead initiation or layer immediately onto allied crowd control to guarantee hits.';
+  }
+  if (tags.includes('GLOBAL') || tags.includes('LONG RANGE')) {
+    return 'Snipe escaping targets or assist sidelane skirmishes from long distance.';
+  }
+  if (tags.includes('TRUE DMG / EXECUTE')) {
+    return 'Save for low-health targets to maximize missing-health burst and secure takedowns.';
+  }
+  if (tags.includes('MOBILITY')) {
+    return 'Hold for dodging lethal skillshots, navigating terrain, or aggressively closing the gap.';
+  }
+  if (tags.includes('SHIELD') || tags.includes('HEAL')) {
+    return 'Pop during enemy burst trades or tower dives to negate incoming damage.';
+  }
+  if (tags.includes('SLOW')) {
+    return 'Cast to peel approaching threats or lock down retreating targets for follow-up attacks.';
+  }
+  if (key === 'PASSIVE') {
+    return 'Track status and stack counters to time favorable trading windows.';
+  }
+  if (key === 'R') {
+    return 'Deploy in teamfight clashes to turn skirmishes and secure decisive advantages.';
+  }
+  if (key === 'Q') {
+    return 'Cast to poke, contest minion waves, or initiate short trades.';
+  }
+  return 'Weave between basic attacks to maximize spell rotation efficiency.';
+};
+
 export const AbilityCards: React.FC<AbilityCardsProps> = ({
   version,
   champion,
@@ -19,26 +212,8 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 }) => {
   const { registerHover, unregisterHover } = usePinnedCards();
   const { isMobile, isTouch } = useDevice();
-
-  const isGeneric = (text: string) =>
-    !text ||
-    text.includes('Innate passive ability') ||
-    text.includes('Primary bread-and-butter skill') ||
-    text.includes('Secondary utility, defensive') ||
-    text.includes('Mobility dash, crowd control') ||
-    text.includes('High-impact ultimate ability');
-
-  const passiveTldr = isGeneric(tactics.plainAbilities.passive.tldr) && champion.passive.description
-    ? cleanDDragonText(champion.passive.description)
-    : tactics.plainAbilities.passive.tldr;
-
-  const getSpellTldr = (idx: number, fallback: string) => {
-    const spell = champion.spells[idx];
-    if (isGeneric(fallback) && spell?.description) {
-      return cleanDDragonText(spell.description);
-    }
-    return fallback;
-  };
+  const [viewMode, setViewMode] = useState<'deck' | 'inspector'>('deck');
+  const [focusedKey, setFocusedKey] = useState<AbilityKey>('Q');
 
   // Parse skill max order (e.g. "Q > E > W" -> ['Q', 'E', 'W'])
   const parsedMaxOrder = useMemo(() => {
@@ -51,7 +226,26 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 
   const [firstMaxKey, secondMaxKey, thirdMaxKey] = parsedMaxOrder;
 
-  // Calculate standard 1-18 level progression matrix based on max order
+  // Spell lookup helpers
+  const spellKeyToIndex: Record<string, number> = { Q: 0, W: 1, E: 2, R: 3 };
+
+  const getSpellIcon = (key: string) => {
+    const idx = spellKeyToIndex[key];
+    if (idx !== undefined && champion.spells[idx]) {
+      return getSpellIconUrl(version, champion.spells[idx].image.full);
+    }
+    return '';
+  };
+
+  const getSpellName = (key: string) => {
+    const idx = spellKeyToIndex[key];
+    if (idx !== undefined && champion.spells[idx]) {
+      return champion.spells[idx].name;
+    }
+    return key;
+  };
+
+  // 1-18 Level Progression Matrix calculation
   const skillMatrix = useMemo(() => {
     const allocation: Record<number, 'Q' | 'W' | 'E' | 'R'> = {
       1: firstMaxKey,
@@ -83,107 +277,144 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 
     for (let lvl = 1; lvl <= 18; lvl++) {
       const key = allocation[lvl];
-      if (key) {
-        rows[key].add(lvl);
-      }
+      if (key) rows[key].add(lvl);
     }
 
     return { allocation, rows };
   }, [firstMaxKey, secondMaxKey, thirdMaxKey]);
 
-  // Spell lookup helpers
-  const spellKeyToIndex: Record<string, number> = { Q: 0, W: 1, E: 2, R: 3 };
+  // Build authentic, zero-slop ability data array
+  const abilitiesData = useMemo(() => {
+    const qSpell = champion.spells[0];
+    const wSpell = champion.spells[1];
+    const eSpell = champion.spells[2];
+    const rSpell = champion.spells[3];
 
-  const getSpellIcon = (key: string) => {
-    const idx = spellKeyToIndex[key];
-    if (idx !== undefined && champion.spells[idx]) {
-      return getSpellIconUrl(version, champion.spells[idx].image.full);
-    }
-    return '';
-  };
+    // Description resolution (Riot DataDragon clean text without filler)
+    const passiveDesc = champion.passive?.description
+      ? cleanDDragonText(champion.passive.description)
+      : tactics.plainAbilities?.passive?.tldr || '';
 
-  const getSpellName = (key: string) => {
-    const idx = spellKeyToIndex[key];
-    if (idx !== undefined && champion.spells[idx]) {
-      return champion.spells[idx].name;
-    }
-    return key;
-  };
+    const getDesc = (spell: any, fallback: string) => {
+      if (spell?.description) return cleanDDragonText(spell.description);
+      return !isGenericSlop(fallback) ? fallback : '';
+    };
 
-  // Build structured ability cards
-  const abilityCardsData = [
-    {
-      key: 'PASSIVE',
-      name: champion.passive.name,
-      iconUrl: getPassiveIconUrl(version, champion.passive.image.full),
-      tldr: passiveTldr,
-      whenToUse: tactics.plainAbilities.passive.whenToUse,
-      maxRankBadge: null,
-      cooldown: null,
-      cost: 'Innate',
-    },
-    {
-      key: 'Q',
-      name: champion.spells[0]?.name || 'Ability Q',
-      iconUrl: champion.spells[0] ? getSpellIconUrl(version, champion.spells[0].image.full) : '',
-      tldr: getSpellTldr(0, tactics.plainAbilities.q.tldr),
-      whenToUse: tactics.plainAbilities.q.whenToUse,
-      maxRankBadge: firstMaxKey === 'Q' ? '1ST MAX' : secondMaxKey === 'Q' ? '2ND MAX' : '3RD MAX',
-      cooldown: champion.spells[0]?.cooldownBurn,
-      cost: champion.spells[0]?.costBurn && champion.spells[0]?.costBurn !== '0'
-        ? `${champion.spells[0].costBurn} ${champion.partype || 'Mana'}`
-        : 'No Cost',
-    },
-    {
-      key: 'W',
-      name: champion.spells[1]?.name || 'Ability W',
-      iconUrl: champion.spells[1] ? getSpellIconUrl(version, champion.spells[1].image.full) : '',
-      tldr: getSpellTldr(1, tactics.plainAbilities.w.tldr),
-      whenToUse: tactics.plainAbilities.w.whenToUse,
-      maxRankBadge: firstMaxKey === 'W' ? '1ST MAX' : secondMaxKey === 'W' ? '2ND MAX' : '3RD MAX',
-      cooldown: champion.spells[1]?.cooldownBurn,
-      cost: champion.spells[1]?.costBurn && champion.spells[1]?.costBurn !== '0'
-        ? `${champion.spells[1].costBurn} ${champion.partype || 'Mana'}`
-        : 'No Cost',
-    },
-    {
-      key: 'E',
-      name: champion.spells[2]?.name || 'Ability E',
-      iconUrl: champion.spells[2] ? getSpellIconUrl(version, champion.spells[2].image.full) : '',
-      tldr: getSpellTldr(2, tactics.plainAbilities.e.tldr),
-      whenToUse: tactics.plainAbilities.e.whenToUse,
-      maxRankBadge: firstMaxKey === 'E' ? '1ST MAX' : secondMaxKey === 'E' ? '2ND MAX' : '3RD MAX',
-      cooldown: champion.spells[2]?.cooldownBurn,
-      cost: champion.spells[2]?.costBurn && champion.spells[2]?.costBurn !== '0'
-        ? `${champion.spells[2].costBurn} ${champion.partype || 'Mana'}`
-        : 'No Cost',
-    },
-    {
-      key: 'R',
-      name: champion.spells[3]?.name || 'Ultimate',
-      iconUrl: champion.spells[3] ? getSpellIconUrl(version, champion.spells[3].image.full) : '',
-      tldr: getSpellTldr(3, tactics.plainAbilities.r.tldr),
-      whenToUse: tactics.plainAbilities.r.whenToUse,
-      maxRankBadge: 'RANKS AT 6 / 11 / 16',
-      cooldown: champion.spells[3]?.cooldownBurn,
-      cost: champion.spells[3]?.costBurn && champion.spells[3]?.costBurn !== '0'
-        ? `${champion.spells[3].costBurn} ${champion.partype || 'Mana'}`
-        : 'No Cost',
-    },
-  ];
+    const passiveTags = detectAbilityTags('PASSIVE', null, passiveDesc);
+    const qTags = detectAbilityTags('Q', qSpell, qSpell?.description || '');
+    const wTags = detectAbilityTags('W', wSpell, wSpell?.description || '');
+    const eTags = detectAbilityTags('E', eSpell, eSpell?.description || '');
+    const rTags = detectAbilityTags('R', rSpell, rSpell?.description || '');
 
-  const progressionRows: Array<{ key: 'Q' | 'W' | 'E' | 'R'; label: string; priorityBadge: string }> = [
-    { key: 'Q', label: champion.spells[0]?.name || 'Ability Q', priorityBadge: firstMaxKey === 'Q' ? '1st Max' : secondMaxKey === 'Q' ? '2nd Max' : '3rd Max' },
-    { key: 'W', label: champion.spells[1]?.name || 'Ability W', priorityBadge: firstMaxKey === 'W' ? '1st Max' : secondMaxKey === 'W' ? '2nd Max' : '3rd Max' },
-    { key: 'E', label: champion.spells[2]?.name || 'Ability E', priorityBadge: firstMaxKey === 'E' ? '1st Max' : secondMaxKey === 'E' ? '2nd Max' : '3rd Max' },
-    { key: 'R', label: champion.spells[3]?.name || 'Ultimate', priorityBadge: 'Lvls 6, 11, 16' },
+    return [
+      {
+        key: 'PASSIVE' as AbilityKey,
+        shortKey: 'P',
+        name: champion.passive?.name || 'Innate',
+        iconUrl: getPassiveIconUrl(version, champion.passive?.image?.full || ''),
+        tags: passiveTags,
+        cooldownFormatted: 'Innate',
+        costFormatted: 'No Cost',
+        rangeFormatted: 'Self',
+        description: passiveDesc,
+        combatApplication: getCombatApplication('PASSIVE', passiveTags, tactics.plainAbilities?.passive?.whenToUse),
+        maxPriorityBadge: 'INNATE PASSIVE',
+        priorityTier: 'passive' as const,
+        priorityColor: 'border-purple-400 bg-purple-50 text-purple-950',
+      },
+      {
+        key: 'Q' as AbilityKey,
+        shortKey: 'Q',
+        name: qSpell?.name || 'Ability Q',
+        iconUrl: qSpell ? getSpellIconUrl(version, qSpell.image.full) : '',
+        tags: qTags,
+        cooldownFormatted: formatCooldown(qSpell?.cooldownBurn),
+        costFormatted: formatCost(qSpell?.costBurn, qSpell?.costType, champion.partype),
+        rangeFormatted: formatRange(qSpell?.rangeBurn),
+        description: getDesc(qSpell, tactics.plainAbilities?.q?.tldr || ''),
+        combatApplication: getCombatApplication('Q', qTags, tactics.plainAbilities?.q?.whenToUse),
+        maxPriorityBadge: firstMaxKey === 'Q' ? 'MAX 1ST (LVL 1, 4, 5, 7, 9)' : secondMaxKey === 'Q' ? 'MAX 2ND (LVL 2, 8, 10, 12, 13)' : 'MAX 3RD',
+        priorityTier: firstMaxKey === 'Q' ? ('1st' as const) : secondMaxKey === 'Q' ? ('2nd' as const) : ('3rd' as const),
+        priorityColor: firstMaxKey === 'Q' ? 'border-emerald-500 bg-emerald-50 text-emerald-950' : 'border-slate-400 bg-slate-100 text-slate-800',
+      },
+      {
+        key: 'W' as AbilityKey,
+        shortKey: 'W',
+        name: wSpell?.name || 'Ability W',
+        iconUrl: wSpell ? getSpellIconUrl(version, wSpell.image.full) : '',
+        tags: wTags,
+        cooldownFormatted: formatCooldown(wSpell?.cooldownBurn),
+        costFormatted: formatCost(wSpell?.costBurn, wSpell?.costType, champion.partype),
+        rangeFormatted: formatRange(wSpell?.rangeBurn),
+        description: getDesc(wSpell, tactics.plainAbilities?.w?.tldr || ''),
+        combatApplication: getCombatApplication('W', wTags, tactics.plainAbilities?.w?.whenToUse),
+        maxPriorityBadge: firstMaxKey === 'W' ? 'MAX 1ST (LVL 1, 4, 5, 7, 9)' : secondMaxKey === 'W' ? 'MAX 2ND (LVL 2, 8, 10, 12, 13)' : 'MAX 3RD',
+        priorityTier: firstMaxKey === 'W' ? ('1st' as const) : secondMaxKey === 'W' ? ('2nd' as const) : ('3rd' as const),
+        priorityColor: firstMaxKey === 'W' ? 'border-emerald-500 bg-emerald-50 text-emerald-950' : 'border-slate-400 bg-slate-100 text-slate-800',
+      },
+      {
+        key: 'E' as AbilityKey,
+        shortKey: 'E',
+        name: eSpell?.name || 'Ability E',
+        iconUrl: eSpell ? getSpellIconUrl(version, eSpell.image.full) : '',
+        tags: eTags,
+        cooldownFormatted: formatCooldown(eSpell?.cooldownBurn),
+        costFormatted: formatCost(eSpell?.costBurn, eSpell?.costType, champion.partype),
+        rangeFormatted: formatRange(eSpell?.rangeBurn),
+        description: getDesc(eSpell, tactics.plainAbilities?.e?.tldr || ''),
+        combatApplication: getCombatApplication('E', eTags, tactics.plainAbilities?.e?.whenToUse),
+        maxPriorityBadge: firstMaxKey === 'E' ? 'MAX 1ST (LVL 1, 4, 5, 7, 9)' : secondMaxKey === 'E' ? 'MAX 2ND (LVL 2, 8, 10, 12, 13)' : 'MAX 3RD',
+        priorityTier: firstMaxKey === 'E' ? ('1st' as const) : secondMaxKey === 'E' ? ('2nd' as const) : ('3rd' as const),
+        priorityColor: firstMaxKey === 'E' ? 'border-emerald-500 bg-emerald-50 text-emerald-950' : 'border-slate-400 bg-slate-100 text-slate-800',
+      },
+      {
+        key: 'R' as AbilityKey,
+        shortKey: 'R',
+        name: rSpell?.name || 'Ultimate',
+        iconUrl: rSpell ? getSpellIconUrl(version, rSpell.image.full) : '',
+        tags: rTags,
+        cooldownFormatted: formatCooldown(rSpell?.cooldownBurn),
+        costFormatted: formatCost(rSpell?.costBurn, rSpell?.costType, champion.partype),
+        rangeFormatted: formatRange(rSpell?.rangeBurn),
+        description: getDesc(rSpell, tactics.plainAbilities?.r?.tldr || ''),
+        combatApplication: getCombatApplication('R', rTags, tactics.plainAbilities?.r?.whenToUse),
+        maxPriorityBadge: 'ULTIMATE (RANKS AT 6, 11, 16)',
+        priorityTier: 'ult' as const,
+        priorityColor: 'border-amber-500 bg-amber-50 text-amber-950',
+      },
+    ];
+  }, [champion, version, tactics, firstMaxKey, secondMaxKey, thirdMaxKey]);
+
+  // Current focused ability for inspector mode
+  const currentAbility = useMemo(() => {
+    return abilitiesData.find((a) => a.key === focusedKey) || abilitiesData[1];
+  }, [abilitiesData, focusedKey]);
+
+  // Filter combos to prevent generic filler
+  const validCombos = useMemo(() => {
+    return (tactics.combos || []).filter(
+      (c) =>
+        c &&
+        c.name &&
+        c.sequence &&
+        c.sequence.length > 0 &&
+        !isGenericSlop(c.name) &&
+        !isGenericSlop(c.tip)
+    );
+  }, [tactics.combos]);
+
+  const progressionRows = [
+    { key: 'Q' as const, label: champion.spells[0]?.name || 'Ability Q' },
+    { key: 'W' as const, label: champion.spells[1]?.name || 'Ability W' },
+    { key: 'E' as const, label: champion.spells[2]?.name || 'Ability E' },
+    { key: 'R' as const, label: champion.spells[3]?.name || 'Ultimate' },
   ];
 
   return (
     <div className="deadlock-frame w-full rounded-xl p-3 sm:p-5 shadow-sm flex flex-col gap-4 font-['Barlow_Condensed'] bg-[#edf2e8] border-2 border-[#b5c2af]">
       
       {/* ============================================================ */}
-      {/* HEADER & RECOMMENDED SKILL PRIORITY HERO CARDS (MOBALYTICS)  */}
+      {/* 1. HERO SKILL PATH & UPGRADE PRIORITY CARDS                 */}
       {/* ============================================================ */}
       <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
@@ -192,20 +423,20 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
               <span>SKILL PATH</span>
             </span>
             <h2 className="text-lg sm:text-xl font-black uppercase text-slate-900 tracking-wide">
-              Recommended Skill Upgrade Order
+              Skill Upgrade Priority & Level Milestones
             </h2>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-slate-500 font-sans">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Optimal patch {version} solo-queue skill allocation</span>
+            <span>Patch {version} optimal solo-queue skill allocation</span>
           </div>
         </div>
 
-        {/* 3 Priority Cards Connected by Chevrons (Mobalytics style) */}
+        {/* 3 Deadlock Hero Priority Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-3">
           {/* 1st Max */}
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-white border-2 border-emerald-500 shadow-2xs relative overflow-hidden">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 via-white to-white border-2 border-emerald-500 shadow-2xs relative overflow-hidden">
             <div className="w-12 h-12 rounded-lg border-2 border-emerald-600 overflow-hidden bg-slate-900 flex-shrink-0 shadow-sm relative">
               <img
                 src={getSpellIcon(firstMaxKey)}
@@ -218,8 +449,8 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-1.5 py-0.2 rounded font-sans">
-                  1ST MAX
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-1.5 py-0.2 rounded font-sans">
+                  MAX 1ST
                 </span>
                 <span className="text-[11px] font-bold text-slate-500 font-sans">
                   (Levels 1, 4, 5, 7, 9)
@@ -246,7 +477,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-slate-700 bg-slate-200 px-1.5 py-0.2 rounded font-sans">
-                  2ND MAX
+                  MAX 2ND
                 </span>
                 <span className="text-[11px] font-bold text-slate-500 font-sans">
                   (Levels 2, 8, 10, 12, 13)
@@ -273,7 +504,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-slate-700 bg-slate-200 px-1.5 py-0.2 rounded font-sans">
-                  3RD MAX
+                  MAX 3RD
                 </span>
                 <span className="text-[11px] font-bold text-slate-500 font-sans">
                   (Levels 3, 14, 15, 17, 18)
@@ -287,7 +518,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
         </div>
 
         {/* Why Max Explanation Callout */}
-        <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200 text-xs text-slate-800 font-sans flex items-start gap-2">
+        <div className="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200 text-xs text-slate-800 font-sans flex items-start gap-2">
           <Info className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
           <div>
             <strong className="text-emerald-950 font-bold">Why max {tactics.skillMaxOrder}? </strong>
@@ -297,7 +528,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
       </div>
 
       {/* ============================================================ */}
-      {/* 1-18 LEVEL SKILL PROGRESSION MATRIX (MOBALYTICS / OP.GG)     */}
+      {/* 2. 1-18 LEVEL SKILL PROGRESSION MATRIX                       */}
       {/* ============================================================ */}
       <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
         <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
@@ -305,11 +536,11 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
             Levels 1 – 18 Skill Progression Matrix
           </h3>
           <span className="text-[11px] text-slate-500 font-sans font-medium hidden sm:inline">
-            Ultimate [R] automatically ranked at levels 6, 11, and 16
+            Ultimate [R] automatically skilled at levels 6, 11, and 16
           </span>
         </div>
 
-        {/* Responsive Table Container */}
+        {/* Matrix Table */}
         <div className="overflow-x-auto pb-1 no-scrollbar">
           <div className="min-w-[640px]">
             {/* Level Column Headers */}
@@ -333,7 +564,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 
             {/* Spell Rows: Q, W, E, R */}
             <div className="space-y-1.5">
-              {progressionRows.map(({ key, label, priorityBadge }) => {
+              {progressionRows.map(({ key, label }) => {
                 const isUlt = key === 'R';
                 const isFirstMax = firstMaxKey === key;
 
@@ -386,7 +617,6 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                         );
                       }
 
-                      // Skilled at this level!
                       return (
                         <div
                           key={lvl}
@@ -412,155 +642,348 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
       </div>
 
       {/* ============================================================ */}
-      {/* PICTURED ABILITY CARDS WITH COOLDOWNS & COSTS (MOBALYTICS)   */}
+      {/* 3. DEADLOCK ABILITY SYSTEM: CARDS DECK & FOCUS INSPECTOR     */}
       {/* ============================================================ */}
       <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
-        <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
+        
+        {/* Section Header with View Mode Switcher */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
             <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
-              Detailed Ability Breakdown & Tactical Triggers
+              Tactical Abilities HUD & Combat Application
             </h3>
           </div>
-          <span className="text-[11px] text-slate-500 font-sans hidden sm:inline">
-            Hover or pin abilities to inspect kit details
-          </span>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 self-start sm:self-auto">
+            <button
+              onClick={() => setViewMode('deck')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold font-sans transition-all ${
+                viewMode === 'deck'
+                  ? 'bg-white text-emerald-950 shadow-2xs border border-slate-300/80 font-black'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5 text-emerald-600" />
+              <span>All Abilities Deck</span>
+            </button>
+            <button
+              onClick={() => setViewMode('inspector')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold font-sans transition-all ${
+                viewMode === 'inspector'
+                  ? 'bg-white text-emerald-950 shadow-2xs border border-slate-300/80 font-black'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Crosshair className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Focus Inspector</span>
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-2.5">
-          {abilityCardsData.map((ability) => (
-            <div
-              key={ability.key}
-              onMouseEnter={(e) => {
-                if (isMobile || isTouch) return;
-                const mouseX = e.clientX;
-                const mouseY = e.clientY;
-                registerHover({
-                  id: ability.key,
-                  type: 'ability',
-                  title: `[${ability.key}] ${ability.name}`,
-                  category: 'Champion Ability',
-                  data: {
-                    spell: { name: ability.name, image: { full: ability.iconUrl.split('/').pop() || '' } },
-                    abilityTactics: {
-                      tldr: ability.tldr,
-                      plainEnglish: ability.tldr,
-                      whenToUse: ability.whenToUse
-                    },
-                    key: ability.key,
-                    version
-                  },
-                  getCoords: () => ({
-                    x: Math.min(window.innerWidth - 360, Math.max(20, mouseX + 20)),
-                    y: Math.min(window.innerHeight - 250, Math.max(40, mouseY - 40))
-                  })
-                });
-              }}
-              onMouseLeave={() => {
-                if (isMobile || isTouch) return;
-                unregisterHover(ability.key);
-              }}
-              className="p-3 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 sm:hover:border-emerald-500 sm:hover:bg-white sm:hover:shadow-sm transition-all flex flex-col sm:flex-row gap-3 items-start relative group"
-            >
-              {!isMobile && !isTouch && (
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[8.5px] px-1.5 py-0.2 rounded bg-slate-900 text-white font-bold border border-slate-700 font-sans absolute top-2 right-2">
-                  [Tab] to Pin
-                </span>
-              )}
+        {/* ------------------------------------------------------------ */}
+        {/* MODE A: DEADLOCK FOCUS INSPECTOR (HERO TAB BAR)              */}
+        {/* ------------------------------------------------------------ */}
+        {viewMode === 'inspector' && (
+          <div className="space-y-3 mb-2">
+            {/* Deadlock Hotkey Selector Strip */}
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 p-1.5 rounded-xl bg-slate-100 border border-slate-200">
+              {abilitiesData.map((ability) => {
+                const isActive = ability.key === focusedKey;
+                return (
+                  <button
+                    key={ability.key}
+                    onClick={() => setFocusedKey(ability.key)}
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-lg border transition-all ${
+                      isActive
+                        ? 'bg-white border-emerald-500 shadow-sm text-slate-950 scale-[1.02]'
+                        : 'bg-transparent border-transparent hover:bg-white/60 text-slate-600'
+                    }`}
+                  >
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded overflow-hidden bg-slate-900 relative flex-shrink-0 border border-slate-300">
+                      <img
+                        src={ability.iconUrl}
+                        alt={ability.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0 right-0 bg-slate-950/90 text-white text-[9px] font-black px-0.5 rounded-tl font-mono">
+                        {ability.shortKey}
+                      </span>
+                    </div>
+                    <div className="text-center sm:text-left min-w-0">
+                      <span className="block text-[11px] sm:text-xs font-black uppercase truncate font-['Barlow_Condensed']">
+                        [{ability.shortKey}] {ability.name}
+                      </span>
+                      <span className="hidden sm:block text-[9.5px] font-sans text-slate-400 truncate">
+                        {ability.cooldownFormatted}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
 
-              {/* Large Pictured Ability Icon with Key & Status Badges */}
-              <div className="flex sm:flex-col items-center gap-3 sm:gap-2 flex-shrink-0 w-full sm:w-28">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-emerald-500 overflow-hidden bg-slate-900 flex-shrink-0 shadow-sm">
-                  <img
-                    src={ability.iconUrl}
-                    alt={ability.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-0 left-0 bg-slate-950/85 text-emerald-400 font-black text-[11px] px-1.5 py-0.5 rounded-br border-r border-b border-emerald-500/50 font-mono">
-                    {ability.key === 'PASSIVE' ? 'P' : ability.key}
+            {/* Focused Ability Card Display */}
+            <div className="p-4 rounded-xl bg-slate-50/90 border-2 border-emerald-500/80 shadow-sm space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="relative w-14 h-14 rounded-xl border-2 border-emerald-600 overflow-hidden bg-slate-900 shadow-sm flex-shrink-0">
+                    <img
+                      src={currentAbility.iconUrl}
+                      alt={currentAbility.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <span className="absolute top-0 left-0 bg-slate-950/85 text-emerald-400 font-mono font-black text-xs px-1.5 py-0.5 rounded-br border-r border-b border-emerald-500/50">
+                      {currentAbility.shortKey}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xl font-black uppercase text-slate-900 tracking-wide font-['Barlow_Condensed']">
+                        {currentAbility.name}
+                      </h4>
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded border font-sans bg-emerald-50 border-emerald-300 text-emerald-900">
+                        {currentAbility.maxPriorityBadge}
+                      </span>
+                    </div>
+                    {/* Tags */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                      {currentAbility.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={`text-[9.5px] uppercase font-black px-1.5 py-0.2 rounded border font-mono tracking-wider ${getTagBadgeStyle(
+                            tag
+                          )}`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex-1 sm:text-center">
-                  <span className="font-mono text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 border border-emerald-300 px-1.5 py-0.2 rounded block sm:inline-block">
-                    {ability.key}
+                {/* Stat Chips */}
+                <div className="flex items-center gap-2 flex-wrap font-mono text-xs">
+                  <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-1 rounded border border-slate-200 shadow-2xs">
+                    <Clock className="w-3.5 h-3.5 text-slate-500" />
+                    <span>{currentAbility.cooldownFormatted}</span>
                   </span>
-                  {ability.maxRankBadge && (
-                    <span className="text-[9.5px] font-black uppercase text-slate-600 bg-slate-200/80 px-1.5 py-0.2 rounded block mt-1 font-sans">
-                      {ability.maxRankBadge}
-                    </span>
-                  )}
+                  <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-1 rounded border border-slate-200 shadow-2xs">
+                    <Droplets className="w-3.5 h-3.5 text-sky-600" />
+                    <span>{currentAbility.costFormatted}</span>
+                  </span>
+                  <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-1 rounded border border-slate-200 shadow-2xs">
+                    <Target className="w-3.5 h-3.5 text-rose-500" />
+                    <span>{currentAbility.rangeFormatted}</span>
+                  </span>
                 </div>
               </div>
 
-              {/* Ability Information, Cooldown, Cost, and Tactical Guide */}
-              <div className="flex-1 space-y-2 w-full text-xs sm:text-[13px] font-sans">
-                {/* Name & Resource Bar */}
-                <div className="flex flex-wrap items-center justify-between gap-1 pb-1.5 border-b border-slate-200">
-                  <h4 className="text-base sm:text-lg font-black uppercase text-slate-900 font-['Barlow_Condensed']">
-                    {ability.name}
-                  </h4>
-
-                  <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono">
-                    {ability.cooldown && (
-                      <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
-                        <Clock className="w-3 h-3 text-slate-500" />
-                        <span>{ability.cooldown}s CD</span>
-                      </span>
-                    )}
-                    {ability.cost && (
-                      <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
-                        <Droplets className="w-3 h-3 text-sky-600" />
-                        <span>{ability.cost}</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* What it does */}
-                <p className="text-slate-800 leading-relaxed">
-                  <strong className="text-emerald-900 font-bold">What it does: </strong>
-                  <GlossaryText text={ability.tldr} />
+              {/* What It Does */}
+              <div className="space-y-1 font-sans text-xs sm:text-[13px]">
+                <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block font-['Barlow_Condensed']">
+                  MECHANICS BREAKDOWN
+                </span>
+                <p className="text-slate-800 leading-relaxed bg-white p-3 rounded-lg border border-slate-200">
+                  <GlossaryText text={currentAbility.description} />
                 </p>
+              </div>
 
-                {/* When to press */}
-                <div className="p-2.5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-slate-800 leading-relaxed">
-                  <strong className="text-emerald-950 font-bold">When to press: </strong>
-                  <GlossaryText text={ability.whenToUse} />
+              {/* Combat Application */}
+              <div className="p-3 rounded-lg bg-emerald-50/90 border border-emerald-300 text-xs sm:text-[13px] font-sans flex items-start gap-2.5 shadow-2xs">
+                <Zap className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-emerald-950 font-bold block mb-0.5 font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
+                    COMBAT APPLICATION:
+                  </strong>
+                  <span className="text-slate-800 leading-relaxed">
+                    <GlossaryText text={currentAbility.combatApplication} />
+                  </span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------ */}
+        {/* MODE B: ALL ABILITIES DECK (DEADLOCK STACK CARDS)            */}
+        {/* ------------------------------------------------------------ */}
+        {viewMode === 'deck' && (
+          <div className="space-y-2.5">
+            {abilitiesData.map((ability) => (
+              <div
+                key={ability.key}
+                onMouseEnter={(e) => {
+                  if (isMobile || isTouch) return;
+                  const mouseX = e.clientX;
+                  const mouseY = e.clientY;
+                  registerHover({
+                    id: ability.key,
+                    type: 'ability',
+                    title: `[${ability.shortKey}] ${ability.name}`,
+                    category: 'Champion Ability',
+                    data: {
+                      spell: { name: ability.name, image: { full: ability.iconUrl.split('/').pop() || '' } },
+                      abilityTactics: {
+                        tldr: ability.description,
+                        plainEnglish: ability.description,
+                        whenToUse: ability.combatApplication,
+                      },
+                      key: ability.key,
+                      version,
+                    },
+                    getCoords: () => ({
+                      x: Math.min(window.innerWidth - 360, Math.max(20, mouseX + 20)),
+                      y: Math.min(window.innerHeight - 250, Math.max(40, mouseY - 40)),
+                    }),
+                  });
+                }}
+                onMouseLeave={() => {
+                  if (isMobile || isTouch) return;
+                  unregisterHover(ability.key);
+                }}
+                className="p-3 sm:p-3.5 rounded-xl bg-slate-50/90 border border-slate-200 hover:border-emerald-500 hover:bg-white hover:shadow-sm transition-all flex flex-col sm:flex-row gap-3 items-start relative group"
+              >
+                {!isMobile && !isTouch && (
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[8.5px] px-1.5 py-0.2 rounded bg-slate-900 text-white font-bold border border-slate-700 font-sans absolute top-2 right-2">
+                    [Tab] to Pin
+                  </span>
+                )}
+
+                {/* Left: Embossed Key Badge & Icon Frame */}
+                <div className="flex sm:flex-col items-center gap-3 sm:gap-2 flex-shrink-0 w-full sm:w-28">
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-emerald-500/80 overflow-hidden bg-slate-900 flex-shrink-0 shadow-sm">
+                    <img
+                      src={ability.iconUrl}
+                      alt={ability.name}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Tactile Hotkey Stencil */}
+                    <div className="absolute top-0 left-0 bg-slate-950/90 text-emerald-400 font-mono font-black text-[11px] px-1.5 py-0.5 rounded-br border-r border-b border-emerald-500/50">
+                      {ability.shortKey}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 sm:text-center">
+                    <span className="font-mono text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 border border-emerald-300 px-1.5 py-0.2 rounded block sm:inline-block">
+                      [{ability.shortKey}]
+                    </span>
+                    {ability.maxPriorityBadge && (
+                      <span className="text-[9px] font-black uppercase text-slate-600 bg-slate-200/80 px-1.5 py-0.2 rounded block mt-1 font-sans">
+                        {ability.priorityTier === '1st'
+                          ? '1ST MAX'
+                          : ability.priorityTier === '2nd'
+                          ? '2ND MAX'
+                          : ability.priorityTier === '3rd'
+                          ? '3RD MAX'
+                          : ability.shortKey === 'R'
+                          ? 'ULTIMATE'
+                          : 'PASSIVE'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: Ability Information, Stats, and Tactical Guide */}
+                <div className="flex-1 space-y-2 w-full text-xs sm:text-[13px] font-sans min-w-0">
+                  {/* Name, Tags, & Metric Chips Bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-1 pb-1.5 border-b border-slate-200">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-base sm:text-lg font-black uppercase text-slate-900 font-['Barlow_Condensed'] tracking-wide">
+                        {ability.name}
+                      </h4>
+                      {/* Tags */}
+                      <div className="flex items-center gap-1 flex-wrap">
+                        {ability.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className={`text-[9px] uppercase font-black px-1.5 py-0.2 rounded border font-mono tracking-wider ${getTagBadgeStyle(
+                              tag
+                            )}`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Stat Metrics Bar */}
+                    <div className="flex items-center gap-1.5 flex-wrap text-[11px] font-mono">
+                      {ability.cooldownFormatted !== 'Innate' && (
+                        <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+                          <Clock className="w-3 h-3 text-slate-500" />
+                          <span>{ability.cooldownFormatted}</span>
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+                        <Droplets className="w-3 h-3 text-sky-600" />
+                        <span>{ability.costFormatted}</span>
+                      </span>
+                      {ability.rangeFormatted !== 'Self' && (
+                        <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+                          <Target className="w-3 h-3 text-rose-500" />
+                          <span>{ability.rangeFormatted}</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* What it does (Authentic Riot Mechanics) */}
+                  <p className="text-slate-800 leading-relaxed">
+                    <strong className="text-emerald-950 font-bold font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
+                      What it does:{' '}
+                    </strong>
+                    <GlossaryText text={ability.description} />
+                  </p>
+
+                  {/* Combat Application (Tactical Trigger) */}
+                  <div className="p-2 sm:p-2.5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-slate-800 leading-relaxed flex items-start gap-2 shadow-2xs">
+                    <Zap className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-emerald-950 font-bold font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
+                        Combat Application:{' '}
+                      </strong>
+                      <GlossaryText text={ability.combatApplication} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ============================================================ */}
-      {/* BREAD & BUTTER COMBOS (MOBALYTICS COMBO CARDS)               */}
+      {/* 4. BREAD & BUTTER COMBOS (AUTHENTIC SEQUENCES ONLY)          */}
       {/* ============================================================ */}
-      {tactics.combos.length > 0 && (
+      {validCombos.length > 0 && (
         <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
           <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
             <span className="text-xs sm:text-sm font-black uppercase text-emerald-800 tracking-wider flex items-center gap-1.5 font-['Barlow_Condensed']">
               <Swords className="w-4 h-4 text-emerald-600" />
-              Bread & Butter Combos:
+              Tactical Combat Sequences:
             </span>
             <span className="text-[11px] text-slate-500 font-sans hidden sm:inline">
-              Practice execution in Practice Tool or early lane skirmishes
+              Practice execution in Practice Tool or early skirmishes
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {tactics.combos.map((combo, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-[13px] shadow-2xs">
+            {validCombos.map((combo, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-[13px] shadow-2xs"
+              >
                 <span className="font-black uppercase text-slate-900 block mb-1.5 font-['Barlow_Condensed'] text-sm sm:text-base">
                   {combo.name}:
                 </span>
-                
-                {/* Sequence Chips with Arrows */}
+
+                {/* Step Badges with Directional Arrows */}
                 <div className="flex flex-wrap items-center gap-1.5 mb-2 font-['Barlow_Condensed']">
                   {combo.sequence.map((step, sIdx) => (
                     <React.Fragment key={sIdx}>
-                      <span className="px-2 py-0.5 rounded bg-white text-slate-900 font-black text-xs border border-slate-300 shadow-2xs">
+                      <span className="px-2 py-0.5 rounded bg-white text-slate-900 font-black text-xs border border-slate-300 shadow-2xs font-mono">
                         {step}
                       </span>
                       {sIdx < combo.sequence.length - 1 && (
@@ -571,7 +994,10 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                 </div>
 
                 <p className="text-xs text-slate-700 font-sans leading-relaxed bg-white p-2 rounded-lg border border-slate-200">
-                  <strong className="text-emerald-900 font-bold">Execution Tip:</strong> {combo.tip}
+                  <strong className="text-emerald-900 font-bold font-['Barlow_Condensed'] uppercase tracking-wide">
+                    Execution Tip:
+                  </strong>{' '}
+                  {combo.tip}
                 </p>
               </div>
             ))}
@@ -582,4 +1008,3 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
     </div>
   );
 };
-

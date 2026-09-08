@@ -243,13 +243,20 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   </button>
 
                   {importResult && (
-                    <div className={`p-2.5 rounded border text-xs flex items-center gap-2 ${
-                      importResult.success 
-                        ? 'bg-emerald-50 border-emerald-300 text-emerald-900' 
-                        : 'bg-rose-50 border-rose-300 text-rose-900'
-                    }`}>
-                      {importResult.success ? <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />}
-                      <span>{importResult.message}</span>
+                    <div className="space-y-1.5">
+                      <div className={`p-2.5 rounded border text-xs flex items-center gap-2 ${
+                        importResult.success 
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-900' 
+                          : 'bg-rose-50 border-rose-300 text-rose-900'
+                      }`}>
+                        {importResult.success ? <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />}
+                        <span>{importResult.message}</span>
+                      </div>
+                      {importResult.success && (
+                        <p className="text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 leading-snug">
+                          💡 <strong>Shop Display Tip:</strong> If your in-game shop ever displays shifted to the left or cut off, simply click & drag the bottom-right corner of the in-game shop window to resize it slightly. League will immediately re-render and snap all item columns back into place!
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>

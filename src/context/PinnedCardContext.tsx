@@ -135,7 +135,9 @@ export const PinnedCardProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const handleKeyDown = (e: KeyboardEvent) => {
       // 1. Tab Key: Freeze whatever card is currently hovered in place!
       if (e.key === 'Tab') {
-        if (activeHoverRef.current) {
+        const activeEl = document.activeElement;
+        const isInput = activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName);
+        if (!isInput && activeHoverRef.current) {
           e.preventDefault();
           freezeActiveHover();
         }

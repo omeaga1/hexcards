@@ -26,6 +26,9 @@ export interface SpellDetail {
   tooltip: string;
   cooldownBurn: string;
   costBurn: string;
+  rangeBurn?: string;
+  costType?: string;
+  maxrank?: number;
   image: {
     full: string;
   };
@@ -92,6 +95,7 @@ export interface RuneEntry {
   slot?: string;
   effect: string;
   why?: string;
+  fourWords?: string;
 }
 
 export interface RuneKitGuide {

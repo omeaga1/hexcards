@@ -397,10 +397,21 @@ ipcMain.handle("lcu:importItemSet", async (_event, itemSet) => {
       map: "any",
       mode: "any",
       priority: false,
-      sortrank: 1,
+      sortrank: 0,
       associatedMaps: itemSet.associatedMaps || [11, 12],
       associatedChampions: itemSet.associatedChampions || [],
-      blocks: itemSet.blocks || []
+      blocks: (itemSet.blocks || []).map((b) => ({
+        type: b.type || "Items",
+        recMath: b.recMath ?? false,
+        minSummonerLevel: b.minSummonerLevel ?? -1,
+        maxSummonerLevel: b.maxSummonerLevel ?? -1,
+        showIfSummonerSpell: b.showIfSummonerSpell || "",
+        hideIfSummonerSpell: b.hideIfSummonerSpell || "",
+        items: (b.items || []).map((i) => ({
+          id: String(i.id),
+          count: Number(i.count) || 1
+        }))
+      }))
     };
 
     // Fetch existing item sets to preserve user sets

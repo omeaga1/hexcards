@@ -23,7 +23,9 @@ export interface ChampionMetaBuild {
   keystoneName: string;
   keystoneTldr: string;
   keystoneWhy: string;
+  primaryRunes?: string[];
   secondaryTree: 'Precision' | 'Domination' | 'Sorcery' | 'Resolve' | 'Inspiration';
+  secondaryRunes?: string[];
   statShards: string;
 }
 

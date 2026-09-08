@@ -57,26 +57,63 @@ export const ChampionHero: React.FC<ChampionHeroProps> = ({
         </div>
       </div>
 
-      {/* Right: Spikes Ribbon */}
-      <div className="flex items-center gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5 max-w-full flex-shrink-0">
-        <div className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase flex-shrink-0">
-          <Zap className="w-3 h-3 text-amber-500" />
-          <span>Spikes:</span>
-        </div>
-        <div className="flex items-center gap-1 flex-nowrap">
-          {tactics.powerSpikes.map((spike, idx) => {
-            const cleanSpike = spike
-              .replace(/Level\s*/i, 'Lvl ')
-              .replace(/\s*\([^)]*\)/g, '');
-            return (
-              <span
-                key={idx}
-                className="px-1.5 py-0.2 rounded bg-slate-100 border border-slate-200 text-slate-800 text-[9.5px] font-bold whitespace-nowrap shadow-2xs"
-              >
-                {cleanSpike}
-              </span>
-            );
-          })}
+      {/* Center/Right: 30s Champ Select Quick-Glance Ribbon */}
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+        {/* Quick Skill Max Order */}
+        {tactics.skillMaxOrder && (
+          <div className="flex items-center gap-1 bg-emerald-50/90 border border-emerald-300 px-2 py-0.5 rounded-lg shadow-2xs">
+            <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider font-sans">
+              MAX:
+            </span>
+            <div className="flex items-center gap-1 font-mono text-xs font-black text-emerald-950">
+              {tactics.skillMaxOrder.split(/\s*>\s*/).map((key, idx, arr) => (
+                <React.Fragment key={idx}>
+                  <span className="bg-emerald-600 text-white px-1.5 py-0.2 rounded text-[11px] shadow-2xs">
+                    {key}
+                  </span>
+                  {idx < arr.length - 1 && <span className="text-emerald-400 text-[10px]">›</span>}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Quick Keystone Badge */}
+        {tactics.runeKit?.keystone?.name && (
+          <div className="flex items-center gap-1 bg-slate-100 border border-slate-300 px-2 py-0.5 rounded-lg shadow-2xs">
+            <span className="text-[10px] font-black uppercase text-slate-500 font-sans">
+              KEY:
+            </span>
+            <span className="text-xs font-black uppercase text-slate-900 font-['Barlow_Condensed'] tracking-wide">
+              {tactics.runeKit.keystone.name}
+            </span>
+            <span className="text-[10px] text-slate-500 font-sans font-bold">
+              ({tactics.runeKit.secondaryTree || 'Resolve'})
+            </span>
+          </div>
+        )}
+
+        {/* Spikes Ribbon */}
+        <div className="hidden lg:flex items-center gap-1.5 text-xs overflow-x-auto no-scrollbar py-0.5 flex-shrink-0">
+          <div className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase flex-shrink-0">
+            <Zap className="w-3 h-3 text-amber-500" />
+            <span>Spikes:</span>
+          </div>
+          <div className="flex items-center gap-1 flex-nowrap">
+            {tactics.powerSpikes.map((spike, idx) => {
+              const cleanSpike = spike
+                .replace(/Level\s*/i, 'Lvl ')
+                .replace(/\s*\([^)]*\)/g, '');
+              return (
+                <span
+                  key={idx}
+                  className="px-1.5 py-0.2 rounded bg-slate-100 border border-slate-200 text-slate-800 text-[9.5px] font-bold whitespace-nowrap shadow-2xs"
+                >
+                  {cleanSpike}
+                </span>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

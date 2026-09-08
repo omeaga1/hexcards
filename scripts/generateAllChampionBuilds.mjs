@@ -132,16 +132,28 @@ function parseOpGgResponse(text) {
     // 3rd CoreItems is starter
     const starterNames = parseArray(coreItemMatches[2][2]);
 
-    // Runes: Runes(id, primaryId, "PrimaryTree", [ids], ["Keystone", ...], secId, "SecondaryTree", ...)
-    const runeMatch = text.match(/Runes\(\d+,\d+,"([^"]+)",\[.*?\],\[(.*?)\],\d+,"([^"]+)"/);
+    // Runes: Runes(id, primaryId, "PrimaryTree", [ids], ["Keystone", ...], secId, "SecondaryTree", [secIds], [secNames]...)
+    const runeMatch = text.match(/Runes\(\d+,\d+,"([^"]+)",\[.*?\],\[(.*?)\],\d+,"([^"]+)",\[.*?\],\[(.*?)\](?:,\[.*?\],\[(.*?)\])?/);
     let primaryTree = 'Precision';
     let secondaryTree = 'Resolve';
     let keystoneName = 'Conqueror';
+    let primaryRunes = [];
+    let secondaryRunes = [];
+    let statShards = '+8 Ability Haste • +9 Adaptive Force • +65 Health';
+
     if (runeMatch) {
       primaryTree = runeMatch[1];
-      const runeNames = parseArray(runeMatch[2]);
-      keystoneName = runeNames[0] || 'Conqueror';
+      const pRunes = parseArray(runeMatch[2]);
+      keystoneName = pRunes[0] || 'Conqueror';
+      primaryRunes = pRunes;
       secondaryTree = runeMatch[3];
+      secondaryRunes = parseArray(runeMatch[4]);
+      if (runeMatch[5]) {
+        const shards = parseArray(runeMatch[5]);
+        if (shards.length > 0) {
+          statShards = shards.join(' • ');
+        }
+      }
     }
 
     // Skills: SkillMasteries(["Q","E","W"],...)
@@ -154,19 +166,40 @@ function parseOpGgResponse(text) {
 
     if (!coreIds[0] || !coreNames[0]) return null;
 
+    const UNPURCHASABLE_MAP = {
+      '3040': { id: '3003', name: "Archangel's Staff" },
+      '3042': { id: '3004', name: 'Manamune' },
+      '3121': { id: '3119', name: "Winter's Approach" },
+      '2530': { id: '2526', name: 'Hymn of the Fates' },
+    };
+
+    const cleanItem = (id, name) => {
+      if (UNPURCHASABLE_MAP[id]) {
+        return UNPURCHASABLE_MAP[id];
+      }
+      return { id: id || '', name: name || '' };
+    };
+
+    const item1 = cleanItem(coreIds[0], coreNames[0]);
+    const item2 = cleanItem(coreIds[1] || coreIds[0], coreNames[1] || coreNames[0]);
+    const item3 = cleanItem(coreIds[2] || coreIds[1] || coreIds[0], coreNames[2] || coreNames[1] || coreNames[0]);
+
     return {
-      firstItemId: coreIds[0] || '',
-      firstItemName: coreNames[0] || '',
-      secondItemId: coreIds[1] || coreIds[0],
-      secondItemName: coreNames[1] || coreNames[0],
-      thirdItemId: coreIds[2] || coreIds[1] || coreIds[0],
-      thirdItemName: coreNames[2] || coreNames[1] || coreNames[0],
+      firstItemId: item1.id,
+      firstItemName: item1.name,
+      secondItemId: item2.id,
+      secondItemName: item2.name,
+      thirdItemId: item3.id,
+      thirdItemName: item3.name,
       bootsId: bootIds[0] || '3047',
       bootsName: bootNames[0] || 'Plated Steelcaps',
       starter: starterNames.join(' + ') || "Doran's Blade + Health Potion",
       primaryTree,
       keystoneName,
+      primaryRunes,
       secondaryTree,
+      secondaryRunes,
+      statShards,
       skillMaxOrder
     };
   } catch {
@@ -444,8 +477,10 @@ async function main() {
       keystoneName: buildData.keystoneName,
       keystoneTldr: kInfo.tldr,
       keystoneWhy: kInfo.why,
+      primaryRunes: buildData.primaryRunes || [],
       secondaryTree: buildData.secondaryTree,
-      statShards
+      secondaryRunes: buildData.secondaryRunes || [],
+      statShards: buildData.statShards || statShards
     };
   });
 
