@@ -58,6 +58,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
       a: 'HexCards was built by competitive players frustrated with legacy companion apps that force 30-second unskippable video ads and hog 1.5 GB of RAM via Overwolf. HexCards is free, open-source, and engineered for pure tactical clarity.'
     },
     {
+      q: 'Why does Windows SmartScreen show "Windows protected your PC"?',
+      a: 'This is standard Windows Defender behavior for newly released open-source apps that do not pay thousands of dollars annually for EV corporate signing certificates. HexCards is 100% open-source, safe, and transparent. To install: simply click "More info" and then "Run anyway". You can inspect the entire codebase and automated GitHub release builds anytime on our public GitHub repository.'
+    },
+    {
       q: 'Can I run HexCards on a second monitor or while alt-tabbed?',
       a: 'Yes! HexCards is designed to sit comfortably on a secondary monitor, in a side-by-side window, or alt-tabbed. It also includes an Always-On-Top toggle in the title bar if you prefer to keep your tactical matrix pinned over your client.'
     }
@@ -168,7 +172,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
               className="w-full sm:w-auto flex-1 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/20 hover:shadow-xl transition-all cursor-pointer active:scale-95 group"
             >
               <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
-              <span>Download for Windows</span>
+              <span>Download 1-Click Installer</span>
             </a>
 
             <button
@@ -179,6 +183,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
               <span>Use Web Version</span>
             </button>
 
+          </div>
+
+          {/* Quick Install Reassurance */}
+          <div className="pt-1 flex flex-col items-center justify-center gap-1.5 text-xs text-slate-500 font-sans">
+            <div className="flex items-center gap-3 font-mono text-[11px] text-slate-600 flex-wrap justify-center">
+              <span className="flex items-center gap-1 text-emerald-700 font-bold">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                ⚡ 1-Click Silent Install (3s)
+              </span>
+              <span>•</span>
+              <span>No Account or Sign-Up Needed</span>
+              <span>•</span>
+              <a 
+                href="https://github.com/omeaga1/hexcards/releases" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-slate-500 hover:text-emerald-600 underline decoration-slate-300"
+              >
+                All Releases (v1.0.11)
+              </a>
+            </div>
+            <p className="text-[11px] text-slate-400 max-w-md text-center leading-tight">
+              Windows SmartScreen: Click <span className="font-semibold text-slate-600">"More info"</span> &rarr; <span className="font-semibold text-slate-600">"Run anyway"</span> (Safe & Open Source).
+            </p>
           </div>
 
           {/* Technical Specs Callout */}
@@ -683,7 +711,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
                 Download HexCards
               </h3>
               <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                Download the lightweight <strong className="text-slate-800">HexCards-Setup-1.0.11.exe</strong> installer. It takes about 3 seconds to install silently.
+                Download the lightweight <strong className="text-slate-800">HexCards-Setup-1.0.11.exe</strong> installer. It takes about 3 seconds to install silently. If Windows SmartScreen pops up, click <em>"More info" &rarr; "Run anyway"</em>.
               </p>
             </div>
 
