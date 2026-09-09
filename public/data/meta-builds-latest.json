@@ -1,8 +1,134 @@
 {
   "patch": "16.17.1",
-  "generatedAt": "2026-09-09T03:49:33.675Z",
+  "generatedAt": "2026-09-09T16:13:11.630Z",
   "source": "OP.GG Ranked Solo Queue Analysis via MCP API",
   "builds": {
+    "Aatrox": {
+      "championId": "Aatrox",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Bruiser / Skirmisher",
+      "damageType": "Physical Heavy",
+      "identity": "Aatrox controls the match through high-impact Fighter kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Eclipse Spike",
+        "2-Item Sundered Sky Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "6692",
+      "firstItemName": "Eclipse",
+      "secondItemId": "6610",
+      "secondItemName": "Sundered Sky",
+      "thirdItemId": "6333",
+      "thirdItemName": "Death's Dance",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Precision",
+      "keystoneName": "Conqueror",
+      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
+      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
+      "primaryRunes": [
+        "Conqueror",
+        "Triumph",
+        "Legend: Haste",
+        "Last Stand"
+      ],
+      "secondaryTree": "Resolve",
+      "secondaryRunes": [
+        "Revitalize",
+        "Bone Plating"
+      ],
+      "statShards": "5008 • 5008 • 5001"
+    },
+    "Ahri": {
+      "championId": "Ahri",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Ahri controls the match through high-impact Mage / Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Malignance Spike",
+        "2-Item Shadowflame Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3118",
+      "firstItemName": "Malignance",
+      "secondItemId": "4645",
+      "secondItemName": "Shadowflame",
+      "thirdItemId": "3157",
+      "thirdItemName": "Zhonya's Hourglass",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Domination",
+      "keystoneName": "Electrocute",
+      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
+      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
+      "primaryRunes": [
+        "Electrocute",
+        "Taste of Blood",
+        "Grisly Mementos",
+        "Ultimate Hunter"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Transcendence",
+        "Manaflow Band"
+      ],
+      "statShards": "5005 • 5008 • 5001"
+    },
+    "Alistar": {
+      "championId": "Alistar",
+      "role": "Support",
+      "secondaryRole": "Support",
+      "playstyle": "Engage Vanguard",
+      "damageType": "Physical Heavy",
+      "identity": "Alistar controls the match through high-impact Tank / Support kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Locket of the Iron Solari Spike",
+        "2-Item Zeke's Convergence Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Health Potion + Health Potion",
+      "firstItemId": "3190",
+      "firstItemName": "Locket of the Iron Solari",
+      "secondItemId": "3050",
+      "secondItemName": "Zeke's Convergence",
+      "thirdItemId": "3109",
+      "thirdItemName": "Knight's Vow",
+      "bootsId": "3009",
+      "bootsName": "Boots of Swiftness",
+      "bootsWhy": "Maximum flat movement speed and slow resistance.",
+      "primaryTree": "Resolve",
+      "keystoneName": "Aftershock",
+      "keystoneTldr": "Immobilizing an enemy grants temporary armor and MR before detonating in AoE magic damage.",
+      "keystoneWhy": "Absorbs retaliatory burst when initiating crowd-control engagements.",
+      "primaryRunes": [
+        "Aftershock",
+        "Font of Life",
+        "Bone Plating",
+        "Unflinching"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Hextech Flashtraption",
+        "Cosmic Insight"
+      ],
+      "statShards": "5007 • 5001 • 5001"
+    },
     "Akshan": {
       "championId": "Akshan",
       "role": "Mid",
@@ -87,70 +213,28 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Ahri": {
-      "championId": "Ahri",
-      "role": "Mid",
-      "secondaryRole": "Top",
+    "Amumu": {
+      "championId": "Amumu",
+      "role": "Jungle",
+      "secondaryRole": "Support",
       "playstyle": "Control Mage",
       "damageType": "Magic Heavy",
-      "identity": "Ahri controls the match through high-impact Mage / Assassin kit mechanics and tactical power spikes.",
+      "identity": "Amumu controls the match through high-impact Tank / Support kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Malignance Spike",
-        "2-Item Shadowflame Core Synergy"
+        "1st Item Liandry's Torment Spike",
+        "2-Item Sunfire Aegis Core Synergy"
       ],
-      "skillMaxOrder": "Q > W > E",
+      "skillMaxOrder": "E > Q > W",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3118",
-      "firstItemName": "Malignance",
-      "secondItemId": "4645",
-      "secondItemName": "Shadowflame",
-      "thirdItemId": "3157",
-      "thirdItemName": "Zhonya's Hourglass",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Domination",
-      "keystoneName": "Electrocute",
-      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
-      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
-      "primaryRunes": [
-        "Electrocute",
-        "Taste of Blood",
-        "Grisly Mementos",
-        "Ultimate Hunter"
-      ],
-      "secondaryTree": "Sorcery",
-      "secondaryRunes": [
-        "Transcendence",
-        "Manaflow Band"
-      ],
-      "statShards": "5005 • 5008 • 5001"
-    },
-    "Aatrox": {
-      "championId": "Aatrox",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Bruiser / Skirmisher",
-      "damageType": "Physical Heavy",
-      "identity": "Aatrox controls the match through high-impact Fighter kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Eclipse Spike",
-        "2-Item Sundered Sky Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "6692",
-      "firstItemName": "Eclipse",
-      "secondItemId": "6610",
-      "secondItemName": "Sundered Sky",
-      "thirdItemId": "6333",
-      "thirdItemName": "Death's Dance",
+      "starter": "Mosstomper Seedling + Health Potion",
+      "firstItemId": "6653",
+      "firstItemName": "Liandry's Torment",
+      "secondItemId": "3068",
+      "secondItemName": "Sunfire Aegis",
+      "thirdItemId": "8020",
+      "thirdItemName": "Abyssal Mask",
       "bootsId": "3047",
       "bootsName": "Plated Steelcaps",
       "bootsWhy": "Essential physical attack damage mitigation and armor.",
@@ -164,96 +248,12 @@
         "Legend: Haste",
         "Last Stand"
       ],
-      "secondaryTree": "Resolve",
+      "secondaryTree": "Domination",
       "secondaryRunes": [
-        "Revitalize",
-        "Bone Plating"
+        "Ultimate Hunter",
+        "Cheap Shot"
       ],
-      "statShards": "5008 • 5008 • 5001"
-    },
-    "Alistar": {
-      "championId": "Alistar",
-      "role": "Support",
-      "secondaryRole": "Support",
-      "playstyle": "Engage Vanguard",
-      "damageType": "Physical Heavy",
-      "identity": "Alistar controls the match through high-impact Tank / Support kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Locket of the Iron Solari Spike",
-        "2-Item Zeke's Convergence Core Synergy"
-      ],
-      "skillMaxOrder": "Q > W > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Health Potion + Health Potion",
-      "firstItemId": "3190",
-      "firstItemName": "Locket of the Iron Solari",
-      "secondItemId": "3050",
-      "secondItemName": "Zeke's Convergence",
-      "thirdItemId": "3109",
-      "thirdItemName": "Knight's Vow",
-      "bootsId": "3009",
-      "bootsName": "Boots of Swiftness",
-      "bootsWhy": "Maximum flat movement speed and slow resistance.",
-      "primaryTree": "Resolve",
-      "keystoneName": "Aftershock",
-      "keystoneTldr": "Immobilizing an enemy grants temporary armor and MR before detonating in AoE magic damage.",
-      "keystoneWhy": "Absorbs retaliatory burst when initiating crowd-control engagements.",
-      "primaryRunes": [
-        "Aftershock",
-        "Font of Life",
-        "Bone Plating",
-        "Unflinching"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Hextech Flashtraption",
-        "Cosmic Insight"
-      ],
-      "statShards": "5007 • 5001 • 5001"
-    },
-    "Ambessa": {
-      "championId": "Ambessa",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Burst Assassin",
-      "damageType": "Physical Heavy",
-      "identity": "Ambessa controls the match through high-impact Fighter / Assassin kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Eclipse Spike",
-        "2-Item Spear of Shojin Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "6692",
-      "firstItemName": "Eclipse",
-      "secondItemId": "3161",
-      "secondItemName": "Spear of Shojin",
-      "thirdItemId": "6333",
-      "thirdItemName": "Death's Dance",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Resolve",
-      "keystoneName": "Grasp of the Undying",
-      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
-      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
-      "primaryRunes": [
-        "Grasp of the Undying",
-        "Shield Bash",
-        "Second Wind",
-        "Overgrowth"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Biscuit Delivery"
-      ],
-      "statShards": "5008 • 5008 • 5011"
+      "statShards": "5005 • 5008 • 5001"
     },
     "Annie": {
       "championId": "Annie",
@@ -297,90 +297,6 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Anivia": {
-      "championId": "Anivia",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Anivia controls the match through high-impact Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Tear of the Goddess Spike",
-        "2-Item Rod of Ages Core Synergy"
-      ],
-      "skillMaxOrder": "E > Q > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3070",
-      "firstItemName": "Tear of the Goddess",
-      "secondItemId": "6657",
-      "secondItemName": "Rod of Ages",
-      "thirdItemId": "3003",
-      "thirdItemName": "Archangel's Staff",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Domination",
-      "keystoneName": "Electrocute",
-      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
-      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
-      "primaryRunes": [
-        "Electrocute",
-        "Cheap Shot",
-        "Grisly Mementos",
-        "Relentless Hunter"
-      ],
-      "secondaryTree": "Precision",
-      "secondaryRunes": [
-        "Presence of Mind",
-        "Coup de Grace"
-      ],
-      "statShards": "5005 • 5008 • 5001"
-    },
-    "Amumu": {
-      "championId": "Amumu",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Amumu controls the match through high-impact Tank / Support kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Liandry's Torment Spike",
-        "2-Item Sunfire Aegis Core Synergy"
-      ],
-      "skillMaxOrder": "E > Q > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Mosstomper Seedling + Health Potion",
-      "firstItemId": "6653",
-      "firstItemName": "Liandry's Torment",
-      "secondItemId": "3068",
-      "secondItemName": "Sunfire Aegis",
-      "thirdItemId": "8020",
-      "thirdItemName": "Abyssal Mask",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Precision",
-      "keystoneName": "Conqueror",
-      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
-      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
-      "primaryRunes": [
-        "Conqueror",
-        "Triumph",
-        "Legend: Haste",
-        "Last Stand"
-      ],
-      "secondaryTree": "Domination",
-      "secondaryRunes": [
-        "Ultimate Hunter",
-        "Cheap Shot"
-      ],
-      "statShards": "5005 • 5008 • 5001"
-    },
     "Aphelios": {
       "championId": "Aphelios",
       "role": "ADC",
@@ -422,6 +338,90 @@
         "Cash Back"
       ],
       "statShards": "5005 • 5008 • 5011"
+    },
+    "Ambessa": {
+      "championId": "Ambessa",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Burst Assassin",
+      "damageType": "Physical Heavy",
+      "identity": "Ambessa controls the match through high-impact Fighter / Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Eclipse Spike",
+        "2-Item Spear of Shojin Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "6692",
+      "firstItemName": "Eclipse",
+      "secondItemId": "3161",
+      "secondItemName": "Spear of Shojin",
+      "thirdItemId": "6333",
+      "thirdItemName": "Death's Dance",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Resolve",
+      "keystoneName": "Grasp of the Undying",
+      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
+      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
+      "primaryRunes": [
+        "Grasp of the Undying",
+        "Shield Bash",
+        "Second Wind",
+        "Overgrowth"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Magical Footwear",
+        "Biscuit Delivery"
+      ],
+      "statShards": "5008 • 5008 • 5011"
+    },
+    "Anivia": {
+      "championId": "Anivia",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Anivia controls the match through high-impact Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Tear of the Goddess Spike",
+        "2-Item Rod of Ages Core Synergy"
+      ],
+      "skillMaxOrder": "E > Q > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3070",
+      "firstItemName": "Tear of the Goddess",
+      "secondItemId": "6657",
+      "secondItemName": "Rod of Ages",
+      "thirdItemId": "3003",
+      "thirdItemName": "Archangel's Staff",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Domination",
+      "keystoneName": "Electrocute",
+      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
+      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
+      "primaryRunes": [
+        "Electrocute",
+        "Cheap Shot",
+        "Grisly Mementos",
+        "Relentless Hunter"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Presence of Mind",
+        "Coup de Grace"
+      ],
+      "statShards": "5005 • 5008 • 5001"
     },
     "Ashe": {
       "championId": "Ashe",
@@ -507,6 +507,48 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
+    "Azir": {
+      "championId": "Azir",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Azir controls the match through high-impact Mage / Marksman kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Nashor's Tooth Spike",
+        "2-Item Shadowflame Core Synergy"
+      ],
+      "skillMaxOrder": "W > Q > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3115",
+      "firstItemName": "Nashor's Tooth",
+      "secondItemId": "4645",
+      "secondItemName": "Shadowflame",
+      "thirdItemId": "3089",
+      "thirdItemName": "Rabadon's Deathcap",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Precision",
+      "keystoneName": "Press the Attack",
+      "keystoneTldr": "Hitting 3 consecutive basic attacks deals bonus damage and exposes target for increased damage.",
+      "keystoneWhy": "Drastically amplifies single-target burst in fast attack rotations.",
+      "primaryRunes": [
+        "Press the Attack",
+        "Presence of Mind",
+        "Legend: Alacrity",
+        "Cut Down"
+      ],
+      "secondaryTree": "Resolve",
+      "secondaryRunes": [
+        "Overgrowth",
+        "Bone Plating"
+      ],
+      "statShards": "5005 • 5008 • 5001"
+    },
     "Aurora": {
       "championId": "Aurora",
       "role": "Mid",
@@ -590,48 +632,6 @@
         "Jack Of All Trades"
       ],
       "statShards": "5005 • 5010 • 5001"
-    },
-    "Azir": {
-      "championId": "Azir",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Azir controls the match through high-impact Mage / Marksman kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Nashor's Tooth Spike",
-        "2-Item Shadowflame Core Synergy"
-      ],
-      "skillMaxOrder": "W > Q > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3115",
-      "firstItemName": "Nashor's Tooth",
-      "secondItemId": "4645",
-      "secondItemName": "Shadowflame",
-      "thirdItemId": "3089",
-      "thirdItemName": "Rabadon's Deathcap",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Precision",
-      "keystoneName": "Press the Attack",
-      "keystoneTldr": "Hitting 3 consecutive basic attacks deals bonus damage and exposes target for increased damage.",
-      "keystoneWhy": "Drastically amplifies single-target burst in fast attack rotations.",
-      "primaryRunes": [
-        "Press the Attack",
-        "Presence of Mind",
-        "Legend: Alacrity",
-        "Cut Down"
-      ],
-      "secondaryTree": "Resolve",
-      "secondaryRunes": [
-        "Overgrowth",
-        "Bone Plating"
-      ],
-      "statShards": "5005 • 5008 • 5001"
     },
     "Belveth": {
       "championId": "Belveth",
@@ -885,6 +885,48 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
+    "Chogath": {
+      "championId": "Chogath",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Cho'Gath controls the match through high-impact Tank / Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Hextech Rocketbelt Spike",
+        "2-Item Riftmaker Core Synergy"
+      ],
+      "skillMaxOrder": "E > Q > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3152",
+      "firstItemName": "Hextech Rocketbelt",
+      "secondItemId": "4633",
+      "secondItemName": "Riftmaker",
+      "thirdItemId": "3742",
+      "thirdItemName": "Dead Man's Plate",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Domination",
+      "keystoneName": "Hail of Blades",
+      "keystoneTldr": "Grants an extreme burst of attack speed for the first 3 basic attacks.",
+      "keystoneWhy": "Instantly unloads front-loaded auto attacks and fast passive triggers.",
+      "primaryRunes": [
+        "Hail of Blades",
+        "Cheap Shot",
+        "Grisly Mementos",
+        "Ultimate Hunter"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Axiom Arcanist",
+        "Celerity"
+      ],
+      "statShards": "5008 • 5010 • 5001"
+    },
     "Camille": {
       "championId": "Camille",
       "role": "Support",
@@ -968,48 +1010,6 @@
         "Coup de Grace"
       ],
       "statShards": "5008 • 5008 • 5001"
-    },
-    "Chogath": {
-      "championId": "Chogath",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Cho'Gath controls the match through high-impact Tank / Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Hextech Rocketbelt Spike",
-        "2-Item Riftmaker Core Synergy"
-      ],
-      "skillMaxOrder": "E > Q > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3152",
-      "firstItemName": "Hextech Rocketbelt",
-      "secondItemId": "4633",
-      "secondItemName": "Riftmaker",
-      "thirdItemId": "3742",
-      "thirdItemName": "Dead Man's Plate",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Domination",
-      "keystoneName": "Hail of Blades",
-      "keystoneTldr": "Grants an extreme burst of attack speed for the first 3 basic attacks.",
-      "keystoneWhy": "Instantly unloads front-loaded auto attacks and fast passive triggers.",
-      "primaryRunes": [
-        "Hail of Blades",
-        "Cheap Shot",
-        "Grisly Mementos",
-        "Ultimate Hunter"
-      ],
-      "secondaryTree": "Sorcery",
-      "secondaryRunes": [
-        "Axiom Arcanist",
-        "Celerity"
-      ],
-      "statShards": "5008 • 5010 • 5001"
     },
     "Corki": {
       "championId": "Corki",
@@ -1137,48 +1137,6 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "DrMundo": {
-      "championId": "DrMundo",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Teamfight Tank",
-      "damageType": "Physical Heavy",
-      "identity": "Dr. Mundo controls the match through high-impact Tank / Fighter kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Warmog's Armor Spike",
-        "2-Item Heartsteel Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Shield + Health Potion",
-      "firstItemId": "3083",
-      "firstItemName": "Warmog's Armor",
-      "secondItemId": "3084",
-      "secondItemName": "Heartsteel",
-      "thirdItemId": "3748",
-      "thirdItemName": "Titanic Hydra",
-      "bootsId": "3009",
-      "bootsName": "Boots of Swiftness",
-      "bootsWhy": "Maximum flat movement speed and slow resistance.",
-      "primaryTree": "Resolve",
-      "keystoneName": "Grasp of the Undying",
-      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
-      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
-      "primaryRunes": [
-        "Grasp of the Undying",
-        "Demolish",
-        "Second Wind",
-        "Overgrowth"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Approach Velocity"
-      ],
-      "statShards": "5005 • 5001 • 5001"
-    },
     "Draven": {
       "championId": "Draven",
       "role": "ADC",
@@ -1221,6 +1179,48 @@
       ],
       "statShards": "5005 • 5008 • 5011"
     },
+    "DrMundo": {
+      "championId": "DrMundo",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Teamfight Tank",
+      "damageType": "Physical Heavy",
+      "identity": "Dr. Mundo controls the match through high-impact Tank / Fighter kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Warmog's Armor Spike",
+        "2-Item Heartsteel Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Shield + Health Potion",
+      "firstItemId": "3083",
+      "firstItemName": "Warmog's Armor",
+      "secondItemId": "3084",
+      "secondItemName": "Heartsteel",
+      "thirdItemId": "3748",
+      "thirdItemName": "Titanic Hydra",
+      "bootsId": "3009",
+      "bootsName": "Boots of Swiftness",
+      "bootsWhy": "Maximum flat movement speed and slow resistance.",
+      "primaryTree": "Resolve",
+      "keystoneName": "Grasp of the Undying",
+      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
+      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
+      "primaryRunes": [
+        "Grasp of the Undying",
+        "Demolish",
+        "Second Wind",
+        "Overgrowth"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Magical Footwear",
+        "Approach Velocity"
+      ],
+      "statShards": "5005 • 5001 • 5001"
+    },
     "Ekko": {
       "championId": "Ekko",
       "role": "Jungle",
@@ -1262,48 +1262,6 @@
         "Cosmic Insight"
       ],
       "statShards": "5005 • 5008 • 5001"
-    },
-    "Evelynn": {
-      "championId": "Evelynn",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Evelynn controls the match through high-impact Assassin / Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Dark Seal Spike",
-        "2-Item Lich Bane Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Gustwalker Hatchling + Health Potion",
-      "firstItemId": "1082",
-      "firstItemName": "Dark Seal",
-      "secondItemId": "3100",
-      "secondItemName": "Lich Bane",
-      "thirdItemId": "3041",
-      "thirdItemName": "Mejai's Soulstealer",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Domination",
-      "keystoneName": "Electrocute",
-      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
-      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
-      "primaryRunes": [
-        "Electrocute",
-        "Sudden Impact",
-        "Grisly Mementos",
-        "Relentless Hunter"
-      ],
-      "secondaryTree": "Sorcery",
-      "secondaryRunes": [
-        "Absolute Focus",
-        "Gathering Storm"
-      ],
-      "statShards": "5008 • 5008 • 5001"
     },
     "Elise": {
       "championId": "Elise",
@@ -1388,6 +1346,48 @@
         "Biscuit Delivery"
       ],
       "statShards": "5005 • 5008 • 5001"
+    },
+    "Evelynn": {
+      "championId": "Evelynn",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Evelynn controls the match through high-impact Assassin / Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Dark Seal Spike",
+        "2-Item Lich Bane Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Gustwalker Hatchling + Health Potion",
+      "firstItemId": "1082",
+      "firstItemName": "Dark Seal",
+      "secondItemId": "3100",
+      "secondItemName": "Lich Bane",
+      "thirdItemId": "3041",
+      "thirdItemName": "Mejai's Soulstealer",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Domination",
+      "keystoneName": "Electrocute",
+      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
+      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
+      "primaryRunes": [
+        "Electrocute",
+        "Sudden Impact",
+        "Grisly Mementos",
+        "Relentless Hunter"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Absolute Focus",
+        "Gathering Storm"
+      ],
+      "statShards": "5008 • 5008 • 5001"
     },
     "Fiddlesticks": {
       "championId": "Fiddlesticks",
@@ -1515,6 +1515,48 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
+    "Garen": {
+      "championId": "Garen",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Teamfight Tank",
+      "damageType": "Physical Heavy",
+      "identity": "Garen controls the match through high-impact Fighter / Tank kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Stridebreaker Spike",
+        "2-Item Phantom Dancer Core Synergy"
+      ],
+      "skillMaxOrder": "E > Q > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Shield + Health Potion",
+      "firstItemId": "6631",
+      "firstItemName": "Stridebreaker",
+      "secondItemId": "3046",
+      "secondItemName": "Phantom Dancer",
+      "thirdItemId": "3033",
+      "thirdItemName": "Mortal Reminder",
+      "bootsId": "3006",
+      "bootsName": "Berserker's Greaves",
+      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
+      "primaryTree": "Precision",
+      "keystoneName": "Conqueror",
+      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
+      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
+      "primaryRunes": [
+        "Conqueror",
+        "Triumph",
+        "Legend: Haste",
+        "Last Stand"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Axiom Arcanist",
+        "Celerity"
+      ],
+      "statShards": "5008 • 5008 • 5001"
+    },
     "Galio": {
       "championId": "Galio",
       "role": "Mid",
@@ -1599,48 +1641,6 @@
       ],
       "statShards": "5008 • 5008 • 5011"
     },
-    "Garen": {
-      "championId": "Garen",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Teamfight Tank",
-      "damageType": "Physical Heavy",
-      "identity": "Garen controls the match through high-impact Fighter / Tank kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Stridebreaker Spike",
-        "2-Item Phantom Dancer Core Synergy"
-      ],
-      "skillMaxOrder": "E > Q > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Shield + Health Potion",
-      "firstItemId": "6631",
-      "firstItemName": "Stridebreaker",
-      "secondItemId": "3046",
-      "secondItemName": "Phantom Dancer",
-      "thirdItemId": "3033",
-      "thirdItemName": "Mortal Reminder",
-      "bootsId": "3006",
-      "bootsName": "Berserker's Greaves",
-      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
-      "primaryTree": "Precision",
-      "keystoneName": "Conqueror",
-      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
-      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
-      "primaryRunes": [
-        "Conqueror",
-        "Triumph",
-        "Legend: Haste",
-        "Last Stand"
-      ],
-      "secondaryTree": "Sorcery",
-      "secondaryRunes": [
-        "Axiom Arcanist",
-        "Celerity"
-      ],
-      "statShards": "5008 • 5008 • 5001"
-    },
     "Gnar": {
       "championId": "Gnar",
       "role": "Top",
@@ -1682,6 +1682,48 @@
         "Bone Plating"
       ],
       "statShards": "5005 • 5008 • 5001"
+    },
+    "Gragas": {
+      "championId": "Gragas",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Gragas controls the match through high-impact Fighter / Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Lich Bane Spike",
+        "2-Item Shadowflame Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Gustwalker Hatchling + Health Potion",
+      "firstItemId": "3100",
+      "firstItemName": "Lich Bane",
+      "secondItemId": "4645",
+      "secondItemName": "Shadowflame",
+      "thirdItemId": "3157",
+      "thirdItemName": "Zhonya's Hourglass",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Domination",
+      "keystoneName": "Dark Harvest",
+      "keystoneTldr": "Damaging low-health champions reaps soul essence, dealing ramping bonus damage.",
+      "keystoneWhy": "Enables explosive teamfight execution and resets on low-health carries.",
+      "primaryRunes": [
+        "Dark Harvest",
+        "Sudden Impact",
+        "Grisly Mementos",
+        "Treasure Hunter"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Transcendence",
+        "Waterwalking"
+      ],
+      "statShards": "5008 • 5008 • 5001"
     },
     "Graves": {
       "championId": "Graves",
@@ -1767,48 +1809,6 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Gragas": {
-      "championId": "Gragas",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Gragas controls the match through high-impact Fighter / Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Lich Bane Spike",
-        "2-Item Shadowflame Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Gustwalker Hatchling + Health Potion",
-      "firstItemId": "3100",
-      "firstItemName": "Lich Bane",
-      "secondItemId": "4645",
-      "secondItemName": "Shadowflame",
-      "thirdItemId": "3157",
-      "thirdItemName": "Zhonya's Hourglass",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Domination",
-      "keystoneName": "Dark Harvest",
-      "keystoneTldr": "Damaging low-health champions reaps soul essence, dealing ramping bonus damage.",
-      "keystoneWhy": "Enables explosive teamfight execution and resets on low-health carries.",
-      "primaryRunes": [
-        "Dark Harvest",
-        "Sudden Impact",
-        "Grisly Mementos",
-        "Treasure Hunter"
-      ],
-      "secondaryTree": "Sorcery",
-      "secondaryRunes": [
-        "Transcendence",
-        "Waterwalking"
-      ],
-      "statShards": "5008 • 5008 • 5001"
-    },
     "Hecarim": {
       "championId": "Hecarim",
       "role": "Jungle",
@@ -1893,45 +1893,87 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Hwei": {
-      "championId": "Hwei",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Hwei controls the match through high-impact Mage / Support kit mechanics and tactical power spikes.",
+    "Illaoi": {
+      "championId": "Illaoi",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Teamfight Tank",
+      "damageType": "Physical Heavy",
+      "identity": "Illaoi controls the match through high-impact Fighter / Tank kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Blackfire Torch Spike",
-        "2-Item Liandry's Torment Core Synergy"
+        "1st Item Black Cleaver Spike",
+        "2-Item Iceborn Gauntlet Core Synergy"
       ],
-      "skillMaxOrder": "Q > E > W",
+      "skillMaxOrder": "E > Q > W",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "2503",
-      "firstItemName": "Blackfire Torch",
-      "secondItemId": "6653",
-      "secondItemName": "Liandry's Torment",
-      "thirdItemId": "4645",
-      "thirdItemName": "Shadowflame",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Sorcery",
-      "keystoneName": "Arcane Comet",
-      "keystoneTldr": "Damaging a champion hurls a comet dealing adaptive AoE damage to their location.",
-      "keystoneWhy": "Consistent ranged poke damage that synergizes with ability slows.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "3071",
+      "firstItemName": "Black Cleaver",
+      "secondItemId": "6662",
+      "secondItemName": "Iceborn Gauntlet",
+      "thirdItemId": "3053",
+      "thirdItemName": "Sterak's Gage",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Resolve",
+      "keystoneName": "Grasp of the Undying",
+      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
+      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
       "primaryRunes": [
-        "Arcane Comet",
-        "Manaflow Band",
-        "Transcendence",
-        "Scorch"
+        "Grasp of the Undying",
+        "Demolish",
+        "Bone Plating",
+        "Overgrowth"
       ],
       "secondaryTree": "Precision",
       "secondaryRunes": [
-        "Cut Down",
-        "Legend: Haste"
+        "Presence of Mind",
+        "Last Stand"
+      ],
+      "statShards": "5008 • 5008 • 5001"
+    },
+    "Irelia": {
+      "championId": "Irelia",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Burst Assassin",
+      "damageType": "Physical Heavy",
+      "identity": "Irelia controls the match through high-impact Fighter / Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Blade of The Ruined King Spike",
+        "2-Item Kraken Slayer Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "3153",
+      "firstItemName": "Blade of The Ruined King",
+      "secondItemId": "6672",
+      "secondItemName": "Kraken Slayer",
+      "thirdItemId": "6333",
+      "thirdItemName": "Death's Dance",
+      "bootsId": "3111",
+      "bootsName": "Mercury's Treads",
+      "bootsWhy": "Tenacity to reduce crowd control duration and magic resistance.",
+      "primaryTree": "Precision",
+      "keystoneName": "Conqueror",
+      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
+      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
+      "primaryRunes": [
+        "Conqueror",
+        "Triumph",
+        "Legend: Alacrity",
+        "Last Stand"
+      ],
+      "secondaryTree": "Resolve",
+      "secondaryRunes": [
+        "Unflinching",
+        "Bone Plating"
       ],
       "statShards": "5005 • 5008 • 5001"
     },
@@ -1977,89 +2019,47 @@
       ],
       "statShards": "5007 • 5010 • 5001"
     },
-    "Irelia": {
-      "championId": "Irelia",
+    "Hwei": {
+      "championId": "Hwei",
       "role": "Mid",
       "secondaryRole": "Top",
-      "playstyle": "Burst Assassin",
-      "damageType": "Physical Heavy",
-      "identity": "Irelia controls the match through high-impact Fighter / Assassin kit mechanics and tactical power spikes.",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Hwei controls the match through high-impact Mage / Support kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Blade of The Ruined King Spike",
-        "2-Item Kraken Slayer Core Synergy"
+        "1st Item Blackfire Torch Spike",
+        "2-Item Liandry's Torment Core Synergy"
       ],
-      "skillMaxOrder": "Q > W > E",
+      "skillMaxOrder": "Q > E > W",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "3153",
-      "firstItemName": "Blade of The Ruined King",
-      "secondItemId": "6672",
-      "secondItemName": "Kraken Slayer",
-      "thirdItemId": "6333",
-      "thirdItemName": "Death's Dance",
-      "bootsId": "3111",
-      "bootsName": "Mercury's Treads",
-      "bootsWhy": "Tenacity to reduce crowd control duration and magic resistance.",
-      "primaryTree": "Precision",
-      "keystoneName": "Conqueror",
-      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
-      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "2503",
+      "firstItemName": "Blackfire Torch",
+      "secondItemId": "6653",
+      "secondItemName": "Liandry's Torment",
+      "thirdItemId": "4645",
+      "thirdItemName": "Shadowflame",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Sorcery",
+      "keystoneName": "Arcane Comet",
+      "keystoneTldr": "Damaging a champion hurls a comet dealing adaptive AoE damage to their location.",
+      "keystoneWhy": "Consistent ranged poke damage that synergizes with ability slows.",
       "primaryRunes": [
-        "Conqueror",
-        "Triumph",
-        "Legend: Alacrity",
-        "Last Stand"
-      ],
-      "secondaryTree": "Resolve",
-      "secondaryRunes": [
-        "Unflinching",
-        "Bone Plating"
-      ],
-      "statShards": "5005 • 5008 • 5001"
-    },
-    "Illaoi": {
-      "championId": "Illaoi",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Teamfight Tank",
-      "damageType": "Physical Heavy",
-      "identity": "Illaoi controls the match through high-impact Fighter / Tank kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Black Cleaver Spike",
-        "2-Item Iceborn Gauntlet Core Synergy"
-      ],
-      "skillMaxOrder": "E > Q > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "3071",
-      "firstItemName": "Black Cleaver",
-      "secondItemId": "6662",
-      "secondItemName": "Iceborn Gauntlet",
-      "thirdItemId": "3053",
-      "thirdItemName": "Sterak's Gage",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Resolve",
-      "keystoneName": "Grasp of the Undying",
-      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
-      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
-      "primaryRunes": [
-        "Grasp of the Undying",
-        "Demolish",
-        "Bone Plating",
-        "Overgrowth"
+        "Arcane Comet",
+        "Manaflow Band",
+        "Transcendence",
+        "Scorch"
       ],
       "secondaryTree": "Precision",
       "secondaryRunes": [
-        "Presence of Mind",
-        "Last Stand"
+        "Cut Down",
+        "Legend: Haste"
       ],
-      "statShards": "5008 • 5008 • 5001"
+      "statShards": "5005 • 5008 • 5001"
     },
     "Janna": {
       "championId": "Janna",
@@ -2145,48 +2145,6 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Jhin": {
-      "championId": "Jhin",
-      "role": "ADC",
-      "secondaryRole": "Support",
-      "playstyle": "Sustained Marksman",
-      "damageType": "Magic Heavy",
-      "identity": "Jhin controls the match through high-impact Marksman / Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Hubris Spike",
-        "2-Item The Collector Core Synergy"
-      ],
-      "skillMaxOrder": "Q > W > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "6697",
-      "firstItemName": "Hubris",
-      "secondItemId": "6676",
-      "secondItemName": "The Collector",
-      "thirdItemId": "3031",
-      "thirdItemName": "Infinity Edge",
-      "bootsId": "3009",
-      "bootsName": "Boots of Swiftness",
-      "bootsWhy": "Maximum flat movement speed and slow resistance.",
-      "primaryTree": "Precision",
-      "keystoneName": "Fleet Footwork",
-      "keystoneTldr": "Energized attacks restore health and grant a surging burst of movement speed.",
-      "keystoneWhy": "Provides vital early lane sustain and kiting mobility.",
-      "primaryRunes": [
-        "Fleet Footwork",
-        "Presence of Mind",
-        "Legend: Bloodline",
-        "Coup de Grace"
-      ],
-      "secondaryTree": "Sorcery",
-      "secondaryRunes": [
-        "Celerity",
-        "Gathering Storm"
-      ],
-      "statShards": "5008 • 5008 • 5001"
-    },
     "Jayce": {
       "championId": "Jayce",
       "role": "Mid",
@@ -2226,6 +2184,48 @@
       "secondaryRunes": [
         "Treasure Hunter",
         "Sudden Impact"
+      ],
+      "statShards": "5008 • 5008 • 5001"
+    },
+    "Jhin": {
+      "championId": "Jhin",
+      "role": "ADC",
+      "secondaryRole": "Support",
+      "playstyle": "Sustained Marksman",
+      "damageType": "Magic Heavy",
+      "identity": "Jhin controls the match through high-impact Marksman / Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Hubris Spike",
+        "2-Item The Collector Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "6697",
+      "firstItemName": "Hubris",
+      "secondItemId": "6676",
+      "secondItemName": "The Collector",
+      "thirdItemId": "3031",
+      "thirdItemName": "Infinity Edge",
+      "bootsId": "3009",
+      "bootsName": "Boots of Swiftness",
+      "bootsWhy": "Maximum flat movement speed and slow resistance.",
+      "primaryTree": "Precision",
+      "keystoneName": "Fleet Footwork",
+      "keystoneTldr": "Energized attacks restore health and grant a surging burst of movement speed.",
+      "keystoneWhy": "Provides vital early lane sustain and kiting mobility.",
+      "primaryRunes": [
+        "Fleet Footwork",
+        "Presence of Mind",
+        "Legend: Bloodline",
+        "Coup de Grace"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Celerity",
+        "Gathering Storm"
       ],
       "statShards": "5008 • 5008 • 5001"
     },
@@ -2649,48 +2649,6 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Khazix": {
-      "championId": "Khazix",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Burst Assassin",
-      "damageType": "Physical Heavy",
-      "identity": "Kha'Zix controls the match through high-impact Assassin kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Umbral Glaive Spike",
-        "2-Item Voltaic Cyclosword Core Synergy"
-      ],
-      "skillMaxOrder": "Q > W > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Gustwalker Hatchling + Health Potion",
-      "firstItemId": "3179",
-      "firstItemName": "Umbral Glaive",
-      "secondItemId": "6699",
-      "secondItemName": "Voltaic Cyclosword",
-      "thirdItemId": "3814",
-      "thirdItemName": "Edge of Night",
-      "bootsId": "3158",
-      "bootsName": "Ionian Boots of Lucidity",
-      "bootsWhy": "Ability haste and summoner spell cooldown reduction.",
-      "primaryTree": "Inspiration",
-      "keystoneName": "First Strike",
-      "keystoneTldr": "Damaging enemy champions first grants gold and bonus true damage for 3 seconds.",
-      "keystoneWhy": "Accelerates core item completion while adding true-damage burst.",
-      "primaryRunes": [
-        "First Strike",
-        "Cash Back",
-        "Triple Tonic",
-        "Cosmic Insight"
-      ],
-      "secondaryTree": "Domination",
-      "secondaryRunes": [
-        "Treasure Hunter",
-        "Sudden Impact"
-      ],
-      "statShards": "5008 • 5008 • 5001"
-    },
     "Kennen": {
       "championId": "Kennen",
       "role": "Top",
@@ -2732,6 +2690,48 @@
         "Scorch"
       ],
       "statShards": "5005 • 5008 • 5001"
+    },
+    "Khazix": {
+      "championId": "Khazix",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Burst Assassin",
+      "damageType": "Physical Heavy",
+      "identity": "Kha'Zix controls the match through high-impact Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Umbral Glaive Spike",
+        "2-Item Voltaic Cyclosword Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Gustwalker Hatchling + Health Potion",
+      "firstItemId": "3179",
+      "firstItemName": "Umbral Glaive",
+      "secondItemId": "6699",
+      "secondItemName": "Voltaic Cyclosword",
+      "thirdItemId": "3814",
+      "thirdItemName": "Edge of Night",
+      "bootsId": "3158",
+      "bootsName": "Ionian Boots of Lucidity",
+      "bootsWhy": "Ability haste and summoner spell cooldown reduction.",
+      "primaryTree": "Inspiration",
+      "keystoneName": "First Strike",
+      "keystoneTldr": "Damaging enemy champions first grants gold and bonus true damage for 3 seconds.",
+      "keystoneWhy": "Accelerates core item completion while adding true-damage burst.",
+      "primaryRunes": [
+        "First Strike",
+        "Cash Back",
+        "Triple Tonic",
+        "Cosmic Insight"
+      ],
+      "secondaryTree": "Domination",
+      "secondaryRunes": [
+        "Treasure Hunter",
+        "Sudden Impact"
+      ],
+      "statShards": "5008 • 5008 • 5001"
     },
     "Kindred": {
       "championId": "Kindred",
@@ -3069,6 +3069,48 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
+    "Lissandra": {
+      "championId": "Lissandra",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Lissandra controls the match through high-impact Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Malignance Spike",
+        "2-Item Shadowflame Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3118",
+      "firstItemName": "Malignance",
+      "secondItemId": "4645",
+      "secondItemName": "Shadowflame",
+      "thirdItemId": "3157",
+      "thirdItemName": "Zhonya's Hourglass",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Domination",
+      "keystoneName": "Electrocute",
+      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
+      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
+      "primaryRunes": [
+        "Electrocute",
+        "Cheap Shot",
+        "Grisly Mementos",
+        "Ultimate Hunter"
+      ],
+      "secondaryTree": "Sorcery",
+      "secondaryRunes": [
+        "Transcendence",
+        "Manaflow Band"
+      ],
+      "statShards": "5008 • 5008 • 5001"
+    },
     "Locke": {
       "championId": "Locke",
       "role": "Mid",
@@ -3111,47 +3153,47 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Lissandra": {
-      "championId": "Lissandra",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Lissandra controls the match through high-impact Mage kit mechanics and tactical power spikes.",
+    "Lucian": {
+      "championId": "Lucian",
+      "role": "ADC",
+      "secondaryRole": "Support",
+      "playstyle": "Sustained Marksman",
+      "damageType": "Physical Heavy",
+      "identity": "Lucian controls the match through high-impact Marksman / Assassin kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Malignance Spike",
-        "2-Item Shadowflame Core Synergy"
+        "1st Item Essence Reaver Spike",
+        "2-Item Navori Flickerblade Core Synergy"
       ],
-      "skillMaxOrder": "Q > W > E",
+      "skillMaxOrder": "Q > E > W",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3118",
-      "firstItemName": "Malignance",
-      "secondItemId": "4645",
-      "secondItemName": "Shadowflame",
-      "thirdItemId": "3157",
-      "thirdItemName": "Zhonya's Hourglass",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Domination",
-      "keystoneName": "Electrocute",
-      "keystoneTldr": "Hitting 3 distinct attacks or abilities triggers a massive burst of adaptive damage.",
-      "keystoneWhy": "Guarantees lethal single-target burst in quick trade combos.",
+      "starter": "Doran's Bow + Health Potion + Health Potion",
+      "firstItemId": "3508",
+      "firstItemName": "Essence Reaver",
+      "secondItemId": "6675",
+      "secondItemName": "Navori Flickerblade",
+      "thirdItemId": "3031",
+      "thirdItemName": "Infinity Edge",
+      "bootsId": "3008",
+      "bootsName": "Gluttonous Greaves",
+      "bootsWhy": "Core movement speed and combat mobility.",
+      "primaryTree": "Precision",
+      "keystoneName": "Press the Attack",
+      "keystoneTldr": "Hitting 3 consecutive basic attacks deals bonus damage and exposes target for increased damage.",
+      "keystoneWhy": "Drastically amplifies single-target burst in fast attack rotations.",
       "primaryRunes": [
-        "Electrocute",
-        "Cheap Shot",
-        "Grisly Mementos",
-        "Ultimate Hunter"
+        "Press the Attack",
+        "Presence of Mind",
+        "Legend: Bloodline",
+        "Coup de Grace"
       ],
-      "secondaryTree": "Sorcery",
+      "secondaryTree": "Inspiration",
       "secondaryRunes": [
-        "Transcendence",
-        "Manaflow Band"
+        "Magical Footwear",
+        "Biscuit Delivery"
       ],
-      "statShards": "5008 • 5008 • 5001"
+      "statShards": "5005 • 5008 • 5001"
     },
     "Lulu": {
       "championId": "Lulu",
@@ -3236,48 +3278,6 @@
         "Cheap Shot"
       ],
       "statShards": "5008 • 5008 • 5001"
-    },
-    "Lucian": {
-      "championId": "Lucian",
-      "role": "ADC",
-      "secondaryRole": "Support",
-      "playstyle": "Sustained Marksman",
-      "damageType": "Physical Heavy",
-      "identity": "Lucian controls the match through high-impact Marksman / Assassin kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Essence Reaver Spike",
-        "2-Item Navori Flickerblade Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Bow + Health Potion + Health Potion",
-      "firstItemId": "3508",
-      "firstItemName": "Essence Reaver",
-      "secondItemId": "6675",
-      "secondItemName": "Navori Flickerblade",
-      "thirdItemId": "3031",
-      "thirdItemName": "Infinity Edge",
-      "bootsId": "3008",
-      "bootsName": "Gluttonous Greaves",
-      "bootsWhy": "Core movement speed and combat mobility.",
-      "primaryTree": "Precision",
-      "keystoneName": "Press the Attack",
-      "keystoneTldr": "Hitting 3 consecutive basic attacks deals bonus damage and exposes target for increased damage.",
-      "keystoneWhy": "Drastically amplifies single-target burst in fast attack rotations.",
-      "primaryRunes": [
-        "Press the Attack",
-        "Presence of Mind",
-        "Legend: Bloodline",
-        "Coup de Grace"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Biscuit Delivery"
-      ],
-      "statShards": "5005 • 5008 • 5001"
     },
     "Malphite": {
       "championId": "Malphite",
@@ -3699,48 +3699,6 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Naafiri": {
-      "championId": "Naafiri",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Burst Assassin",
-      "damageType": "Physical Heavy",
-      "identity": "Naafiri controls the match through high-impact Assassin / Fighter kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Voltaic Cyclosword Spike",
-        "2-Item Axiom Arc Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "6699",
-      "firstItemName": "Voltaic Cyclosword",
-      "secondItemId": "6696",
-      "secondItemName": "Axiom Arc",
-      "thirdItemId": "6694",
-      "thirdItemName": "Serylda's Grudge",
-      "bootsId": "3008",
-      "bootsName": "Gluttonous Greaves",
-      "bootsWhy": "Core movement speed and combat mobility.",
-      "primaryTree": "Sorcery",
-      "keystoneName": "Deathfire Touch",
-      "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
-      "keystoneWhy": "Optimal keystone for trading cadence and primary spell kit.",
-      "primaryRunes": [
-        "Deathfire Touch",
-        "Manaflow Band",
-        "Transcendence",
-        "Scorch"
-      ],
-      "secondaryTree": "Precision",
-      "secondaryRunes": [
-        "Cut Down",
-        "Legend: Haste"
-      ],
-      "statShards": "5008 • 5008 • 5001"
-    },
     "Nami": {
       "championId": "Nami",
       "role": "Support",
@@ -3780,6 +3738,48 @@
       "secondaryRunes": [
         "Revitalize",
         "Bone Plating"
+      ],
+      "statShards": "5008 • 5008 • 5001"
+    },
+    "Naafiri": {
+      "championId": "Naafiri",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Burst Assassin",
+      "damageType": "Physical Heavy",
+      "identity": "Naafiri controls the match through high-impact Assassin / Fighter kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Voltaic Cyclosword Spike",
+        "2-Item Axiom Arc Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "6699",
+      "firstItemName": "Voltaic Cyclosword",
+      "secondItemId": "6696",
+      "secondItemName": "Axiom Arc",
+      "thirdItemId": "6694",
+      "thirdItemName": "Serylda's Grudge",
+      "bootsId": "3008",
+      "bootsName": "Gluttonous Greaves",
+      "bootsWhy": "Core movement speed and combat mobility.",
+      "primaryTree": "Sorcery",
+      "keystoneName": "Deathfire Touch",
+      "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
+      "keystoneWhy": "Optimal keystone for trading cadence and primary spell kit.",
+      "primaryRunes": [
+        "Deathfire Touch",
+        "Manaflow Band",
+        "Transcendence",
+        "Scorch"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Cut Down",
+        "Legend: Haste"
       ],
       "statShards": "5008 • 5008 • 5001"
     },
@@ -3825,48 +3825,6 @@
       ],
       "statShards": "5007 • 5001 • 5001"
     },
-    "Neeko": {
-      "championId": "Neeko",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Neeko controls the match through high-impact Mage / Support kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Hextech Rocketbelt Spike",
-        "2-Item Stormsurge Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3152",
-      "firstItemName": "Hextech Rocketbelt",
-      "secondItemId": "4646",
-      "secondItemName": "Stormsurge",
-      "thirdItemId": "3157",
-      "thirdItemName": "Zhonya's Hourglass",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Sorcery",
-      "keystoneName": "Arcane Comet",
-      "keystoneTldr": "Damaging a champion hurls a comet dealing adaptive AoE damage to their location.",
-      "keystoneWhy": "Consistent ranged poke damage that synergizes with ability slows.",
-      "primaryRunes": [
-        "Arcane Comet",
-        "Manaflow Band",
-        "Transcendence",
-        "Scorch"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Biscuit Delivery",
-        "Cosmic Insight"
-      ],
-      "statShards": "5005 • 5008 • 5001"
-    },
     "Nautilus": {
       "championId": "Nautilus",
       "role": "Support",
@@ -3908,6 +3866,48 @@
         "Cosmic Insight"
       ],
       "statShards": "5007 • 5001 • 5001"
+    },
+    "Neeko": {
+      "championId": "Neeko",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Neeko controls the match through high-impact Mage / Support kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Hextech Rocketbelt Spike",
+        "2-Item Stormsurge Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3152",
+      "firstItemName": "Hextech Rocketbelt",
+      "secondItemId": "4646",
+      "secondItemName": "Stormsurge",
+      "thirdItemId": "3157",
+      "thirdItemName": "Zhonya's Hourglass",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Sorcery",
+      "keystoneName": "Arcane Comet",
+      "keystoneTldr": "Damaging a champion hurls a comet dealing adaptive AoE damage to their location.",
+      "keystoneWhy": "Consistent ranged poke damage that synergizes with ability slows.",
+      "primaryRunes": [
+        "Arcane Comet",
+        "Manaflow Band",
+        "Transcendence",
+        "Scorch"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Biscuit Delivery",
+        "Cosmic Insight"
+      ],
+      "statShards": "5005 • 5008 • 5001"
     },
     "Nidalee": {
       "championId": "Nidalee",
@@ -3990,6 +3990,48 @@
       "secondaryRunes": [
         "Cash Back",
         "Cosmic Insight"
+      ],
+      "statShards": "5005 • 5008 • 5001"
+    },
+    "Nocturne": {
+      "championId": "Nocturne",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Burst Assassin",
+      "damageType": "Physical Heavy",
+      "identity": "Nocturne controls the match through high-impact Fighter / Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Profane Hydra Spike",
+        "2-Item Axiom Arc Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Scorchclaw Pup + Health Potion",
+      "firstItemId": "6698",
+      "firstItemName": "Profane Hydra",
+      "secondItemId": "6696",
+      "secondItemName": "Axiom Arc",
+      "thirdItemId": "6699",
+      "thirdItemName": "Voltaic Cyclosword",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Domination",
+      "keystoneName": "Hail of Blades",
+      "keystoneTldr": "Grants an extreme burst of attack speed for the first 3 basic attacks.",
+      "keystoneWhy": "Instantly unloads front-loaded auto attacks and fast passive triggers.",
+      "primaryRunes": [
+        "Hail of Blades",
+        "Sudden Impact",
+        "Grisly Mementos",
+        "Ultimate Hunter"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Legend: Alacrity",
+        "Triumph"
       ],
       "statShards": "5005 • 5008 • 5001"
     },
@@ -4076,48 +4118,6 @@
         "Celerity"
       ],
       "statShards": "5008 • 5008 • 5001"
-    },
-    "Nocturne": {
-      "championId": "Nocturne",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Burst Assassin",
-      "damageType": "Physical Heavy",
-      "identity": "Nocturne controls the match through high-impact Fighter / Assassin kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Profane Hydra Spike",
-        "2-Item Axiom Arc Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Scorchclaw Pup + Health Potion",
-      "firstItemId": "6698",
-      "firstItemName": "Profane Hydra",
-      "secondItemId": "6696",
-      "secondItemName": "Axiom Arc",
-      "thirdItemId": "6699",
-      "thirdItemName": "Voltaic Cyclosword",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Domination",
-      "keystoneName": "Hail of Blades",
-      "keystoneTldr": "Grants an extreme burst of attack speed for the first 3 basic attacks.",
-      "keystoneWhy": "Instantly unloads front-loaded auto attacks and fast passive triggers.",
-      "primaryRunes": [
-        "Hail of Blades",
-        "Sudden Impact",
-        "Grisly Mementos",
-        "Ultimate Hunter"
-      ],
-      "secondaryTree": "Precision",
-      "secondaryRunes": [
-        "Legend: Alacrity",
-        "Triumph"
-      ],
-      "statShards": "5005 • 5008 • 5001"
     },
     "Orianna": {
       "championId": "Orianna",
@@ -4455,6 +4455,48 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
+    "Rammus": {
+      "championId": "Rammus",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Teamfight Tank",
+      "damageType": "Physical Heavy",
+      "identity": "Rammus controls the match through high-impact Tank kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Thornmail Spike",
+        "2-Item Sunfire Aegis Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Gustwalker Hatchling + Health Potion",
+      "firstItemId": "3075",
+      "firstItemName": "Thornmail",
+      "secondItemId": "3068",
+      "secondItemName": "Sunfire Aegis",
+      "thirdItemId": "6665",
+      "thirdItemName": "Jak'Sho",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Resolve",
+      "keystoneName": "Aftershock",
+      "keystoneTldr": "Immobilizing an enemy grants temporary armor and MR before detonating in AoE magic damage.",
+      "keystoneWhy": "Absorbs retaliatory burst when initiating crowd-control engagements.",
+      "primaryRunes": [
+        "Aftershock",
+        "Font of Life",
+        "Conditioning",
+        "Unflinching"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Legend: Alacrity",
+        "Triumph"
+      ],
+      "statShards": "5005 • 5001 • 5001"
+    },
     "RekSai": {
       "championId": "RekSai",
       "role": "Jungle",
@@ -4538,48 +4580,6 @@
         "Cosmic Insight"
       ],
       "statShards": "5007 • 5001 • 5001"
-    },
-    "Rammus": {
-      "championId": "Rammus",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Teamfight Tank",
-      "damageType": "Physical Heavy",
-      "identity": "Rammus controls the match through high-impact Tank kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Thornmail Spike",
-        "2-Item Sunfire Aegis Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Gustwalker Hatchling + Health Potion",
-      "firstItemId": "3075",
-      "firstItemName": "Thornmail",
-      "secondItemId": "3068",
-      "secondItemName": "Sunfire Aegis",
-      "thirdItemId": "6665",
-      "thirdItemName": "Jak'Sho",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Resolve",
-      "keystoneName": "Aftershock",
-      "keystoneTldr": "Immobilizing an enemy grants temporary armor and MR before detonating in AoE magic damage.",
-      "keystoneWhy": "Absorbs retaliatory burst when initiating crowd-control engagements.",
-      "primaryRunes": [
-        "Aftershock",
-        "Font of Life",
-        "Conditioning",
-        "Unflinching"
-      ],
-      "secondaryTree": "Precision",
-      "secondaryRunes": [
-        "Legend: Alacrity",
-        "Triumph"
-      ],
-      "statShards": "5005 • 5001 • 5001"
     },
     "Renata": {
       "championId": "Renata",
@@ -4917,48 +4917,6 @@
       ],
       "statShards": "5005 • 5001 • 5001"
     },
-    "Seraphine": {
-      "championId": "Seraphine",
-      "role": "ADC",
-      "secondaryRole": "Support",
-      "playstyle": "Sustained Marksman",
-      "damageType": "Magic Heavy",
-      "identity": "Seraphine controls the match through high-impact Support / Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Tear of the Goddess Spike",
-        "2-Item Blackfire Torch Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3070",
-      "firstItemName": "Tear of the Goddess",
-      "secondItemId": "2503",
-      "secondItemName": "Blackfire Torch",
-      "thirdItemId": "3003",
-      "thirdItemName": "Archangel's Staff",
-      "bootsId": "3158",
-      "bootsName": "Ionian Boots of Lucidity",
-      "bootsWhy": "Ability haste and summoner spell cooldown reduction.",
-      "primaryTree": "Sorcery",
-      "keystoneName": "Arcane Comet",
-      "keystoneTldr": "Damaging a champion hurls a comet dealing adaptive AoE damage to their location.",
-      "keystoneWhy": "Consistent ranged poke damage that synergizes with ability slows.",
-      "primaryRunes": [
-        "Arcane Comet",
-        "Manaflow Band",
-        "Transcendence",
-        "Gathering Storm"
-      ],
-      "secondaryTree": "Precision",
-      "secondaryRunes": [
-        "Cut Down",
-        "Legend: Haste"
-      ],
-      "statShards": "5007 • 5008 • 5011"
-    },
     "Senna": {
       "championId": "Senna",
       "role": "ADC",
@@ -5001,47 +4959,47 @@
       ],
       "statShards": "5008 • 5010 • 5001"
     },
-    "Shaco": {
-      "championId": "Shaco",
-      "role": "Jungle",
+    "Seraphine": {
+      "championId": "Seraphine",
+      "role": "ADC",
       "secondaryRole": "Support",
-      "playstyle": "Burst Assassin",
-      "damageType": "Physical Heavy",
-      "identity": "Shaco controls the match through high-impact Assassin kit mechanics and tactical power spikes.",
+      "playstyle": "Sustained Marksman",
+      "damageType": "Magic Heavy",
+      "identity": "Seraphine controls the match through high-impact Support / Mage kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Blackfire Torch Spike",
-        "2-Item Liandry's Torment Core Synergy"
+        "1st Item Tear of the Goddess Spike",
+        "2-Item Blackfire Torch Core Synergy"
       ],
-      "skillMaxOrder": "E > Q > W",
+      "skillMaxOrder": "Q > E > W",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Gustwalker Hatchling + Health Potion",
-      "firstItemId": "2503",
-      "firstItemName": "Blackfire Torch",
-      "secondItemId": "6653",
-      "secondItemName": "Liandry's Torment",
-      "thirdItemId": "4005",
-      "thirdItemName": "Imperial Mandate",
-      "bootsId": "3006",
-      "bootsName": "Berserker's Greaves",
-      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
-      "primaryTree": "Domination",
-      "keystoneName": "Hail of Blades",
-      "keystoneTldr": "Grants an extreme burst of attack speed for the first 3 basic attacks.",
-      "keystoneWhy": "Instantly unloads front-loaded auto attacks and fast passive triggers.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3070",
+      "firstItemName": "Tear of the Goddess",
+      "secondItemId": "2503",
+      "secondItemName": "Blackfire Torch",
+      "thirdItemId": "3003",
+      "thirdItemName": "Archangel's Staff",
+      "bootsId": "3158",
+      "bootsName": "Ionian Boots of Lucidity",
+      "bootsWhy": "Ability haste and summoner spell cooldown reduction.",
+      "primaryTree": "Sorcery",
+      "keystoneName": "Arcane Comet",
+      "keystoneTldr": "Damaging a champion hurls a comet dealing adaptive AoE damage to their location.",
+      "keystoneWhy": "Consistent ranged poke damage that synergizes with ability slows.",
       "primaryRunes": [
-        "Hail of Blades",
-        "Sudden Impact",
-        "Grisly Mementos",
-        "Relentless Hunter"
+        "Arcane Comet",
+        "Manaflow Band",
+        "Transcendence",
+        "Gathering Storm"
       ],
       "secondaryTree": "Precision",
       "secondaryRunes": [
-        "Coup de Grace",
-        "Legend: Alacrity"
+        "Cut Down",
+        "Legend: Haste"
       ],
-      "statShards": "5005 • 5008 • 5001"
+      "statShards": "5007 • 5008 • 5011"
     },
     "Sett": {
       "championId": "Sett",
@@ -5082,6 +5040,48 @@
       "secondaryRunes": [
         "Unflinching",
         "Second Wind"
+      ],
+      "statShards": "5005 • 5008 • 5001"
+    },
+    "Shaco": {
+      "championId": "Shaco",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Burst Assassin",
+      "damageType": "Physical Heavy",
+      "identity": "Shaco controls the match through high-impact Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Blackfire Torch Spike",
+        "2-Item Liandry's Torment Core Synergy"
+      ],
+      "skillMaxOrder": "E > Q > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Gustwalker Hatchling + Health Potion",
+      "firstItemId": "2503",
+      "firstItemName": "Blackfire Torch",
+      "secondItemId": "6653",
+      "secondItemName": "Liandry's Torment",
+      "thirdItemId": "4005",
+      "thirdItemName": "Imperial Mandate",
+      "bootsId": "3006",
+      "bootsName": "Berserker's Greaves",
+      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
+      "primaryTree": "Domination",
+      "keystoneName": "Hail of Blades",
+      "keystoneTldr": "Grants an extreme burst of attack speed for the first 3 basic attacks.",
+      "keystoneWhy": "Instantly unloads front-loaded auto attacks and fast passive triggers.",
+      "primaryRunes": [
+        "Hail of Blades",
+        "Sudden Impact",
+        "Grisly Mementos",
+        "Relentless Hunter"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Coup de Grace",
+        "Legend: Alacrity"
       ],
       "statShards": "5005 • 5008 • 5001"
     },
@@ -5169,6 +5169,48 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
+    "Singed": {
+      "championId": "Singed",
+      "role": "Top",
+      "secondaryRole": "Mid",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Singed controls the match through high-impact Tank / Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Liandry's Torment Spike",
+        "2-Item Rylai's Crystal Scepter Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "6653",
+      "firstItemName": "Liandry's Torment",
+      "secondItemId": "3116",
+      "secondItemName": "Rylai's Crystal Scepter",
+      "thirdItemId": "2525",
+      "thirdItemName": "Protoplasm Harness",
+      "bootsId": "3009",
+      "bootsName": "Boots of Swiftness",
+      "bootsWhy": "Maximum flat movement speed and slow resistance.",
+      "primaryTree": "Sorcery",
+      "keystoneName": "Deathfire Touch",
+      "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
+      "keystoneWhy": "Optimal keystone for trading cadence and primary spell kit.",
+      "primaryRunes": [
+        "Deathfire Touch",
+        "Nimbus Cloak",
+        "Celerity",
+        "Scorch"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Last Stand",
+        "Triumph"
+      ],
+      "statShards": "5008 • 5010 • 5001"
+    },
     "Sion": {
       "championId": "Sion",
       "role": "Top",
@@ -5211,31 +5253,73 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Singed": {
-      "championId": "Singed",
-      "role": "Top",
-      "secondaryRole": "Mid",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Singed controls the match through high-impact Tank / Mage kit mechanics and tactical power spikes.",
+    "Skarner": {
+      "championId": "Skarner",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Teamfight Tank",
+      "damageType": "Physical Heavy",
+      "identity": "Skarner controls the match through high-impact Tank / Fighter kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Liandry's Torment Spike",
-        "2-Item Rylai's Crystal Scepter Core Synergy"
+        "1st Item Heartsteel Spike",
+        "2-Item Unending Despair Core Synergy"
       ],
-      "skillMaxOrder": "Q > E > W",
+      "skillMaxOrder": "Q > W > E",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "6653",
-      "firstItemName": "Liandry's Torment",
-      "secondItemId": "3116",
-      "secondItemName": "Rylai's Crystal Scepter",
-      "thirdItemId": "2525",
-      "thirdItemName": "Protoplasm Harness",
-      "bootsId": "3009",
-      "bootsName": "Boots of Swiftness",
-      "bootsWhy": "Maximum flat movement speed and slow resistance.",
+      "starter": "Mosstomper Seedling + Health Potion",
+      "firstItemId": "3084",
+      "firstItemName": "Heartsteel",
+      "secondItemId": "2502",
+      "secondItemName": "Unending Despair",
+      "thirdItemId": "3065",
+      "thirdItemName": "Spirit Visage",
+      "bootsId": "3047",
+      "bootsName": "Plated Steelcaps",
+      "bootsWhy": "Essential physical attack damage mitigation and armor.",
+      "primaryTree": "Resolve",
+      "keystoneName": "Grasp of the Undying",
+      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
+      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
+      "primaryRunes": [
+        "Grasp of the Undying",
+        "Shield Bash",
+        "Conditioning",
+        "Overgrowth"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Magical Footwear",
+        "Approach Velocity"
+      ],
+      "statShards": "5007 • 5001 • 5001"
+    },
+    "Smolder": {
+      "championId": "Smolder",
+      "role": "ADC",
+      "secondaryRole": "Support",
+      "playstyle": "Sustained Marksman",
+      "damageType": "Magic Heavy",
+      "identity": "Smolder controls the match through high-impact Marksman / Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Essence Reaver Spike",
+        "2-Item Black Cleaver Core Synergy"
+      ],
+      "skillMaxOrder": "Q > W > E",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Blade + Health Potion",
+      "firstItemId": "3508",
+      "firstItemName": "Essence Reaver",
+      "secondItemId": "3071",
+      "secondItemName": "Black Cleaver",
+      "thirdItemId": "3161",
+      "thirdItemName": "Spear of Shojin",
+      "bootsId": "3008",
+      "bootsName": "Gluttonous Greaves",
+      "bootsWhy": "Core movement speed and combat mobility.",
       "primaryTree": "Sorcery",
       "keystoneName": "Deathfire Touch",
       "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
@@ -5244,12 +5328,12 @@
         "Deathfire Touch",
         "Nimbus Cloak",
         "Celerity",
-        "Scorch"
+        "Gathering Storm"
       ],
-      "secondaryTree": "Precision",
+      "secondaryTree": "Inspiration",
       "secondaryRunes": [
-        "Last Stand",
-        "Triumph"
+        "Magical Footwear",
+        "Jack Of All Trades"
       ],
       "statShards": "5008 • 5010 • 5001"
     },
@@ -5294,90 +5378,6 @@
         "Cash Back"
       ],
       "statShards": "5005 • 5008 • 5011"
-    },
-    "Smolder": {
-      "championId": "Smolder",
-      "role": "ADC",
-      "secondaryRole": "Support",
-      "playstyle": "Sustained Marksman",
-      "damageType": "Magic Heavy",
-      "identity": "Smolder controls the match through high-impact Marksman / Mage kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Essence Reaver Spike",
-        "2-Item Black Cleaver Core Synergy"
-      ],
-      "skillMaxOrder": "Q > W > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Blade + Health Potion",
-      "firstItemId": "3508",
-      "firstItemName": "Essence Reaver",
-      "secondItemId": "3071",
-      "secondItemName": "Black Cleaver",
-      "thirdItemId": "3161",
-      "thirdItemName": "Spear of Shojin",
-      "bootsId": "3008",
-      "bootsName": "Gluttonous Greaves",
-      "bootsWhy": "Core movement speed and combat mobility.",
-      "primaryTree": "Sorcery",
-      "keystoneName": "Deathfire Touch",
-      "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
-      "keystoneWhy": "Optimal keystone for trading cadence and primary spell kit.",
-      "primaryRunes": [
-        "Deathfire Touch",
-        "Nimbus Cloak",
-        "Celerity",
-        "Gathering Storm"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Jack Of All Trades"
-      ],
-      "statShards": "5008 • 5010 • 5001"
-    },
-    "Skarner": {
-      "championId": "Skarner",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Teamfight Tank",
-      "damageType": "Physical Heavy",
-      "identity": "Skarner controls the match through high-impact Tank / Fighter kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Heartsteel Spike",
-        "2-Item Unending Despair Core Synergy"
-      ],
-      "skillMaxOrder": "Q > W > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Mosstomper Seedling + Health Potion",
-      "firstItemId": "3084",
-      "firstItemName": "Heartsteel",
-      "secondItemId": "2502",
-      "secondItemName": "Unending Despair",
-      "thirdItemId": "3065",
-      "thirdItemName": "Spirit Visage",
-      "bootsId": "3047",
-      "bootsName": "Plated Steelcaps",
-      "bootsWhy": "Essential physical attack damage mitigation and armor.",
-      "primaryTree": "Resolve",
-      "keystoneName": "Grasp of the Undying",
-      "keystoneTldr": "Combat empowers basic attacks to deal bonus magic damage, heal, and permanently gain max HP.",
-      "keystoneWhy": "Endless lane trading sustain that continuously scales maximum health.",
-      "primaryRunes": [
-        "Grasp of the Undying",
-        "Shield Bash",
-        "Conditioning",
-        "Overgrowth"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Approach Velocity"
-      ],
-      "statShards": "5007 • 5001 • 5001"
     },
     "Sona": {
       "championId": "Sona",
@@ -5505,48 +5505,6 @@
       ],
       "statShards": "5008 • 5008 • 5001"
     },
-    "Sylas": {
-      "championId": "Sylas",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Sylas controls the match through high-impact Mage / Assassin kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Hextech Rocketbelt Spike",
-        "2-Item Riftmaker Core Synergy"
-      ],
-      "skillMaxOrder": "W > E > Q",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "3152",
-      "firstItemName": "Hextech Rocketbelt",
-      "secondItemId": "4633",
-      "secondItemName": "Riftmaker",
-      "thirdItemId": "3157",
-      "thirdItemName": "Zhonya's Hourglass",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Precision",
-      "keystoneName": "Conqueror",
-      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
-      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
-      "primaryRunes": [
-        "Conqueror",
-        "Presence of Mind",
-        "Legend: Haste",
-        "Last Stand"
-      ],
-      "secondaryTree": "Resolve",
-      "secondaryRunes": [
-        "Unflinching",
-        "Second Wind"
-      ],
-      "statShards": "5008 • 5008 • 5001"
-    },
     "Syndra": {
       "championId": "Syndra",
       "role": "Mid",
@@ -5589,45 +5547,45 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Taliyah": {
-      "championId": "Taliyah",
-      "role": "Jungle",
-      "secondaryRole": "Support",
+    "Sylas": {
+      "championId": "Sylas",
+      "role": "Mid",
+      "secondaryRole": "Top",
       "playstyle": "Control Mage",
       "damageType": "Magic Heavy",
-      "identity": "Taliyah controls the match through high-impact Mage / Support kit mechanics and tactical power spikes.",
+      "identity": "Sylas controls the match through high-impact Mage / Assassin kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Blackfire Torch Spike",
-        "2-Item Shadowflame Core Synergy"
+        "1st Item Hextech Rocketbelt Spike",
+        "2-Item Riftmaker Core Synergy"
       ],
-      "skillMaxOrder": "Q > E > W",
+      "skillMaxOrder": "W > E > Q",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Scorchclaw Pup + Health Potion",
-      "firstItemId": "2503",
-      "firstItemName": "Blackfire Torch",
-      "secondItemId": "4645",
-      "secondItemName": "Shadowflame",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "3152",
+      "firstItemName": "Hextech Rocketbelt",
+      "secondItemId": "4633",
+      "secondItemName": "Riftmaker",
       "thirdItemId": "3157",
       "thirdItemName": "Zhonya's Hourglass",
       "bootsId": "3020",
       "bootsName": "Sorcerer's Shoes",
       "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Domination",
-      "keystoneName": "Dark Harvest",
-      "keystoneTldr": "Damaging low-health champions reaps soul essence, dealing ramping bonus damage.",
-      "keystoneWhy": "Enables explosive teamfight execution and resets on low-health carries.",
+      "primaryTree": "Precision",
+      "keystoneName": "Conqueror",
+      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
+      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
       "primaryRunes": [
-        "Dark Harvest",
-        "Cheap Shot",
-        "Sixth Sense",
-        "Treasure Hunter"
+        "Conqueror",
+        "Presence of Mind",
+        "Legend: Haste",
+        "Last Stand"
       ],
-      "secondaryTree": "Precision",
+      "secondaryTree": "Resolve",
       "secondaryRunes": [
-        "Coup de Grace",
-        "Legend: Haste"
+        "Unflinching",
+        "Second Wind"
       ],
       "statShards": "5008 • 5008 • 5001"
     },
@@ -5672,6 +5630,48 @@
         "Triumph"
       ],
       "statShards": "5005 • 5001 • 5001"
+    },
+    "Taliyah": {
+      "championId": "Taliyah",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Taliyah controls the match through high-impact Mage / Support kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Blackfire Torch Spike",
+        "2-Item Shadowflame Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Scorchclaw Pup + Health Potion",
+      "firstItemId": "2503",
+      "firstItemName": "Blackfire Torch",
+      "secondItemId": "4645",
+      "secondItemName": "Shadowflame",
+      "thirdItemId": "3157",
+      "thirdItemName": "Zhonya's Hourglass",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Domination",
+      "keystoneName": "Dark Harvest",
+      "keystoneTldr": "Damaging low-health champions reaps soul essence, dealing ramping bonus damage.",
+      "keystoneWhy": "Enables explosive teamfight execution and resets on low-health carries.",
+      "primaryRunes": [
+        "Dark Harvest",
+        "Cheap Shot",
+        "Sixth Sense",
+        "Treasure Hunter"
+      ],
+      "secondaryTree": "Precision",
+      "secondaryRunes": [
+        "Coup de Grace",
+        "Legend: Haste"
+      ],
+      "statShards": "5008 • 5008 • 5001"
     },
     "Talon": {
       "championId": "Talon",
@@ -5799,48 +5799,6 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Tristana": {
-      "championId": "Tristana",
-      "role": "ADC",
-      "secondaryRole": "Support",
-      "playstyle": "Sustained Marksman",
-      "damageType": "Physical Heavy",
-      "identity": "Tristana controls the match through high-impact Marksman / Assassin kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Yun Tal Wildarrows Spike",
-        "2-Item Infinity Edge Core Synergy"
-      ],
-      "skillMaxOrder": "E > Q > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Bow + Health Potion + Health Potion",
-      "firstItemId": "3032",
-      "firstItemName": "Yun Tal Wildarrows",
-      "secondItemId": "3031",
-      "secondItemName": "Infinity Edge",
-      "thirdItemId": "6675",
-      "thirdItemName": "Navori Flickerblade",
-      "bootsId": "3006",
-      "bootsName": "Berserker's Greaves",
-      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
-      "primaryTree": "Precision",
-      "keystoneName": "Lethal Tempo",
-      "keystoneTldr": "Attacking enemy champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.",
-      "keystoneWhy": "Maximizes sustained damage per second in extended skirmishes.",
-      "primaryRunes": [
-        "Lethal Tempo",
-        "Triumph",
-        "Legend: Bloodline",
-        "Cut Down"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Triple Tonic",
-        "Cash Back"
-      ],
-      "statShards": "5005 • 5008 • 5011"
-    },
     "Thresh": {
       "championId": "Thresh",
       "role": "Support",
@@ -5882,6 +5840,48 @@
         "Cosmic Insight"
       ],
       "statShards": "5008 • 5008 • 5001"
+    },
+    "Tristana": {
+      "championId": "Tristana",
+      "role": "ADC",
+      "secondaryRole": "Support",
+      "playstyle": "Sustained Marksman",
+      "damageType": "Physical Heavy",
+      "identity": "Tristana controls the match through high-impact Marksman / Assassin kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Yun Tal Wildarrows Spike",
+        "2-Item Infinity Edge Core Synergy"
+      ],
+      "skillMaxOrder": "E > Q > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Bow + Health Potion + Health Potion",
+      "firstItemId": "3032",
+      "firstItemName": "Yun Tal Wildarrows",
+      "secondItemId": "3031",
+      "secondItemName": "Infinity Edge",
+      "thirdItemId": "6675",
+      "thirdItemName": "Navori Flickerblade",
+      "bootsId": "3006",
+      "bootsName": "Berserker's Greaves",
+      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
+      "primaryTree": "Precision",
+      "keystoneName": "Lethal Tempo",
+      "keystoneTldr": "Attacking enemy champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.",
+      "keystoneWhy": "Maximizes sustained damage per second in extended skirmishes.",
+      "primaryRunes": [
+        "Lethal Tempo",
+        "Triumph",
+        "Legend: Bloodline",
+        "Cut Down"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Triple Tonic",
+        "Cash Back"
+      ],
+      "statShards": "5005 • 5008 • 5011"
     },
     "Trundle": {
       "championId": "Trundle",
@@ -6387,6 +6387,48 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
+    "Viktor": {
+      "championId": "Viktor",
+      "role": "Mid",
+      "secondaryRole": "Top",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Viktor controls the match through high-impact Mage kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Blackfire Torch Spike",
+        "2-Item Hextech Rocketbelt Core Synergy"
+      ],
+      "skillMaxOrder": "E > Q > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Ring + Health Potion + Health Potion",
+      "firstItemId": "2503",
+      "firstItemName": "Blackfire Torch",
+      "secondItemId": "3152",
+      "secondItemName": "Hextech Rocketbelt",
+      "thirdItemId": "3157",
+      "thirdItemName": "Zhonya's Hourglass",
+      "bootsId": "3020",
+      "bootsName": "Sorcerer's Shoes",
+      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
+      "primaryTree": "Sorcery",
+      "keystoneName": "Deathfire Touch",
+      "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
+      "keystoneWhy": "Optimal keystone for trading cadence and primary spell kit.",
+      "primaryRunes": [
+        "Deathfire Touch",
+        "Manaflow Band",
+        "Transcendence",
+        "Scorch"
+      ],
+      "secondaryTree": "Resolve",
+      "secondaryRunes": [
+        "Shield Bash",
+        "Bone Plating"
+      ],
+      "statShards": "5005 • 5008 • 5001"
+    },
     "Viego": {
       "championId": "Viego",
       "role": "Jungle",
@@ -6429,45 +6471,45 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Viktor": {
-      "championId": "Viktor",
-      "role": "Mid",
-      "secondaryRole": "Top",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Viktor controls the match through high-impact Mage kit mechanics and tactical power spikes.",
+    "Volibear": {
+      "championId": "Volibear",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Teamfight Tank",
+      "damageType": "Physical Heavy",
+      "identity": "Volibear controls the match through high-impact Fighter / Tank kit mechanics and tactical power spikes.",
       "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
       "powerSpikes": [
         "Early Back Component Spike",
-        "1st Item Blackfire Torch Spike",
-        "2-Item Hextech Rocketbelt Core Synergy"
+        "1st Item Dusk and Dawn Spike",
+        "2-Item Navori Flickerblade Core Synergy"
       ],
-      "skillMaxOrder": "E > Q > W",
+      "skillMaxOrder": "Q > W > E",
       "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Ring + Health Potion + Health Potion",
-      "firstItemId": "2503",
-      "firstItemName": "Blackfire Torch",
-      "secondItemId": "3152",
-      "secondItemName": "Hextech Rocketbelt",
-      "thirdItemId": "3157",
-      "thirdItemName": "Zhonya's Hourglass",
-      "bootsId": "3020",
-      "bootsName": "Sorcerer's Shoes",
-      "bootsWhy": "Flat magic penetration to pierce enemy magic resistance.",
-      "primaryTree": "Sorcery",
-      "keystoneName": "Deathfire Touch",
-      "keystoneTldr": "Key combat rune maximizing damage and engagement utility.",
-      "keystoneWhy": "Optimal keystone for trading cadence and primary spell kit.",
+      "starter": "Gustwalker Hatchling",
+      "firstItemId": "2510",
+      "firstItemName": "Dusk and Dawn",
+      "secondItemId": "6675",
+      "secondItemName": "Navori Flickerblade",
+      "thirdItemId": "3065",
+      "thirdItemName": "Spirit Visage",
+      "bootsId": "3111",
+      "bootsName": "Mercury's Treads",
+      "bootsWhy": "Tenacity to reduce crowd control duration and magic resistance.",
+      "primaryTree": "Precision",
+      "keystoneName": "Lethal Tempo",
+      "keystoneTldr": "Attacking enemy champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.",
+      "keystoneWhy": "Maximizes sustained damage per second in extended skirmishes.",
       "primaryRunes": [
-        "Deathfire Touch",
-        "Manaflow Band",
-        "Transcendence",
-        "Scorch"
+        "Lethal Tempo",
+        "Triumph",
+        "Legend: Haste",
+        "Last Stand"
       ],
-      "secondaryTree": "Resolve",
+      "secondaryTree": "Inspiration",
       "secondaryRunes": [
-        "Shield Bash",
-        "Bone Plating"
+        "Magical Footwear",
+        "Jack Of All Trades"
       ],
       "statShards": "5005 • 5008 • 5001"
     },
@@ -6512,48 +6554,6 @@
         "Legend: Haste"
       ],
       "statShards": "5007 • 5008 • 5001"
-    },
-    "Volibear": {
-      "championId": "Volibear",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Teamfight Tank",
-      "damageType": "Physical Heavy",
-      "identity": "Volibear controls the match through high-impact Fighter / Tank kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Dusk and Dawn Spike",
-        "2-Item Navori Flickerblade Core Synergy"
-      ],
-      "skillMaxOrder": "Q > W > E",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Gustwalker Hatchling",
-      "firstItemId": "2510",
-      "firstItemName": "Dusk and Dawn",
-      "secondItemId": "6675",
-      "secondItemName": "Navori Flickerblade",
-      "thirdItemId": "3065",
-      "thirdItemName": "Spirit Visage",
-      "bootsId": "3111",
-      "bootsName": "Mercury's Treads",
-      "bootsWhy": "Tenacity to reduce crowd control duration and magic resistance.",
-      "primaryTree": "Precision",
-      "keystoneName": "Lethal Tempo",
-      "keystoneTldr": "Attacking enemy champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.",
-      "keystoneWhy": "Maximizes sustained damage per second in extended skirmishes.",
-      "primaryRunes": [
-        "Lethal Tempo",
-        "Triumph",
-        "Legend: Haste",
-        "Last Stand"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Jack Of All Trades"
-      ],
-      "statShards": "5005 • 5008 • 5001"
     },
     "Warwick": {
       "championId": "Warwick",
@@ -6807,48 +6807,6 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
-    "Yunara": {
-      "championId": "Yunara",
-      "role": "ADC",
-      "secondaryRole": "Support",
-      "playstyle": "Sustained Marksman",
-      "damageType": "Physical Heavy",
-      "identity": "Yunara controls the match through high-impact Marksman kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Kraken Slayer Spike",
-        "2-Item Runaan's Hurricane Core Synergy"
-      ],
-      "skillMaxOrder": "Q > E > W",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Doran's Bow + Health Potion + Health Potion",
-      "firstItemId": "6672",
-      "firstItemName": "Kraken Slayer",
-      "secondItemId": "3085",
-      "secondItemName": "Runaan's Hurricane",
-      "thirdItemId": "3031",
-      "thirdItemName": "Infinity Edge",
-      "bootsId": "3006",
-      "bootsName": "Berserker's Greaves",
-      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
-      "primaryTree": "Precision",
-      "keystoneName": "Lethal Tempo",
-      "keystoneTldr": "Attacking enemy champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.",
-      "keystoneWhy": "Maximizes sustained damage per second in extended skirmishes.",
-      "primaryRunes": [
-        "Lethal Tempo",
-        "Triumph",
-        "Legend: Bloodline",
-        "Cut Down"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Triple Tonic",
-        "Cash Back"
-      ],
-      "statShards": "5005 • 5008 • 5011"
-    },
     "Yorick": {
       "championId": "Yorick",
       "role": "Top",
@@ -6891,6 +6849,48 @@
       ],
       "statShards": "5005 • 5008 • 5001"
     },
+    "Yunara": {
+      "championId": "Yunara",
+      "role": "ADC",
+      "secondaryRole": "Support",
+      "playstyle": "Sustained Marksman",
+      "damageType": "Physical Heavy",
+      "identity": "Yunara controls the match through high-impact Marksman kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Kraken Slayer Spike",
+        "2-Item Runaan's Hurricane Core Synergy"
+      ],
+      "skillMaxOrder": "Q > E > W",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Doran's Bow + Health Potion + Health Potion",
+      "firstItemId": "6672",
+      "firstItemName": "Kraken Slayer",
+      "secondItemId": "3085",
+      "secondItemName": "Runaan's Hurricane",
+      "thirdItemId": "3031",
+      "thirdItemName": "Infinity Edge",
+      "bootsId": "3006",
+      "bootsName": "Berserker's Greaves",
+      "bootsWhy": "Attack speed scaling for auto-attack and spell cast fluidness.",
+      "primaryTree": "Precision",
+      "keystoneName": "Lethal Tempo",
+      "keystoneTldr": "Attacking enemy champions stacks attack speed; at max stacks, attacks deal bonus on-hit adaptive damage.",
+      "keystoneWhy": "Maximizes sustained damage per second in extended skirmishes.",
+      "primaryRunes": [
+        "Lethal Tempo",
+        "Triumph",
+        "Legend: Bloodline",
+        "Cut Down"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Triple Tonic",
+        "Cash Back"
+      ],
+      "statShards": "5005 • 5008 • 5011"
+    },
     "Yuumi": {
       "championId": "Yuumi",
       "role": "Support",
@@ -6930,6 +6930,48 @@
       "secondaryRunes": [
         "Revitalize",
         "Font of Life"
+      ],
+      "statShards": "5007 • 5008 • 5001"
+    },
+    "Zac": {
+      "championId": "Zac",
+      "role": "Jungle",
+      "secondaryRole": "Support",
+      "playstyle": "Control Mage",
+      "damageType": "Magic Heavy",
+      "identity": "Zac controls the match through high-impact Tank / Fighter kit mechanics and tactical power spikes.",
+      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
+      "powerSpikes": [
+        "Early Back Component Spike",
+        "1st Item Hextech Rocketbelt Spike",
+        "2-Item Sunfire Aegis Core Synergy"
+      ],
+      "skillMaxOrder": "E > W > Q",
+      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
+      "starter": "Scorchclaw Pup",
+      "firstItemId": "3152",
+      "firstItemName": "Hextech Rocketbelt",
+      "secondItemId": "3068",
+      "secondItemName": "Sunfire Aegis",
+      "thirdItemId": "3065",
+      "thirdItemName": "Spirit Visage",
+      "bootsId": "3158",
+      "bootsName": "Ionian Boots of Lucidity",
+      "bootsWhy": "Ability haste and summoner spell cooldown reduction.",
+      "primaryTree": "Precision",
+      "keystoneName": "Conqueror",
+      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
+      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
+      "primaryRunes": [
+        "Conqueror",
+        "Triumph",
+        "Legend: Haste",
+        "Last Stand"
+      ],
+      "secondaryTree": "Inspiration",
+      "secondaryRunes": [
+        "Magical Footwear",
+        "Cosmic Insight"
       ],
       "statShards": "5007 • 5008 • 5001"
     },
@@ -6974,48 +7016,6 @@
         "Bone Plating"
       ],
       "statShards": "5005 • 5008 • 5011"
-    },
-    "Zac": {
-      "championId": "Zac",
-      "role": "Jungle",
-      "secondaryRole": "Support",
-      "playstyle": "Control Mage",
-      "damageType": "Magic Heavy",
-      "identity": "Zac controls the match through high-impact Tank / Fighter kit mechanics and tactical power spikes.",
-      "winCondition": "Coordinate with your team around key Dragon/Baron objectives, play around your core item spikes, and punish positioning mistakes.",
-      "powerSpikes": [
-        "Early Back Component Spike",
-        "1st Item Hextech Rocketbelt Spike",
-        "2-Item Sunfire Aegis Core Synergy"
-      ],
-      "skillMaxOrder": "E > W > Q",
-      "skillMaxReason": "Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.",
-      "starter": "Scorchclaw Pup",
-      "firstItemId": "3152",
-      "firstItemName": "Hextech Rocketbelt",
-      "secondItemId": "3068",
-      "secondItemName": "Sunfire Aegis",
-      "thirdItemId": "3065",
-      "thirdItemName": "Spirit Visage",
-      "bootsId": "3158",
-      "bootsName": "Ionian Boots of Lucidity",
-      "bootsWhy": "Ability haste and summoner spell cooldown reduction.",
-      "primaryTree": "Precision",
-      "keystoneName": "Conqueror",
-      "keystoneTldr": "Attacks and spells grant stacking AD/AP; at 12 stacks, heals for a portion of damage dealt.",
-      "keystoneWhy": "Provides scaling offensive power and combat sustain in extended trades.",
-      "primaryRunes": [
-        "Conqueror",
-        "Triumph",
-        "Legend: Haste",
-        "Last Stand"
-      ],
-      "secondaryTree": "Inspiration",
-      "secondaryRunes": [
-        "Magical Footwear",
-        "Cosmic Insight"
-      ],
-      "statShards": "5007 • 5008 • 5001"
     },
     "Zed": {
       "championId": "Zed",
