@@ -721,6 +721,108 @@
 }
 
 /* ==========================================================================
+   TACTICAL LOADOUT ARCHITECTURE (UNIFIED CONCOURSE & HARDPOINTS)
+   ========================================================================== */
+
+/* Unified Tactical Concourse Bay */
+.tactical-concourse-bay {
+  position: relative;
+  background: linear-gradient(180deg, rgba(17, 34, 26, 0.96) 0%, rgba(12, 22, 17, 0.98) 100%);
+  border: 1.5px solid #234537;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="tactical-light"] .tactical-concourse-bay {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="midnight-hextech"] .tactical-concourse-bay {
+  background: linear-gradient(180deg, rgba(14, 23, 42, 0.96) 0%, rgba(10, 15, 30, 0.98) 100%);
+  border-color: #1e293b;
+  box-shadow: inset 0 1px 0 rgba(56, 189, 248, 0.1), 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="noxian-blood"] .tactical-concourse-bay {
+  background: linear-gradient(180deg, rgba(28, 14, 20, 0.96) 0%, rgba(18, 9, 13, 0.98) 100%);
+  border-color: #3d1d26;
+  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.1), 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* Hardpoint Modular Locker with Sci-Fi Chamfered Bevels */
+.tactical-hardpoint-bay {
+  position: relative;
+  clip-path: polygon(
+    10px 0%,
+    calc(100% - 10px) 0%,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0% calc(100% - 10px),
+    0% 10px
+  );
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mechanical Weapon Rail running horizontally behind cards */
+.tactical-mounting-rail {
+  position: relative;
+}
+.tactical-mounting-rail::before {
+  content: "";
+  position: absolute;
+  top: 45%;
+  left: 3%;
+  right: 3%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(45, 213, 183, 0.2) 15%, rgba(45, 213, 183, 0.6) 50%, rgba(45, 213, 183, 0.2) 85%, transparent 100%);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Technical Corner Rivets & Brackets */
+.tech-bracket-corner {
+  position: relative;
+}
+.tech-bracket-corner::before {
+  content: "⌜";
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  color: rgba(45, 213, 183, 0.6);
+  pointer-events: none;
+  line-height: 1;
+}
+.tech-bracket-corner::after {
+  content: "⌟";
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  color: rgba(45, 213, 183, 0.6);
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* Blueprint Dot Matrix Ambient Background */
+.blueprint-dot-matrix {
+  background-image: radial-gradient(rgba(45, 213, 183, 0.1) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* High-Tech Conduit Divider */
+.tech-conduit-divider {
+  width: 1.5px;
+  background: linear-gradient(180deg, transparent 0%, rgba(45, 213, 183, 0.4) 25%, rgba(45, 213, 183, 0.6) 50%, rgba(45, 213, 183, 0.4) 75%, transparent 100%);
+}
+
+/* ==========================================================================
    OSAKA JADE COMPREHENSIVE UTILITY ENGINE (GO ALL OUT)
    ========================================================================== */
 :root:not([data-theme="tactical-light"]):not([data-theme="midnight-hextech"]):not([data-theme="noxian-blood"]),

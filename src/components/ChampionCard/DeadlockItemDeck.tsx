@@ -992,42 +992,61 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   // Situational Pods organized by Mobalytics Threat Scenarios (Balanced 2-card presentation)
   const situationalPods = useMemo(() => [
     {
-      title: 'Anti-Heal (Grievous)',
+      modId: 'MOD-01',
+      title: 'Anti-Heal',
+      specTitle: 'BIO-SUPPRESSION',
+      subSpec: 'GRIEVOUS HEAL DRAIN',
       subtitle: isMarksman 
         ? "Sit on Executioner's (800g) ➔ Upgrade late to swap Armor Pen slot"
         : 'Sit on 800g component early ➔ Finish full upgrade late',
-      accent: 'border-rose-400 bg-rose-50/20 text-rose-800',
-      badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
+      accent: 'border-rose-500/70 text-rose-400',
+      badgeBg: 'bg-rose-950/80 text-rose-300 border-rose-500/50',
+      glow: 'shadow-[0_0_12px_rgba(244,63,94,0.15)]',
       icon: <Activity className="w-3.5 h-3.5 text-rose-400" />,
       hasBuildLineage: true,
       cards: [antiHeal800g, antiHealFull]
     },
     {
-      title: 'Anti-Physical & Armor',
+      modId: 'MOD-02',
+      title: 'Anti-Physical',
+      specTitle: 'KINETIC DEFENSE',
+      subSpec: 'BALLISTIC & BURST WARD',
       subtitle: isMarksman ? 'vs Lethal AD Assassins & Burst' : 'vs AD Burst & Assassins',
-      accent: 'border-amber-400 bg-amber-50/20 text-amber-800',
-      badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
+      accent: 'border-amber-500/70 text-amber-400',
+      badgeBg: 'bg-amber-950/80 text-amber-300 border-amber-500/50',
+      glow: 'shadow-[0_0_12px_rgba(245,158,11,0.15)]',
       icon: <Shield className="w-3.5 h-3.5 text-amber-400" />,
       cards: [antiBurst3, flex2]
     },
     {
-      title: 'Magic Resist & Shields',
+      modId: 'MOD-03',
+      title: 'Magic Resist',
+      specTitle: 'NULL-FIELD SHIELD',
+      subSpec: 'ARCANE ABSORPTION',
       subtitle: isMarksman ? 'vs Fed AP Mages & Magic Poke' : 'vs Fed AP Mages & Poke',
-      accent: 'border-purple-400 bg-purple-50/20 text-purple-800',
-      badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
+      accent: 'border-purple-500/70 text-purple-400',
+      badgeBg: 'bg-purple-950/80 text-purple-300 border-purple-500/50',
+      glow: 'shadow-[0_0_12px_rgba(192,132,252,0.15)]',
       icon: <Sparkles className="w-3.5 h-3.5 text-purple-400" />,
       cards: [antiBurst1, antiBurst2]
     },
     {
-      title: 'Armor / MR Penetration',
+      modId: 'MOD-04',
+      title: 'Penetration',
+      specTitle: 'ARMOR BREACH',
+      subSpec: 'PIERCING & TANK SHRED',
       subtitle: isMarksman ? 'vs High Armor & Health Tanks' : 'vs Tanks & Resistances',
-      accent: 'border-sky-400 bg-sky-50/20 text-sky-800',
-      badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
+      accent: 'border-sky-500/70 text-sky-400',
+      badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-500/50',
+      glow: 'shadow-[0_0_12px_rgba(56,189,248,0.15)]',
       icon: <Crosshair className="w-3.5 h-3.5 text-sky-400" />,
       cards: [shred1, shred2]
     },
     {
-      title: 'Cleanse & Suppression',
+      modId: 'MOD-05',
+      title: 'Cleanse & CC',
+      specTitle: 'PURGE PROTOCOL',
+      subSpec: 'DISRUPTION NULLIFIER',
       subtitle: isMarksman
         ? 'Sit on QSS (1300g) ➔ Finish Mercurial Scimitar late'
         : (isMage || isAPAssassin)
@@ -1037,8 +1056,9 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         : isTank
         ? "Negatron Cloak (900g) ➔ Upgrade to Kaenic Rookern"
         : 'Sit on 1300g QSS ➔ Finish Mercurial Scimitar late',
-      accent: 'border-emerald-400 bg-emerald-50/20 text-emerald-800',
-      badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      accent: 'border-emerald-500/70 text-emerald-400',
+      badgeBg: 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50',
+      glow: 'shadow-[0_0_12px_rgba(45,213,183,0.15)]',
       icon: <Zap className="w-3.5 h-3.5 text-emerald-400" />,
       hasBuildLineage: true,
       cards: [antiCC1, antiCC2]
@@ -1680,260 +1700,322 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       <div className="relative flex flex-col gap-3">
         
         {/* ============================================================ */}
-        {/* SECTION 1: THE RECOMMENDED BUILD PATH (CHRONOLOGICAL FLOW)   */}
+        {/* SECTION 1: CHRONOLOGICAL DEPLOYMENT CONCOURSE                */}
         {/* ============================================================ */}
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
-
-          {/* SUB-STAGE A: EARLY GAME & 1ST RECALL (3 COLS) */}
-          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
-            <div className="lg:col-span-3 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative">
-              <div className="flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
-                <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
-                    STAGE 01
-                  </span>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
-                      Early Protocol
-                    </h3>
-                    <span className="text-[10px] text-[#769382] font-mono block leading-none">
-                      0:00 - 5:00 LANING INCEPTION
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Cards Grid */}
-              <div className="space-y-3 flex-1 flex flex-col justify-around py-1">
-                {/* Starters Sub-Group */}
-                <div className="flex flex-col items-center">
-                  <div className="w-full flex items-center justify-center gap-2 mb-1.5 px-1">
-                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#26433a] to-[#26433a]" />
-                    <span className="text-[10px] font-bold text-[#769382] uppercase font-mono tracking-wider">
-                      0:00 Initial Spawn
-                    </span>
-                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#26433a] to-[#26433a]" />
-                  </div>
-                  <div className="flex items-center justify-center gap-2 flex-wrap">
-                    {starterCards.map((card, idx) => (
-                      <React.Fragment key={`${card.id}-${idx}`}>
-                        {renderCardNode(card)}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 1st Recall Sub-Group */}
-                <div className="flex flex-col items-center">
-                  <div className="w-full flex items-center justify-center gap-2 mb-1.5 px-1">
-                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#2dd5b7]/30 to-[#2dd5b7]/50" />
-                    <span className="text-[10px] font-bold text-[#2dd5b7] uppercase font-mono tracking-wider">
-                      ~4:30 1st Recall Spike
-                    </span>
-                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#2dd5b7]/30 to-[#2dd5b7]/50" />
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    {renderCardNode(firstBackCard)}
-                    {renderCardNode(tier1BootsCard)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-2 pt-1 border-t border-[#26433a] text-center">
-                <span className="text-xs text-[#769382] font-sans font-medium">
-                  Establish lane wave-control & recall at 1100–1300g
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* SUB-STAGE B: THE CORE BUILD HIGHWAY (6 COLS - RUSH 1 -> 2 -> 3) */}
-          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
-            <div className="lg:col-span-6 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative overflow-hidden">
-              {/* Radar Circles Watermark in cyber-jade glow */}
-              <div 
-                className="absolute inset-0 pointer-events-none opacity-20"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, transparent 20%, rgba(45, 213, 183, 0.25) 21%, transparent 22%, transparent 40%, rgba(45, 213, 183, 0.25) 41%, transparent 42%, transparent 60%, rgba(45, 213, 183, 0.25) 61%, transparent 62%)',
-                  backgroundPosition: 'center center'
-                }}
-              />
-
-              <div className="relative z-10 flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
-                <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
-                    STAGE 02
-                  </span>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
-                      Core Combat Highway
-                    </h3>
-                    <span className="text-[10px] text-[#2dd5b7] font-mono block leading-none">
-                      RUSH SEQUENCE 1 ➔ 2 ➔ 3
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="tactical-gold-chit px-2 py-0.5 text-[10px] font-bold">
-                    ~9,000g Engine
-                  </span>
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#2dd5b7] bg-[#183327] px-2 py-0.5 rounded border border-[#2dd5b7]/40">
-                    RECOMMENDED RUSH
-                  </span>
-                </div>
-              </div>
-
-              {/* The 3 Core Items with Chevrons and Milestones */}
-              <div className="relative z-10 flex-1 flex flex-col justify-around py-1">
-                <div className="flex items-center justify-center gap-2 sm:gap-3">
-                  <div className="flex flex-col items-center">
-                    {renderCardNode(core1Card)}
-                    <span className="text-xs font-black text-[#2dd5b7] uppercase mt-1 font-['Barlow_Condensed']">
-                      1st Spike (~11m)
-                    </span>
-                  </div>
-
-                  <ArrowRight className="w-6 h-6 text-[#2dd5b7] flex-shrink-0 animate-pulse -mt-6" />
-
-                  <div className="flex flex-col items-center">
-                    {renderCardNode(core2Card)}
-                    <span className="text-xs font-black text-[#769382] uppercase mt-1 font-['Barlow_Condensed']">
-                      2nd Synergy (~19m)
-                    </span>
-                  </div>
-
-                  <ArrowRight className="w-6 h-6 text-[#2dd5b7] flex-shrink-0 animate-pulse -mt-6" />
-
-                  <div className="flex flex-col items-center">
-                    {renderCardNode(core3Card)}
-                    <span className="text-xs font-black text-[#769382] uppercase mt-1 font-['Barlow_Condensed']">
-                      3rd Peak (~26m)
-                    </span>
-                  </div>
-                </div>
-
-                {/* Core Engine Synergy Callout */}
-                <div className="mt-2.5 p-2 rounded-lg bg-[#0f1b16] border border-[#26433a] flex items-center gap-2 text-xs text-[#c1c497] font-sans">
-                  <Info className="w-4 h-4 text-[#2dd5b7] flex-shrink-0" />
-                  <div>
-                    <strong className="text-[#e2e5b8] font-bold">Engine Synergy: </strong>
-                    <span>{core1.name} triggers early {tactics.playstyle || 'combat'} dominance, bridging smoothly into {core2.name} defense and {core3.name} peak teamfight scaling.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* SUB-STAGE C: BOOTS ENGINE (3 COLS) */}
-          {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
-            <div className="lg:col-span-3 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative">
-              <div className="flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
-                <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
-                    STAGE 03
-                  </span>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
-                      Boots Engine
-                    </h3>
-                    <span className="text-[10px] text-[#769382] font-mono block leading-none">
-                      STANDARD VS COUNTER
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Default vs Situational Boots */}
-              <div className="space-y-2 flex-1 flex flex-col justify-around">
-                <div className="flex items-center justify-around gap-2 py-0.5">
-                  <div className="flex flex-col items-center">
-                    <span className="text-xs font-black uppercase text-[#2dd5b7] mb-1">Standard</span>
-                    {renderCardNode(defaultBootsCard)}
-                  </div>
-
-                  <div className="flex flex-col items-center px-1">
-                    <ArrowLeftRight className="w-5 h-5 text-[#2dd5b7] animate-pulse my-1" />
-                    <span className="text-[10px] font-black uppercase text-[#769382]">SWAP</span>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <span className="text-xs font-black uppercase text-sky-400 mb-1">Alternative</span>
-                    {renderCardNode(altBootsCard)}
-                  </div>
-                </div>
-
-                {/* Defensive Comparison Details */}
-                <div className="p-2 rounded-lg bg-[#0f1b16] border border-[#26433a] text-xs text-[#c1c497] leading-snug font-sans space-y-1">
-                  <div className="font-bold text-[#e2e5b8]">
-                    ● {defaultBootsCard.name}: <span className="font-normal text-[#769382]">{bootsRec.why}</span>
-                  </div>
-                  <div className="font-bold text-sky-300">
-                    ● {altBootsCard.name}: <span className="font-normal text-[#769382]">{bootsRec.alternative}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-2 pt-1 border-t border-[#26433a] text-center">
-                <span className="text-xs text-[#769382] font-sans font-medium">
-                  Upgrade T1 Boots after Core #1 for roam tempo
-                </span>
-              </div>
-            </div>
-          )}
-
-        </div>
-
-        {/* ============================================================ */}
-        {/* SECTION 2: SWAPPABLE SITUATIONAL PIVOTS (THREAT ARSENAL)     */}
-        {/* ============================================================ */}
-        {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
-          <div className="relative z-10 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col">
-            <div className="flex items-center justify-between pb-1.5 mb-2.5 stage-conduit-header">
-              <div className="flex items-center gap-2.5">
-                <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
-                  STAGE 04
-                </span>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
-                    Swappable Situational Pivots
-                  </h3>
-                  <span className="text-[10px] text-[#769382] font-mono block leading-none">
-                    DYNAMIC COUNTER-MEASURE ARSENAL • 5 THREAT PROFILES
-                  </span>
-                </div>
-              </div>
-              <span className="text-[11px] font-mono font-bold text-[#2dd5b7] uppercase bg-[#183327] px-2 py-0.5 rounded border border-[#2dd5b7]/40">
-                5 Threat Profiles
+        <div className="relative z-10 rounded-2xl tactical-concourse-bay p-3 sm:p-4 shadow-xl overflow-hidden border border-[#234537]">
+          {/* Subtle blueprint grid matrix background */}
+          <div className="absolute inset-0 pointer-events-none opacity-20 blueprint-dot-matrix" />
+          
+          {/* Top Chrono Power Rail Header across the whole flightpath */}
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2.5 mb-3 border-b border-[#26433a]">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2dd5b7] shadow-[0_0_8px_rgba(45,213,183,0.8)] animate-pulse" />
+              <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#e2e5b8] font-['Barlow_Condensed']">
+                Chronological Combat Deployment Rail
+              </h3>
+              <span className="text-[10px] font-mono text-[#769382] hidden lg:inline">
+                // LINEAR POWER CURVE [0:00 ➔ 26:00+]
               </span>
             </div>
 
-            {/* 5 Balanced Threat Pods */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-2.5">
+            {/* Tactical Conduit Telemetry Status */}
+            <div className="flex items-center gap-2 text-[10.5px] font-mono font-bold">
+              <span className="text-[#769382] hidden sm:inline">ENGINE THRESHOLD:</span>
+              <span className="text-[#2dd5b7] bg-[#142820] px-2 py-0.5 rounded border border-[#2dd5b7]/40 shadow-xs">
+                ~9,000g CORE ENGINE
+              </span>
+              <span className="text-[#c1c497] bg-[#142820] px-2 py-0.5 rounded border border-[#26433a]">
+                4 CHRONO PHASES
+              </span>
+            </div>
+          </div>
+
+          {/* 3 Interconnected Staging Bays */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-2 items-stretch">
+
+            {/* BAY 01: LANING & 1ST RECALL (3 COLS) */}
+            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
+              <div className="lg:col-span-3 flex flex-col justify-between p-2 rounded-xl bg-[#0f1d17]/80 border border-[#224033] relative">
+                <div className="flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
+                  <div className="flex items-center gap-1.5">
+                    <span className="bg-[#183327] text-[#2dd5b7] font-mono font-black text-[10px] px-1.5 py-0.5 rounded border border-[#2dd5b7]/40">
+                      01
+                    </span>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-black uppercase tracking-wide text-[#e2e5b8] leading-tight font-['Barlow_Condensed']">
+                        Deployment Protocol
+                      </h4>
+                      <span className="text-[9px] text-[#769382] font-mono block leading-none">
+                        0:00 - 5:00 LANING INCEPTION
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cards Grid */}
+                <div className="space-y-3 flex-1 flex flex-col justify-around py-1">
+                  {/* Starters Sub-Group */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-full flex items-center justify-center gap-2 mb-1.5 px-1">
+                      <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#26433a] to-[#26433a]" />
+                      <span className="text-[9.5px] font-bold text-[#769382] uppercase font-mono tracking-wider">
+                        0:00 Initial Spawn
+                      </span>
+                      <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#26433a] to-[#26433a]" />
+                    </div>
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                      {starterCards.map((card, idx) => (
+                        <React.Fragment key={`${card.id}-${idx}`}>
+                          {renderCardNode(card)}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 1st Recall Sub-Group */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-full flex items-center justify-center gap-2 mb-1.5 px-1">
+                      <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#2dd5b7]/30 to-[#2dd5b7]/50" />
+                      <span className="text-[9.5px] font-bold text-[#2dd5b7] uppercase font-mono tracking-wider">
+                        ~4:30 1st Recall Spike
+                      </span>
+                      <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#2dd5b7]/30 to-[#2dd5b7]/50" />
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      {renderCardNode(firstBackCard)}
+                      {renderCardNode(tier1BootsCard)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 pt-1 border-t border-[#26433a]/60 text-center">
+                  <span className="text-[10px] text-[#769382] font-mono leading-none">
+                    Recall spike: 1100–1300g for lane priority
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* BAY 02: THE CORE BUILD HIGHWAY (6 COLS - RUSH 1 -> 2 -> 3) */}
+            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
+              <div className="lg:col-span-6 flex flex-col justify-between p-2 sm:p-2.5 rounded-xl bg-[#0f1d17]/80 border border-[#224033] relative overflow-hidden">
+                {/* Tactical Radar Sweep Background */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-20"
+                  style={{
+                    backgroundImage: 'radial-gradient(circle, transparent 20%, rgba(45, 213, 183, 0.25) 21%, transparent 22%, transparent 40%, rgba(45, 213, 183, 0.25) 41%, transparent 42%, transparent 60%, rgba(45, 213, 183, 0.25) 61%, transparent 62%)',
+                    backgroundPosition: 'center center'
+                  }}
+                />
+
+                <div className="relative z-10 flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
+                  <div className="flex items-center gap-1.5">
+                    <span className="bg-[#183327] text-[#2dd5b7] font-mono font-black text-[10px] px-1.5 py-0.5 rounded border border-[#2dd5b7]/40">
+                      02
+                    </span>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-black uppercase tracking-wide text-[#e2e5b8] leading-tight font-['Barlow_Condensed']">
+                        Core Combat Highway
+                      </h4>
+                      <span className="text-[9px] text-[#2dd5b7] font-mono block leading-none">
+                        RUSH SEQUENCE 1 ➔ 2 ➔ 3
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9.5px] font-mono font-black uppercase text-[#2dd5b7] bg-[#183327] px-2 py-0.5 rounded border border-[#2dd5b7]/40">
+                      RECOMMENDED RUSH
+                    </span>
+                  </div>
+                </div>
+
+                {/* The 3 Core Items on the Mounting Rail */}
+                <div className="relative z-10 flex-1 flex flex-col justify-around py-1 tactical-mounting-rail">
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 z-10">
+                    <div className="flex flex-col items-center">
+                      {renderCardNode(core1Card)}
+                      <div className="mt-1 flex items-center gap-1 bg-[#142820] px-1.5 py-0.5 rounded border border-[#2dd5b7]/30 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#2dd5b7] animate-pulse" />
+                        <span className="text-[10px] font-black text-[#2dd5b7] uppercase font-['Barlow_Condensed'] tracking-wider leading-none">
+                          1st Spike (~11m)
+                        </span>
+                      </div>
+                    </div>
+
+                    <ArrowRight className="w-5 h-5 text-[#2dd5b7] flex-shrink-0 animate-pulse -mt-5" />
+
+                    <div className="flex flex-col items-center">
+                      {renderCardNode(core2Card)}
+                      <div className="mt-1 flex items-center gap-1 bg-[#142820] px-1.5 py-0.5 rounded border border-white/10 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                        <span className="text-[10px] font-black text-[#e2e5b8] uppercase font-['Barlow_Condensed'] tracking-wider leading-none">
+                          2nd Synergy (~19m)
+                        </span>
+                      </div>
+                    </div>
+
+                    <ArrowRight className="w-5 h-5 text-[#2dd5b7] flex-shrink-0 animate-pulse -mt-5" />
+
+                    <div className="flex flex-col items-center">
+                      {renderCardNode(core3Card)}
+                      <div className="mt-1 flex items-center gap-1 bg-[#142820] px-1.5 py-0.5 rounded border border-white/10 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+                        <span className="text-[10px] font-black text-[#c1c497] uppercase font-['Barlow_Condensed'] tracking-wider leading-none">
+                          3rd Peak (~26m)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Core Engine Synergy Diagnostic Console */}
+                  <div className="mt-2.5 p-2 rounded-lg bg-[#0a1410] border border-[#26433a] flex items-center gap-2 text-xs text-[#c1c497] font-sans shadow-inner">
+                    <div className="w-2 h-2 rounded-full bg-[#2dd5b7] animate-pulse flex-shrink-0 shadow-[0_0_6px_#2dd5b7]" />
+                    <div className="text-[11px] leading-relaxed">
+                      <strong className="text-[#2dd5b7] font-mono uppercase tracking-wider text-[10px] mr-1">
+                        SYS.ANALYSIS //
+                      </strong>
+                      <span className="text-[#c1c497]">
+                        {core1.name} triggers early {tactics.playstyle || 'combat'} dominance, bridging smoothly into {core2.name} defense and {core3.name} peak teamfight scaling.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* BAY 03: BOOTS ENGINE (3 COLS) */}
+            {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
+              <div className="lg:col-span-3 flex flex-col justify-between p-2 rounded-xl bg-[#0f1d17]/80 border border-[#224033] relative">
+                <div className="flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
+                  <div className="flex items-center gap-1.5">
+                    <span className="bg-[#183327] text-[#2dd5b7] font-mono font-black text-[10px] px-1.5 py-0.5 rounded border border-[#2dd5b7]/40">
+                      03
+                    </span>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-black uppercase tracking-wide text-[#e2e5b8] leading-tight font-['Barlow_Condensed']">
+                        Mobility Vector
+                      </h4>
+                      <span className="text-[9px] text-[#769382] font-mono block leading-none">
+                        STANDARD VS COUNTER
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Default vs Situational Boots */}
+                <div className="space-y-2 flex-1 flex flex-col justify-around">
+                  <div className="flex items-center justify-around gap-2 py-0.5">
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] font-black uppercase text-[#2dd5b7] mb-1 font-mono">
+                        Standard
+                      </span>
+                      {renderCardNode(defaultBootsCard)}
+                    </div>
+
+                    <div className="flex flex-col items-center px-1">
+                      <ArrowLeftRight className="w-4 h-4 text-[#2dd5b7] animate-pulse my-1" />
+                      <span className="text-[9px] font-black uppercase text-[#769382] font-mono">SWAP</span>
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] font-black uppercase text-sky-400 mb-1 font-mono">
+                        Alternative
+                      </span>
+                      {renderCardNode(altBootsCard)}
+                    </div>
+                  </div>
+
+                  {/* Defensive Comparison Details */}
+                  <div className="p-2 rounded-lg bg-[#0a1410] border border-[#26433a] text-[11px] text-[#c1c497] leading-snug font-sans space-y-1 shadow-inner">
+                    <div className="font-bold text-[#e2e5b8]">
+                      ● {defaultBootsCard.name}: <span className="font-normal text-[#769382]">{bootsRec.why}</span>
+                    </div>
+                    <div className="font-bold text-sky-300">
+                      ● {altBootsCard.name}: <span className="font-normal text-[#769382]">{bootsRec.alternative}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 pt-1 border-t border-[#26433a]/60 text-center">
+                  <span className="text-[10px] text-[#769382] font-mono leading-none">
+                    Upgrade T1 Boots after Core #1 for roam tempo
+                  </span>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* SECTION 2: ADAPTIVE COUNTER-MEASURE HARDPOINTS (THREAT MATRIX)*/}
+        {/* ============================================================ */}
+        {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
+          <div className="relative z-10 rounded-2xl tactical-concourse-bay p-3 sm:p-4 shadow-xl overflow-hidden border border-[#234537]">
+            {/* Subtle blueprint grid matrix background */}
+            <div className="absolute inset-0 pointer-events-none opacity-20 blueprint-dot-matrix" />
+
+            {/* Armory Telemetry Header Bar */}
+            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 mb-3 border-b border-[#26433a]">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.8)] animate-pulse" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#e2e5b8] font-['Barlow_Condensed'] leading-tight">
+                    Adaptive Counter-Measure Hardpoints
+                  </h3>
+                  <span className="text-[9.5px] text-[#769382] font-mono block leading-none">
+                    5 THREAT-RESPONSIVE DOCKS // DYNAMIC HOT-SWAP ARSENAL
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-[10.5px] font-mono font-bold">
+                <span className="text-[#769382] hidden sm:inline">PROTOCOL:</span>
+                <span className="text-[#2dd5b7] bg-[#142820] px-2 py-0.5 rounded border border-[#2dd5b7]/40 shadow-xs">
+                  HOT-SWAP ACTIVE
+                </span>
+                <span className="text-[10px] font-mono font-bold text-[#c1c497] bg-[#142820] px-2 py-0.5 rounded border border-[#26433a]">
+                  5 THREAT PROFILES
+                </span>
+              </div>
+            </div>
+
+            {/* 5 Modular Hardpoint Weapon Bays */}
+            <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
               {situationalPods.map((pod, idx) => (
                 <div
                   key={idx}
-                  className={`rounded-xl border-2 ${pod.accent} p-2 sm:p-2.5 flex flex-col justify-between shadow-2xs bg-[#162921] hover:bg-[#1a3128] transition-all`}
+                  className={`tactical-hardpoint-bay p-2.5 flex flex-col justify-between border ${pod.accent} bg-[#14261e] hover:bg-[#182e24] transition-all ${pod.glow}`}
                 >
                   {/* Category Header */}
-                  <div className="pb-1.5 mb-1.5 border-b border-[#26433a] flex items-center justify-between">
+                  <div className="pb-1.5 mb-1.5 border-b border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <span className="flex-shrink-0 flex items-center justify-center">{pod.icon}</span>
-                      <span className="text-[12px] sm:text-[13px] font-black uppercase tracking-wide text-[#e2e5b8] truncate font-['Barlow_Condensed']">
-                        {pod.title}
-                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] font-mono font-black text-[#2dd5b7]/80 leading-none">
+                            {pod.modId}
+                          </span>
+                          <span className="text-[12px] sm:text-[13px] font-black uppercase tracking-wide text-[#e2e5b8] truncate font-['Barlow_Condensed'] leading-tight">
+                            {pod.title}
+                          </span>
+                        </div>
+                        <span className="text-[8.5px] font-mono uppercase text-[#769382] block leading-tight truncate">
+                          {pod.subSpec}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Centered Symmetrical 2-Card Row */}
-                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-1 px-0.5">
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 px-0.5">
                     {pod.hasBuildLineage && pod.cards.length === 2 ? (
                       <>
                         {renderCardNode(pod.cards[0], false)}
-                        <div className="flex flex-col items-center justify-center px-0.5 flex-shrink-0">
-                          <span className={`text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
+                        <div className="flex flex-col items-center justify-center px-0.5 flex-shrink-0 z-10">
+                          <span className={`text-[7.5px] font-black uppercase tracking-wider px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
                             pod.accent.includes('emerald')
-                              ? 'text-emerald-300 bg-emerald-950/60 border border-emerald-500/40'
-                              : 'text-rose-300 bg-rose-950/60 border border-rose-500/40'
+                              ? 'text-emerald-300 bg-emerald-950/80 border border-emerald-500/50 shadow-xs'
+                              : 'text-rose-300 bg-rose-950/80 border border-rose-500/50 shadow-xs'
                           }`}>
                             BUILDS
                           </span>
@@ -1948,9 +2030,9 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                     )}
                   </div>
 
-                  {/* Threat Subtitle Footer */}
-                  <div className="mt-1.5 pt-1.5 border-t border-[#26433a] text-center">
-                    <span className="text-[10.5px] sm:text-[11px] text-[#769382] font-sans leading-tight block font-medium line-clamp-2">
+                  {/* Threat Subtitle / Tactical Directive Footer */}
+                  <div className="mt-1.5 pt-1.5 border-t border-white/10 text-center bg-black/20 -mx-2.5 -mb-2.5 p-1.5">
+                    <span className="text-[10px] text-[#9bb3a4] font-mono leading-tight block truncate" title={pod.subtitle}>
                       {pod.subtitle}
                     </span>
                   </div>
