@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo } from 'react';
 import { TacticalGuide, ItemData } from '../../types';
 import { getItemIconUrl } from '../../services/ddragon';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
-import { X, ArrowRight, ArrowLeftRight, Shield, Zap, Info, Layers } from 'lucide-react';
+import { X, ArrowRight, ArrowLeftRight, Shield, Zap, Info, Layers, Activity, Sparkles, Crosshair } from 'lucide-react';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 import { useDevice } from '../../hooks/useDevice';
 import { ITEM_ESSENCE_MAP } from '../../data/itemEssence';
@@ -998,7 +998,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         : 'Sit on 800g component early ➔ Finish full upgrade late',
       accent: 'border-rose-400 bg-rose-50/20 text-rose-800',
       badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
-      icon: '🩸',
+      icon: <Activity className="w-3.5 h-3.5 text-rose-400" />,
       hasBuildLineage: true,
       cards: [antiHeal800g, antiHealFull]
     },
@@ -1007,7 +1007,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       subtitle: isMarksman ? 'vs Lethal AD Assassins & Burst' : 'vs AD Burst & Assassins',
       accent: 'border-amber-400 bg-amber-50/20 text-amber-800',
       badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
-      icon: '🛡️',
+      icon: <Shield className="w-3.5 h-3.5 text-amber-400" />,
       cards: [antiBurst3, flex2]
     },
     {
@@ -1015,7 +1015,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       subtitle: isMarksman ? 'vs Fed AP Mages & Magic Poke' : 'vs Fed AP Mages & Poke',
       accent: 'border-purple-400 bg-purple-50/20 text-purple-800',
       badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
-      icon: '🔮',
+      icon: <Sparkles className="w-3.5 h-3.5 text-purple-400" />,
       cards: [antiBurst1, antiBurst2]
     },
     {
@@ -1023,7 +1023,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       subtitle: isMarksman ? 'vs High Armor & Health Tanks' : 'vs Tanks & Resistances',
       accent: 'border-sky-400 bg-sky-50/20 text-sky-800',
       badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
-      icon: '⚔️',
+      icon: <Crosshair className="w-3.5 h-3.5 text-sky-400" />,
       cards: [shred1, shred2]
     },
     {
@@ -1039,7 +1039,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         : 'Sit on 1300g QSS ➔ Finish Mercurial Scimitar late',
       accent: 'border-emerald-400 bg-emerald-50/20 text-emerald-800',
       badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      icon: '⚡',
+      icon: <Zap className="w-3.5 h-3.5 text-emerald-400" />,
       hasBuildLineage: true,
       cards: [antiCC1, antiCC2]
     }
@@ -1350,7 +1350,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       case 'weapon': return '⌖';
       case 'vitality': return '✚';
       case 'spirit': return '⬡';
-      case 'utility': return '⚡';
+      case 'utility': return '◈';
     }
   };
 
@@ -1450,13 +1450,13 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group deadlock-tactical-card card-theme-${card.category} w-[98px] sm:w-[108px] md:w-[116px] lg:w-[122px] xl:w-[128px] min-h-[164px] sm:min-h-[172px] lg:min-h-[180px] p-[1.5px] cursor-pointer select-none transition-all duration-200 ${connectionTheme}`}
+        className={`group deadlock-tactical-card card-theme-${card.category} w-[84px] sm:w-[90px] md:w-[96px] lg:w-[100px] xl:w-[104px] min-h-[136px] sm:min-h-[142px] lg:min-h-[148px] p-[1.5px] cursor-pointer select-none transition-all duration-200 ${connectionTheme}`}
       >
         <div className="deadlock-tactical-inner w-full flex-1">
           {/* Top Order / Role Strip with Sci-Fi Angled Header Tab */}
-          <div className="relative z-10 w-full flex items-center justify-between px-1.5 py-1 bg-[#12221a]/95 border-b border-white/10 text-[9.5px] sm:text-[10px] font-black font-mono leading-none flex-shrink-0">
+          <div className="relative z-10 w-full flex items-center justify-between px-1.5 py-0.5 bg-[#12221a]/95 border-b border-white/10 text-[8.5px] sm:text-[9px] font-black font-mono leading-none flex-shrink-0">
             <div className="tactical-header-notch flex items-center gap-1 min-w-0 pr-1">
-              <span className="text-xs leading-none">
+              <span className="text-[10px] leading-none">
                 {card.isCore ? (
                   <span className="text-[#2dd5b7] font-black animate-pulse">★</span>
                 ) : (
@@ -1472,18 +1472,18 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
             {/* Gold Chit or Active Neon Pill */}
             {card.isActive ? (
-              <span className="bg-[#102920] text-[#2dd5b7] text-[8px] sm:text-[8.5px] font-black uppercase px-1 py-0.2 rounded border border-[#2dd5b7]/50 leading-none flex-shrink-0 shadow-xs">
+              <span className="bg-[#102920] text-[#2dd5b7] text-[7.5px] font-black uppercase px-1 py-0.2 rounded border border-[#2dd5b7]/50 leading-none flex-shrink-0 shadow-xs">
                 ACT
               </span>
             ) : gold ? (
-              <span className="tactical-gold-chit px-1 py-0.2 text-[8px] sm:text-[8.5px] leading-none flex-shrink-0">
+              <span className="tactical-gold-chit px-1 py-0.2 text-[7.5px] sm:text-[8px] leading-none flex-shrink-0">
                 {gold}g
               </span>
             ) : null}
           </div>
 
           {/* Middle Artwork Area with Tactical Aperture Housing */}
-          <div className="relative z-10 flex-1 p-1.5 flex flex-col items-center justify-center min-h-0">
+          <div className="relative z-10 flex-1 p-1 sm:p-1.5 flex flex-col items-center justify-center min-h-0">
             {/* Ambient category radial aura */}
             <div 
               className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity"
@@ -1499,7 +1499,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             />
 
             {/* Item Icon Aperture */}
-            <div className="tactical-aperture relative w-12 h-12 sm:w-13 sm:h-13 lg:w-14 lg:h-14 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
+            <div className="tactical-aperture relative w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
               <img
                 src={getItemIconUrl(version, card.id)}
                 alt={card.name}
@@ -1509,13 +1509,13 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
               {/* Stamped Active indicator inside aperture if active */}
               {card.isActive && (
-                <span className="absolute top-1 left-1 w-2 h-2 rounded-full bg-[#2dd5b7] shadow-[0_0_6px_#2dd5b7] animate-pulse z-10" title="Active Item Ability" />
+                <span className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-[#2dd5b7] shadow-[0_0_6px_#2dd5b7] animate-pulse z-10" title="Active Item Ability" />
               )}
             </div>
 
             {/* Tactical Essence Badge Pill */}
             <div className="mt-1 flex items-center justify-center w-full px-0.5 z-10">
-              <span className={`text-[8px] sm:text-[8.5px] xl:text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded border font-['Barlow_Condensed'] truncate leading-tight ${aura.badgeBg}`}>
+              <span className={`text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider px-1 py-0.2 rounded border font-['Barlow_Condensed'] truncate leading-tight ${aura.badgeBg}`}>
                 {essenceTag}
               </span>
             </div>
@@ -1523,11 +1523,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             {/* Key Stat Preview Calibration Chip */}
             <div className="mt-0.5 max-w-[95%] text-center z-10">
               {statPreview ? (
-                <span className="text-[8px] sm:text-[8.5px] font-mono font-bold text-[#c1c497] truncate block leading-tight bg-black/45 px-1 py-0.2 rounded border border-white/5">
+                <span className="text-[7.5px] sm:text-[8px] font-mono font-bold text-[#c1c497] truncate block leading-tight bg-black/45 px-1 py-0.2 rounded border border-white/5">
                   {statPreview}
                 </span>
               ) : (
-                <span className="text-[8px] sm:text-[8.5px] font-sans text-[#769382] italic truncate block leading-tight">
+                <span className="text-[7.5px] sm:text-[8px] font-sans text-[#769382] italic truncate block leading-tight">
                   {card.category.toUpperCase()}
                 </span>
               )}
@@ -1536,54 +1536,54 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             {/* High-Contrast Badges over icon on hover connection */}
             {isFinalSwapTarget && (
               <div className="absolute inset-0 bg-rose-700/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
-                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-rose-200 leading-none mb-0.5 font-['Barlow_Condensed']">
+                <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-rose-200 leading-none mb-0.5 font-['Barlow_Condensed']">
                   SWAP OUT FOR
                 </span>
-                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                   UPGRADE
                 </span>
               </div>
             )}
             {!isFinalSwapTarget && isTarget && (
               <div className="absolute inset-0 bg-rose-600/90 flex items-center justify-center p-1 z-20 animate-in fade-in duration-100">
-                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                   SWAP OUT
                 </span>
               </div>
             )}
             {isUpgrade && (
               <div className="absolute inset-0 bg-emerald-600/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
-                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-emerald-200 leading-none mb-0.5 font-['Barlow_Condensed']">
+                <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-emerald-200 leading-none mb-0.5 font-['Barlow_Condensed']">
                   BUILDS INTO
                 </span>
-                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                   UPGRADE
                 </span>
               </div>
             )}
             {isComponent && (
               <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
-                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
+                <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
                   BUILDS FROM
                 </span>
-                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                   800G COMP
                 </span>
               </div>
             )}
             {isSeedComponent && (
               <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
-                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
+                <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
                   EARLY SEED
                 </span>
-                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                <span className="text-[9px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                   800G COMP
                 </span>
               </div>
             )}
             {!isUpgrade && !isSeedComponent && isCandidate && (
               <div className="absolute inset-0 bg-sky-600/90 flex items-center justify-center p-1 z-20 animate-in fade-in duration-100">
-                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
                   SWAP IN
                 </span>
               </div>
@@ -1591,8 +1591,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           </div>
 
           {/* Bottom Shaded Name Plate */}
-          <div className="relative z-10 px-1 py-1 text-center min-h-[34px] sm:min-h-[36px] flex items-center justify-center border-t border-white/10 flex-shrink-0 bg-[#0c1611]/95 text-[#c1c497] group-hover:text-[#e2e5b8] transition-colors">
-            <span className="text-[10px] sm:text-[10.5px] xl:text-[11px] font-black leading-tight font-sans tracking-tight break-words text-center">
+          <div className="relative z-10 px-1 py-0.5 text-center min-h-[26px] sm:min-h-[28px] flex items-center justify-center border-t border-white/10 flex-shrink-0 bg-[#0c1611]/95 text-[#c1c497] group-hover:text-[#e2e5b8] transition-colors">
+            <span className="text-[9px] sm:text-[9.5px] font-black leading-tight font-sans tracking-tight break-words text-center line-clamp-2">
               {card.name}
             </span>
           </div>
@@ -1704,12 +1704,16 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
               </div>
 
               {/* Cards Grid */}
-              <div className="space-y-2 flex-1 flex flex-col justify-around">
+              <div className="space-y-3 flex-1 flex flex-col justify-around py-1">
                 {/* Starters Sub-Group */}
-                <div className="bg-[#0f1b16] p-1.5 rounded-lg border border-[#26433a]">
-                  <span className="text-xs font-bold text-[#769382] uppercase block mb-1 font-sans text-center">
-                    0:00 Initial Spawn
-                  </span>
+                <div className="flex flex-col items-center">
+                  <div className="w-full flex items-center justify-center gap-2 mb-1.5 px-1">
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#26433a] to-[#26433a]" />
+                    <span className="text-[10px] font-bold text-[#769382] uppercase font-mono tracking-wider">
+                      0:00 Initial Spawn
+                    </span>
+                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#26433a] to-[#26433a]" />
+                  </div>
                   <div className="flex items-center justify-center gap-2 flex-wrap">
                     {starterCards.map((card, idx) => (
                       <React.Fragment key={`${card.id}-${idx}`}>
@@ -1720,10 +1724,14 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </div>
 
                 {/* 1st Recall Sub-Group */}
-                <div className="bg-[#0f1b16] p-1.5 rounded-lg border border-[#26433a]">
-                  <span className="text-xs font-bold text-[#2dd5b7] uppercase block mb-1 font-sans text-center">
-                    ~4:30 1st Recall Spike
-                  </span>
+                <div className="flex flex-col items-center">
+                  <div className="w-full flex items-center justify-center gap-2 mb-1.5 px-1">
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#2dd5b7]/30 to-[#2dd5b7]/50" />
+                    <span className="text-[10px] font-bold text-[#2dd5b7] uppercase font-mono tracking-wider">
+                      ~4:30 1st Recall Spike
+                    </span>
+                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#2dd5b7]/30 to-[#2dd5b7]/50" />
+                  </div>
                   <div className="flex items-center justify-center gap-2">
                     {renderCardNode(firstBackCard)}
                     {renderCardNode(tier1BootsCard)}
@@ -1900,7 +1908,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
             </div>
 
             {/* 5 Balanced Threat Pods */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-2.5">
               {situationalPods.map((pod, idx) => (
                 <div
                   key={idx}
@@ -1909,27 +1917,27 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   {/* Category Header */}
                   <div className="pb-1.5 mb-1.5 border-b border-[#26433a] flex items-center justify-between">
                     <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="text-sm flex-shrink-0">{pod.icon}</span>
-                      <span className="text-[13px] sm:text-sm font-black uppercase tracking-wide text-[#e2e5b8]">
+                      <span className="flex-shrink-0 flex items-center justify-center">{pod.icon}</span>
+                      <span className="text-[12px] sm:text-[13px] font-black uppercase tracking-wide text-[#e2e5b8] truncate font-['Barlow_Condensed']">
                         {pod.title}
                       </span>
                     </div>
                   </div>
 
                   {/* Centered Symmetrical 2-Card Row */}
-                  <div className="flex items-center justify-center gap-1 sm:gap-1.5 py-0.5">
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-1 px-0.5">
                     {pod.hasBuildLineage && pod.cards.length === 2 ? (
                       <>
                         {renderCardNode(pod.cards[0], false)}
                         <div className="flex flex-col items-center justify-center px-0.5 flex-shrink-0">
-                          <span className={`text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
+                          <span className={`text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
                             pod.accent.includes('emerald')
                               ? 'text-emerald-300 bg-emerald-950/60 border border-emerald-500/40'
                               : 'text-rose-300 bg-rose-950/60 border border-rose-500/40'
                           }`}>
                             BUILDS
                           </span>
-                          <ArrowRight className={`w-4 h-4 animate-pulse ${
+                          <ArrowRight className={`w-3.5 h-3.5 animate-pulse ${
                             pod.accent.includes('emerald') ? 'text-[#2dd5b7]' : 'text-rose-400'
                           }`} />
                         </div>
@@ -1942,7 +1950,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
                   {/* Threat Subtitle Footer */}
                   <div className="mt-1.5 pt-1.5 border-t border-[#26433a] text-center">
-                    <span className="text-xs text-[#769382] font-sans leading-tight block font-semibold">
+                    <span className="text-[10.5px] sm:text-[11px] text-[#769382] font-sans leading-tight block font-medium line-clamp-2">
                       {pod.subtitle}
                     </span>
                   </div>
