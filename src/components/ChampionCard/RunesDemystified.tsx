@@ -86,7 +86,7 @@ export const RunesDemystified: React.FC<RunesDemystifiedProps> = ({ tactics }) =
   };
 
   return (
-    <div className="w-full rounded-2xl bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border border-slate-800 shadow-2xl overflow-hidden select-none font-['Barlow_Condensed'] text-slate-200">
+    <div className="w-full rounded-2xl deadlock-frame retro-futuristic-card shadow-2xl overflow-hidden select-none font-['Barlow_Condensed'] text-slate-200">
       {/* Top Atmospheric Header */}
       <div className="px-4 py-3.5 bg-slate-950/90 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">

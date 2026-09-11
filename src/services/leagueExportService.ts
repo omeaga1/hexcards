@@ -224,21 +224,55 @@ export function generateRiotItemSet(
 
   // 1. Starter Block
   const starterItems: RiotItemSetItem[] = [];
-  if (isSupport) {
-    starterItems.push({ id: '3865', count: 1 }); // World Atlas
-    starterItems.push({ id: '2003', count: 2 }); // Health Potions
-  } else if (tactics.role === 'Jungle') {
-    starterItems.push({ id: '1102', count: 1 }); // Gustwalker Hatchling
-    starterItems.push({ id: '2003', count: 1 });
-  } else if (tactics.damageType === 'Magic Heavy') {
-    starterItems.push({ id: '1056', count: 1 }); // Doran's Ring
-    starterItems.push({ id: '2003', count: 2 });
-  } else if (tactics.playstyle === 'Teamfight Tank' || tactics.playstyle === 'Lane Bully') {
-    starterItems.push({ id: '1054', count: 1 }); // Doran's Shield
-    starterItems.push({ id: '2003', count: 1 });
+  if (tactics.coreBuild.starterIds && tactics.coreBuild.starterIds.length > 0) {
+    const counts: Record<string, number> = {};
+    for (const id of tactics.coreBuild.starterIds) {
+      counts[id] = (counts[id] || 0) + 1;
+    }
+    for (const [id, count] of Object.entries(counts)) {
+      starterItems.push({ id, count });
+    }
+  } else if (tactics.coreBuild.starter) {
+    const parts = tactics.coreBuild.starter.split(' + ').map(s => s.trim());
+    const NAME_MAP: Record<string, string> = {
+      "Doran's Blade": '1055',
+      "Doran's Ring": '1056',
+      "Doran's Shield": '1054',
+      "Doran's Helm": '1054',
+      "Doran's Bow": '1055',
+      "World Atlas": '3865',
+      "Dark Seal": '1082',
+      "Tear of the Goddess": '3070',
+      "Cull": '1083',
+      "Long Sword": '1036',
+      "Boots": '1001',
+      "Scorchclaw Pup": '3563',
+      "Gustwalker Hatchling": '1102',
+      "Mosstomper Seedling": '1103',
+      "Health Potion": '2003',
+      "Refillable Potion": '2031'
+    };
+    const counts: Record<string, number> = {};
+    for (const p of parts) {
+      const id = NAME_MAP[p] || '1055';
+      counts[id] = (counts[id] || 0) + 1;
+    }
+    for (const [id, count] of Object.entries(counts)) {
+      starterItems.push({ id, count });
+    }
   } else {
-    starterItems.push({ id: '1055', count: 1 }); // Doran's Blade
-    starterItems.push({ id: '2003', count: 1 });
+    if (isSupport) {
+      starterItems.push({ id: '3865', count: 1 });
+      starterItems.push({ id: '2003', count: 2 });
+    } else if (tactics.role === 'Jungle') {
+      starterItems.push({ id: '1102', count: 1 });
+    } else if (tactics.damageType === 'Magic Heavy') {
+      starterItems.push({ id: '1056', count: 1 });
+      starterItems.push({ id: '2003', count: 2 });
+    } else {
+      starterItems.push({ id: '1055', count: 1 });
+      starterItems.push({ id: '2003', count: 1 });
+    }
   }
   starterItems.push({ id: '3340', count: 1 }); // Stealth Ward
 
@@ -262,19 +296,46 @@ export function generateRiotItemSet(
 
   // 4. Situational & Threat Counter Pivots
   const pivotItemIds = new Set<string>();
+  const isMarksman = tactics.role === 'ADC';
+  const isMagicDamage = tactics.damageType === 'Magic Heavy';
+  const isTank = tactics.playstyle === 'Teamfight Tank' || (isSupport && !isMagicDamage);
+
   // Anti-Heal
-  if (tactics.damageType === 'Magic Heavy') pivotItemIds.add('3165'); // Morellonomicon
-  else if (tactics.playstyle === 'Teamfight Tank') pivotItemIds.add('3075'); // Thornmail
-  else pivotItemIds.add('3033'); // Mortal Reminder / Chempunk
+  if (isTank) pivotItemIds.add('3075'); // Thornmail
+  else if (isMagicDamage) pivotItemIds.add('3165'); // Morellonomicon
+  else if (isMarksman) pivotItemIds.add('3033'); // Mortal Reminder
+  else pivotItemIds.add('6609'); // Chempunk Chainsword
 
   // Armor Penetration / Magic Pen
-  if (tactics.damageType === 'Magic Heavy') pivotItemIds.add('3135'); // Void Staff
-  else pivotItemIds.add('3036'); // LDR
+  if (isMagicDamage) {
+    pivotItemIds.add('3135'); // Void Staff
+    pivotItemIds.add('3137'); // Cryptbloom
+  } else if (isMarksman) {
+    pivotItemIds.add('3036'); // Lord Dominik's Regards
+    pivotItemIds.add('3153'); // Blade of the Ruined King
+  } else if (isTank) {
+    pivotItemIds.add('8020'); // Abyssal Mask
+  } else {
+    pivotItemIds.add('3071'); // Black Cleaver
+  }
 
-  // Defensive / Stasis / Lifeline
-  if (tactics.damageType === 'Magic Heavy') pivotItemIds.add('3157'); // Zhonya's
-  else pivotItemIds.add('3053'); // Sterak's
-  pivotItemIds.add('2504'); // Kaenic Rookern (MR)
+  // Defensive / Magic Resist / Stasis
+  if (isMagicDamage) {
+    pivotItemIds.add('3157'); // Zhonya's
+    pivotItemIds.add('3102'); // Banshee's Veil
+  } else if (isMarksman) {
+    pivotItemIds.add('3026'); // Guardian Angel
+    pivotItemIds.add('3156'); // Maw
+    pivotItemIds.add('3139'); // Mercurial Scimitar
+  } else if (isTank) {
+    pivotItemIds.add('2504'); // Kaenic Rookern
+    pivotItemIds.add('3143'); // Randuin's Omen
+    pivotItemIds.add('4401'); // Force of Nature
+  } else {
+    pivotItemIds.add('6333'); // Death's Dance
+    pivotItemIds.add('3053'); // Sterak's
+    pivotItemIds.add('2504'); // Kaenic Rookern
+  }
 
   const situationalItems: RiotItemSetItem[] = Array.from(pivotItemIds).map(id => ({
     id,
@@ -343,6 +404,8 @@ declare global {
     electronAPI?: {
       isDesktop: boolean;
       platform: string;
+      setZoomFactor?: (factor: number) => void;
+      getZoomFactor?: () => number;
       checkChampSelect: () => Promise<{
         connected?: boolean;
         inChampSelect: boolean;

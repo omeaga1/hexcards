@@ -416,8 +416,8 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
       {/* ============================================================ */}
       {/* 1. HERO SKILL PATH & UPGRADE PRIORITY CARDS                 */}
       {/* ============================================================ */}
-      <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+      <div className="deadlock-frame retro-futuristic-card rounded-xl p-3 sm:p-4 shadow-md relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#26433a]">
           <div className="flex items-center gap-2.5">
             <span className="deadlock-badge px-2.5 py-0.5 text-xs sm:text-sm text-emerald-800 bg-emerald-50 border-emerald-300">
               <span>SKILL PATH</span>
@@ -436,7 +436,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
         {/* 3 Deadlock Hero Priority Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-3">
           {/* 1st Max */}
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 via-white to-white border-2 border-emerald-500 shadow-2xs relative overflow-hidden">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#162b23] border-2 border-[#2dd5b7] shadow-xs relative overflow-hidden">
             <div className="w-12 h-12 rounded-lg border-2 border-emerald-600 overflow-hidden bg-slate-900 flex-shrink-0 shadow-sm relative">
               <img
                 src={getSpellIcon(firstMaxKey)}
@@ -530,8 +530,8 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
       {/* ============================================================ */}
       {/* 2. 1-18 LEVEL SKILL PROGRESSION MATRIX                       */}
       {/* ============================================================ */}
-      <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
-        <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
+      <div className="deadlock-frame retro-futuristic-card rounded-xl p-3 sm:p-4 shadow-md relative overflow-hidden">
+        <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#26433a]">
           <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
             Levels 1 – 18 Skill Progression Matrix
           </h3>
@@ -595,7 +595,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                           >
                             {key}
                           </span>
-                          <span className="text-xs font-black uppercase text-slate-800 truncate font-['Barlow_Condensed']">
+                          <span className="text-xs font-black uppercase text-[#c1c497] truncate font-['Barlow_Condensed']">
                             {label}
                           </span>
                         </div>
@@ -610,7 +610,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                         return (
                           <div
                             key={lvl}
-                            className="h-7 rounded flex items-center justify-center bg-white/70 border border-slate-100 text-[10px] text-slate-300 font-mono"
+                            className="h-7 rounded flex items-center justify-center bg-[#0d1713]/60 border border-[#26433a] text-[10px] text-[#53685b] font-mono"
                           >
                             ·
                           </div>
@@ -644,39 +644,39 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
       {/* ============================================================ */}
       {/* 3. DEADLOCK ABILITY SYSTEM: CARDS DECK & FOCUS INSPECTOR     */}
       {/* ============================================================ */}
-      <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
+      <div className="deadlock-frame retro-futuristic-card rounded-xl p-3 sm:p-4 shadow-md relative overflow-hidden">
         
         {/* Section Header with View Mode Switcher */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-[#26433a]">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
-            <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-slate-900">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2dd5b7] shadow-xs shadow-[#2dd5b7]/40" />
+            <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#e2e5b8]">
               Tactical Abilities HUD & Combat Application
             </h3>
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 self-start sm:self-auto">
+          <div className="flex items-center gap-1 bg-[#0f1c17] p-0.5 rounded-lg border border-[#26433a] self-start sm:self-auto">
             <button
               onClick={() => setViewMode('deck')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold font-sans transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold font-sans transition-all cursor-pointer ${
                 viewMode === 'deck'
-                  ? 'bg-white text-emerald-950 shadow-2xs border border-slate-300/80 font-black'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#1a352a] text-[#2dd5b7] shadow-2xs border border-[#2dd5b7]/50 font-black'
+                  : 'text-[#769382] hover:text-[#e2e5b8] hover:bg-[#162821]'
               }`}
             >
-              <Layers className="w-3.5 h-3.5 text-emerald-600" />
+              <Layers className="w-3.5 h-3.5 text-[#2dd5b7]" />
               <span>All Abilities Deck</span>
             </button>
             <button
               onClick={() => setViewMode('inspector')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold font-sans transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold font-sans transition-all cursor-pointer ${
                 viewMode === 'inspector'
-                  ? 'bg-white text-emerald-950 shadow-2xs border border-slate-300/80 font-black'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#1a352a] text-[#2dd5b7] shadow-2xs border border-[#2dd5b7]/50 font-black'
+                  : 'text-[#769382] hover:text-[#e2e5b8] hover:bg-[#162821]'
               }`}
             >
-              <Crosshair className="w-3.5 h-3.5 text-emerald-600" />
+              <Crosshair className="w-3.5 h-3.5 text-[#2dd5b7]" />
               <span>Focus Inspector</span>
             </button>
           </div>
@@ -688,34 +688,34 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
         {viewMode === 'inspector' && (
           <div className="space-y-3 mb-2">
             {/* Deadlock Hotkey Selector Strip */}
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 p-1.5 rounded-xl bg-slate-100 border border-slate-200">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 p-1.5 rounded-xl bg-[#0f1c17] border border-[#26433a]">
               {abilitiesData.map((ability) => {
                 const isActive = ability.key === focusedKey;
                 return (
                   <button
                     key={ability.key}
                     onClick={() => setFocusedKey(ability.key)}
-                    className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-lg border transition-all ${
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-lg border transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-white border-emerald-500 shadow-sm text-slate-950 scale-[1.02]'
-                        : 'bg-transparent border-transparent hover:bg-white/60 text-slate-600'
+                        ? 'bg-[#1a352a] border-[#2dd5b7] shadow-sm text-[#2dd5b7] scale-[1.02]'
+                        : 'bg-transparent border-transparent hover:bg-[#162821] text-[#769382] hover:text-[#c1c497]'
                     }`}
                   >
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded overflow-hidden bg-slate-900 relative flex-shrink-0 border border-slate-300">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded overflow-hidden bg-slate-900 relative flex-shrink-0 border border-[#26433a]">
                       <img
                         src={ability.iconUrl}
                         alt={ability.name}
                         className="w-full h-full object-cover"
                       />
-                      <span className="absolute bottom-0 right-0 bg-slate-950/90 text-white text-[9px] font-black px-0.5 rounded-tl font-mono">
+                      <span className="absolute bottom-0 right-0 bg-slate-950/90 text-[#2dd5b7] text-[9px] font-black px-0.5 rounded-tl font-mono">
                         {ability.shortKey}
                       </span>
                     </div>
                     <div className="text-center sm:text-left min-w-0">
-                      <span className="block text-[11px] sm:text-xs font-black uppercase truncate font-['Barlow_Condensed']">
+                      <span className="block text-[11px] sm:text-xs font-black uppercase truncate font-['Barlow_Condensed'] text-[#e2e5b8]">
                         [{ability.shortKey}] {ability.name}
                       </span>
-                      <span className="hidden sm:block text-[9.5px] font-sans text-slate-400 truncate">
+                      <span className="hidden sm:block text-[9.5px] font-sans text-[#769382] truncate">
                         {ability.cooldownFormatted}
                       </span>
                     </div>
@@ -725,25 +725,25 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
             </div>
 
             {/* Focused Ability Card Display */}
-            <div className="p-4 rounded-xl bg-slate-50/90 border-2 border-emerald-500/80 shadow-sm space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
+            <div className="p-4 rounded-xl bg-[#13221c] border-2 border-[#2dd5b7]/60 shadow-lg space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[#26433a]">
                 <div className="flex items-center gap-3">
-                  <div className="relative w-14 h-14 rounded-xl border-2 border-emerald-600 overflow-hidden bg-slate-900 shadow-sm flex-shrink-0">
+                  <div className="relative w-14 h-14 rounded-xl border-2 border-[#2dd5b7] overflow-hidden bg-slate-900 shadow-sm flex-shrink-0">
                     <img
                       src={currentAbility.iconUrl}
                       alt={currentAbility.name}
                       className="w-full h-full object-cover"
                     />
-                    <span className="absolute top-0 left-0 bg-slate-950/85 text-emerald-400 font-mono font-black text-xs px-1.5 py-0.5 rounded-br border-r border-b border-emerald-500/50">
+                    <span className="absolute top-0 left-0 bg-slate-950/85 text-[#2dd5b7] font-mono font-black text-xs px-1.5 py-0.5 rounded-br border-r border-b border-[#2dd5b7]/50">
                       {currentAbility.shortKey}
                     </span>
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-xl font-black uppercase text-slate-900 tracking-wide font-['Barlow_Condensed']">
+                      <h4 className="text-xl font-black uppercase text-[#e2e5b8] tracking-wide font-['Barlow_Condensed']">
                         {currentAbility.name}
                       </h4>
-                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded border font-sans bg-emerald-50 border-emerald-300 text-emerald-900">
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded border font-sans bg-[#163026] border-[#2dd5b7]/50 text-[#2dd5b7]">
                         {currentAbility.maxPriorityBadge}
                       </span>
                     </div>
@@ -765,16 +765,16 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 
                 {/* Stat Chips */}
                 <div className="flex items-center gap-2 flex-wrap font-mono text-xs">
-                  <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-1 rounded border border-slate-200 shadow-2xs">
-                    <Clock className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="flex items-center gap-1 text-[#c1c497] bg-[#0f1c17] px-2 py-1 rounded border border-[#26433a] shadow-2xs">
+                    <Clock className="w-3.5 h-3.5 text-[#769382]" />
                     <span>{currentAbility.cooldownFormatted}</span>
                   </span>
-                  <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-1 rounded border border-slate-200 shadow-2xs">
-                    <Droplets className="w-3.5 h-3.5 text-sky-600" />
+                  <span className="flex items-center gap-1 text-[#c1c497] bg-[#0f1c17] px-2 py-1 rounded border border-[#26433a] shadow-2xs">
+                    <Droplets className="w-3.5 h-3.5 text-sky-400" />
                     <span>{currentAbility.costFormatted}</span>
                   </span>
-                  <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-1 rounded border border-slate-200 shadow-2xs">
-                    <Target className="w-3.5 h-3.5 text-rose-500" />
+                  <span className="flex items-center gap-1 text-[#c1c497] bg-[#0f1c17] px-2 py-1 rounded border border-[#26433a] shadow-2xs">
+                    <Target className="w-3.5 h-3.5 text-[#d2689c]" />
                     <span>{currentAbility.rangeFormatted}</span>
                   </span>
                 </div>
@@ -782,22 +782,22 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
 
               {/* What It Does */}
               <div className="space-y-1 font-sans text-xs sm:text-[13px]">
-                <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block font-['Barlow_Condensed']">
+                <span className="text-[11px] font-black uppercase tracking-wider text-[#2dd5b7] block font-['Barlow_Condensed']">
                   MECHANICS BREAKDOWN
                 </span>
-                <p className="text-slate-800 leading-relaxed bg-white p-3 rounded-lg border border-slate-200">
+                <p className="text-[#c1c497] leading-relaxed bg-[#0f1c17] p-3 rounded-lg border border-[#26433a]">
                   <GlossaryText text={currentAbility.description} />
                 </p>
               </div>
 
               {/* Combat Application */}
-              <div className="p-3 rounded-lg bg-emerald-50/90 border border-emerald-300 text-xs sm:text-[13px] font-sans flex items-start gap-2.5 shadow-2xs">
-                <Zap className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
+              <div className="p-3 rounded-lg bg-[#163026] border border-[#2dd5b7]/40 text-xs sm:text-[13px] font-sans flex items-start gap-2.5 shadow-2xs">
+                <Zap className="w-4 h-4 text-[#2dd5b7] flex-shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-emerald-950 font-bold block mb-0.5 font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
+                  <strong className="text-[#2dd5b7] font-bold block mb-0.5 font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
                     COMBAT APPLICATION:
                   </strong>
-                  <span className="text-slate-800 leading-relaxed">
+                  <span className="text-[#c1c497] leading-relaxed">
                     <GlossaryText text={currentAbility.combatApplication} />
                   </span>
                 </div>
@@ -843,34 +843,34 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                   if (isMobile || isTouch) return;
                   unregisterHover(ability.key);
                 }}
-                className="p-3 sm:p-3.5 rounded-xl bg-slate-50/90 border border-slate-200 hover:border-emerald-500 hover:bg-white hover:shadow-sm transition-all flex flex-col sm:flex-row gap-3 items-start relative group"
+                className="p-3 sm:p-3.5 rounded-xl bg-[#13221c] border border-[#26433a] hover:border-[#2dd5b7] hover:bg-[#162821] hover:shadow-lg hover:shadow-[#2dd5b7]/10 transition-all flex flex-col sm:flex-row gap-3 items-start relative group"
               >
                 {!isMobile && !isTouch && (
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[8.5px] px-1.5 py-0.2 rounded bg-slate-900 text-white font-bold border border-slate-700 font-sans absolute top-2 right-2">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] px-2 py-0.5 rounded bg-slate-900 text-[#2dd5b7] font-bold border border-[#2dd5b7]/50 font-sans absolute top-2 right-2 shadow-xs">
                     [Tab] to Pin
                   </span>
                 )}
 
                 {/* Left: Embossed Key Badge & Icon Frame */}
                 <div className="flex sm:flex-col items-center gap-3 sm:gap-2 flex-shrink-0 w-full sm:w-28">
-                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-emerald-500/80 overflow-hidden bg-slate-900 flex-shrink-0 shadow-sm">
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-[#2dd5b7]/80 overflow-hidden bg-slate-900 flex-shrink-0 shadow-sm">
                     <img
                       src={ability.iconUrl}
                       alt={ability.name}
                       className="w-full h-full object-cover"
                     />
                     {/* Tactile Hotkey Stencil */}
-                    <div className="absolute top-0 left-0 bg-slate-950/90 text-emerald-400 font-mono font-black text-[11px] px-1.5 py-0.5 rounded-br border-r border-b border-emerald-500/50">
+                    <div className="absolute top-0 left-0 bg-slate-950/90 text-[#2dd5b7] font-mono font-black text-xs px-1.5 py-0.5 rounded-br border-r border-b border-[#2dd5b7]/50">
                       {ability.shortKey}
                     </div>
                   </div>
 
                   <div className="flex-1 sm:text-center">
-                    <span className="font-mono text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 border border-emerald-300 px-1.5 py-0.2 rounded block sm:inline-block">
+                    <span className="font-mono text-[11px] font-black uppercase text-[#2dd5b7] bg-[#163026] border border-[#2dd5b7]/50 px-2 py-0.5 rounded block sm:inline-block">
                       [{ability.shortKey}]
                     </span>
                     {ability.maxPriorityBadge && (
-                      <span className="text-[9px] font-black uppercase text-slate-600 bg-slate-200/80 px-1.5 py-0.2 rounded block mt-1 font-sans">
+                      <span className="text-[10.5px] font-black uppercase text-[#c1c497] bg-[#1a3128] border border-[#26433a] px-2 py-0.5 rounded block mt-1 font-sans">
                         {ability.priorityTier === '1st'
                           ? '1ST MAX'
                           : ability.priorityTier === '2nd'
@@ -886,11 +886,11 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                 </div>
 
                 {/* Right: Ability Information, Stats, and Tactical Guide */}
-                <div className="flex-1 space-y-2 w-full text-xs sm:text-[13px] font-sans min-w-0">
+                <div className="flex-1 space-y-2 w-full text-xs sm:text-sm font-sans min-w-0">
                   {/* Name, Tags, & Metric Chips Bar */}
-                  <div className="flex flex-wrap items-center justify-between gap-1 pb-1.5 border-b border-slate-200">
+                  <div className="flex flex-wrap items-center justify-between gap-1 pb-1.5 border-b border-[#26433a]">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-base sm:text-lg font-black uppercase text-slate-900 font-['Barlow_Condensed'] tracking-wide">
+                      <h4 className="text-lg sm:text-xl font-black uppercase text-[#e2e5b8] font-['Barlow_Condensed'] tracking-wide">
                         {ability.name}
                       </h4>
                       {/* Tags */}
@@ -898,7 +898,7 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                         {ability.tags.map((tag) => (
                           <span
                             key={tag}
-                            className={`text-[9px] uppercase font-black px-1.5 py-0.2 rounded border font-mono tracking-wider ${getTagBadgeStyle(
+                            className={`text-[10px] uppercase font-black px-2 py-0.5 rounded border font-mono tracking-wider ${getTagBadgeStyle(
                               tag
                             )}`}
                           >
@@ -909,20 +909,20 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                     </div>
 
                     {/* Stat Metrics Bar */}
-                    <div className="flex items-center gap-1.5 flex-wrap text-[11px] font-mono">
+                    <div className="flex items-center gap-1.5 flex-wrap text-xs font-mono">
                       {ability.cooldownFormatted !== 'Innate' && (
-                        <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
-                          <Clock className="w-3 h-3 text-slate-500" />
+                        <span className="flex items-center gap-1 text-[#c1c497] bg-[#0f1c17] px-2 py-0.5 rounded border border-[#26433a] shadow-2xs">
+                          <Clock className="w-3.5 h-3.5 text-[#769382]" />
                           <span>{ability.cooldownFormatted}</span>
                         </span>
                       )}
-                      <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
-                        <Droplets className="w-3 h-3 text-sky-600" />
+                      <span className="flex items-center gap-1 text-[#c1c497] bg-[#0f1c17] px-2 py-0.5 rounded border border-[#26433a] shadow-2xs">
+                        <Droplets className="w-3.5 h-3.5 text-sky-400" />
                         <span>{ability.costFormatted}</span>
                       </span>
                       {ability.rangeFormatted !== 'Self' && (
-                        <span className="flex items-center gap-1 text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
-                          <Target className="w-3 h-3 text-rose-500" />
+                        <span className="flex items-center gap-1 text-[#c1c497] bg-[#0f1c17] px-2 py-0.5 rounded border border-[#26433a] shadow-2xs">
+                          <Target className="w-3.5 h-3.5 text-[#d2689c]" />
                           <span>{ability.rangeFormatted}</span>
                         </span>
                       )}
@@ -930,18 +930,18 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                   </div>
 
                   {/* What it does (Authentic Riot Mechanics) */}
-                  <p className="text-slate-800 leading-relaxed">
-                    <strong className="text-emerald-950 font-bold font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
+                  <p className="text-[#c1c497] leading-relaxed">
+                    <strong className="text-[#2dd5b7] font-bold font-['Barlow_Condensed'] text-xs sm:text-sm uppercase tracking-wider">
                       What it does:{' '}
                     </strong>
                     <GlossaryText text={ability.description} />
                   </p>
 
                   {/* Combat Application (Tactical Trigger) */}
-                  <div className="p-2 sm:p-2.5 rounded-lg bg-emerald-50/90 border border-emerald-200 text-slate-800 leading-relaxed flex items-start gap-2 shadow-2xs">
-                    <Zap className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0 mt-0.5" />
+                  <div className="p-2.5 rounded-lg bg-[#163026] border border-[#2dd5b7]/40 text-[#c1c497] leading-relaxed flex items-start gap-2 shadow-2xs">
+                    <Zap className="w-4 h-4 text-[#2dd5b7] flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-emerald-950 font-bold font-['Barlow_Condensed'] text-xs uppercase tracking-wider">
+                      <strong className="text-[#2dd5b7] font-bold font-['Barlow_Condensed'] text-xs sm:text-sm uppercase tracking-wider">
                         Combat Application:{' '}
                       </strong>
                       <GlossaryText text={ability.combatApplication} />
@@ -958,13 +958,13 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
       {/* 4. BREAD & BUTTER COMBOS (AUTHENTIC SEQUENCES ONLY)          */}
       {/* ============================================================ */}
       {validCombos.length > 0 && (
-        <div className="rounded-xl bg-white border border-[#c8d4c2] p-3 sm:p-4 shadow-2xs">
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
-            <span className="text-xs sm:text-sm font-black uppercase text-emerald-800 tracking-wider flex items-center gap-1.5 font-['Barlow_Condensed']">
-              <Swords className="w-4 h-4 text-emerald-600" />
+        <div className="deadlock-frame retro-futuristic-card rounded-xl p-3 sm:p-4 shadow-md relative overflow-hidden">
+          <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#26433a]">
+            <span className="text-xs sm:text-sm font-black uppercase text-[#2dd5b7] tracking-wider flex items-center gap-1.5 font-['Barlow_Condensed']">
+              <Swords className="w-4 h-4 text-[#2dd5b7]" />
               Tactical Combat Sequences:
             </span>
-            <span className="text-[11px] text-slate-500 font-sans hidden sm:inline">
+            <span className="text-[11px] text-[#769382] font-sans hidden sm:inline">
               Practice execution in Practice Tool or early skirmishes
             </span>
           </div>
@@ -973,9 +973,9 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
             {validCombos.map((combo, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-[13px] shadow-2xs"
+                className="p-3 rounded-xl bg-[#13221c] border border-[#26433a] text-xs sm:text-[13px] shadow-2xs"
               >
-                <span className="font-black uppercase text-slate-900 block mb-1.5 font-['Barlow_Condensed'] text-sm sm:text-base">
+                <span className="font-black uppercase text-[#e2e5b8] block mb-1.5 font-['Barlow_Condensed'] text-sm sm:text-base">
                   {combo.name}:
                 </span>
 
@@ -983,18 +983,18 @@ export const AbilityCards: React.FC<AbilityCardsProps> = ({
                 <div className="flex flex-wrap items-center gap-1.5 mb-2 font-['Barlow_Condensed']">
                   {combo.sequence.map((step, sIdx) => (
                     <React.Fragment key={sIdx}>
-                      <span className="px-2 py-0.5 rounded bg-white text-slate-900 font-black text-xs border border-slate-300 shadow-2xs font-mono">
+                      <span className="px-2 py-0.5 rounded bg-[#0f1c17] text-[#2dd5b7] font-black text-xs border border-[#26433a] shadow-2xs font-mono">
                         {step}
                       </span>
                       {sIdx < combo.sequence.length - 1 && (
-                        <ArrowRight className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        <ArrowRight className="w-3.5 h-3.5 text-[#2dd5b7] flex-shrink-0" />
                       )}
                     </React.Fragment>
                   ))}
                 </div>
 
-                <p className="text-xs text-slate-700 font-sans leading-relaxed bg-white p-2 rounded-lg border border-slate-200">
-                  <strong className="text-emerald-900 font-bold font-['Barlow_Condensed'] uppercase tracking-wide">
+                <p className="text-xs text-[#c1c497] font-sans leading-relaxed bg-[#0f1c17] p-2 rounded-lg border border-[#26433a]">
+                  <strong className="text-[#e5c736] font-bold font-['Barlow_Condensed'] uppercase tracking-wide">
                     Execution Tip:
                   </strong>{' '}
                   {combo.tip}

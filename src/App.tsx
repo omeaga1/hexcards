@@ -24,6 +24,9 @@ import { checkBridgeStatus } from './services/leagueExportService';
 import { GameSessionBanner } from './components/GameSessionBanner';
 import { PinnedCardProvider } from './context/PinnedCardContext';
 import { PinnedWindowManager } from './components/FloatingWindows/PinnedWindowManager';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { ZoomProvider } from './context/ZoomContext';
+import { ThemeModal } from './components/ThemeModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Loader2, AlertCircle, ShoppingBag, Sparkles, Compass, Layers, Download, Globe } from 'lucide-react';
 import { useDevice } from './hooks/useDevice';
@@ -65,6 +68,7 @@ const AppContent: React.FC = () => {
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
   const [isBridgeConnected, setIsBridgeConnected] = useState<boolean>(false);
   const [downloadedUpdateVersion, setDownloadedUpdateVersion] = useState<string | null>(null);
+  const { isThemeModalOpen, setIsThemeModalOpen } = useTheme();
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.electronAPI?.onUpdateStatus) return;
@@ -257,11 +261,11 @@ const AppContent: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] deadlock-hatched flex flex-col items-center justify-center text-slate-600 gap-3 font-['Barlow_Condensed']">
-        <Loader2 className="w-9 h-9 text-emerald-600 animate-spin" />
+      <div className="min-h-screen bg-[#0d1713] deadlock-hatched flex flex-col items-center justify-center text-[#769382] gap-3 font-['Barlow_Condensed']">
+        <Loader2 className="w-9 h-9 text-[#2dd5b7] animate-spin" />
         <div className="text-center">
-          <p className="text-lg font-black tracking-wider uppercase text-slate-900">Initializing HexCards Matrix...</p>
-          <p className="text-xs text-slate-500 font-sans">Connecting to Riot Data Dragon v{version}</p>
+          <p className="text-lg font-black tracking-wider uppercase text-[#e2e5b8]">Initializing HexCards Matrix...</p>
+          <p className="text-xs text-[#769382] font-sans">Connecting to Riot Data Dragon v{version}</p>
         </div>
       </div>
     );
@@ -269,14 +273,14 @@ const AppContent: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] deadlock-hatched flex flex-col items-center justify-center p-4 font-['Barlow_Condensed']">
-        <div className="deadlock-frame p-6 rounded-xl max-w-md text-center space-y-3 bg-white border border-slate-200 shadow-sm">
-          <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
-          <h2 className="text-lg font-black uppercase text-slate-900">Connection Failed</h2>
-          <p className="text-xs text-slate-600 font-sans">{error}</p>
+      <div className="min-h-screen bg-[#0d1713] deadlock-hatched flex flex-col items-center justify-center p-4 font-['Barlow_Condensed']">
+        <div className="deadlock-frame retro-futuristic-card p-6 rounded-xl max-w-md text-center space-y-3 bg-[#13221c] border border-[#26433a] shadow-lg text-[#e2e5b8]">
+          <AlertCircle className="w-8 h-8 text-[#d2689c] mx-auto" />
+          <h2 className="text-lg font-black uppercase text-[#e2e5b8]">Connection Failed</h2>
+          <p className="text-xs text-[#c1c497] font-sans">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="deadlock-badge px-4 py-1.5 text-xs text-emerald-800 bg-emerald-50 border-emerald-300 cursor-pointer"
+            className="deadlock-badge px-4 py-1.5 text-xs text-[#07120e] bg-[#2dd5b7] hover:bg-[#34e2c3] border-[#2dd5b7] cursor-pointer font-bold uppercase transition-all"
           >
             <span>Retry Connection</span>
           </button>
@@ -286,16 +290,16 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] deadlock-hatched text-slate-900 flex flex-col">
+    <div className="min-h-screen bg-[#0d1713] deadlock-hatched text-[#e2e5b8] flex flex-col">
       {/* Web Version Active Indicator Banner (Web only) */}
       {!isDesktop && (
-        <div className="w-full bg-slate-900 text-slate-200 border-b border-slate-800 px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 shadow-xs font-['Barlow_Condensed'] text-xs sm:text-sm z-30">
+        <div className="w-full bg-[#0a1410] text-[#c1c497] border-b border-[#26433a] px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 shadow-xs font-['Barlow_Condensed'] text-xs sm:text-sm z-30">
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 text-[11px] uppercase tracking-wider">
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#163026] text-[#2dd5b7] font-bold border border-[#2dd5b7]/30 text-[11px] uppercase tracking-wider">
               <Globe className="w-3 h-3" />
               <span>Web Version Active</span>
             </span>
-            <span className="text-slate-400 text-xs hidden md:inline">
+            <span className="text-[#769382] text-xs hidden md:inline">
               Manual Deck Reference Mode. 1-Click Riot Client in-game shop & rune export requires the Desktop App.
             </span>
           </div>
@@ -305,13 +309,13 @@ const AppContent: React.FC = () => {
                 setViewMode('landing');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="text-xs text-slate-300 hover:text-white underline underline-offset-2 transition-colors cursor-pointer"
+              className="text-xs text-[#9eebb3] hover:text-[#e2e5b8] underline underline-offset-2 transition-colors cursor-pointer"
             >
               Overview & Download
             </button>
             <button
               onClick={() => setIsDownloadModalOpen(true)}
-              className="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-xs transition-all cursor-pointer"
+              className="px-2.5 py-0.5 rounded bg-[#2dd5b7] hover:bg-[#34e2c3] text-[#07120e] text-[11px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs transition-all cursor-pointer"
             >
               <Download className="w-3 h-3" />
               <span>Get Desktop .exe</span>
@@ -385,7 +389,7 @@ const AppContent: React.FC = () => {
       )}
 
       {/* Main Content Area */}
-      <main className={`flex-1 w-full max-w-7xl mx-auto py-2 sm:py-3 space-y-3 ${isMobile ? 'pb-16 px-2' : 'px-3 sm:px-4 lg:px-6'}`}>
+      <main className={`flex-1 w-full max-w-7xl 2xl:max-w-[1536px] mx-auto py-2 sm:py-3 space-y-3 ${isMobile ? 'pb-16 px-2' : 'px-3 sm:px-4 lg:px-6'}`}>
         
         {/* Collapsible Champion Drawer (controlled via Header CHAMPS trigger) */}
         {isSelectorExpanded && (
@@ -425,52 +429,52 @@ const AppContent: React.FC = () => {
             />
 
             {/* View Selector Tabs */}
-            <div className="flex items-center justify-center sm:justify-start gap-1.5 p-1 rounded-xl bg-white border border-slate-200 shadow-xs w-full sm:w-auto overflow-x-auto font-['Barlow_Condensed']">
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl deadlock-frame retro-futuristic-card bg-[#13221c] border border-[#26433a] shadow-xs w-full sm:w-auto overflow-x-auto font-['Barlow_Condensed']">
               <button
                 onClick={() => setActiveTab('items')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 sm:px-4.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-[13.5px] font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'items'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-[#2dd5b7] text-[#07120e] shadow-md shadow-[#2dd5b7]/20'
+                    : 'text-[#c1c497] hover:text-[#e2e5b8] hover:bg-[#192e26]'
                 }`}
               >
-                <ShoppingBag className="w-4 h-4" />
+                <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 <span>Items</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('abilities')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 sm:px-4.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-[13.5px] font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'abilities'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-[#2dd5b7] text-[#07120e] shadow-md shadow-[#2dd5b7]/20'
+                    : 'text-[#c1c497] hover:text-[#e2e5b8] hover:bg-[#192e26]'
                 }`}
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 <span>Abilities</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('runes')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 sm:px-4.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-[13.5px] font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'runes'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-[#2dd5b7] text-[#07120e] shadow-md shadow-[#2dd5b7]/20'
+                    : 'text-[#c1c497] hover:text-[#e2e5b8] hover:bg-[#192e26]'
                 }`}
               >
-                <Compass className="w-4 h-4" />
+                <Compass className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 <span>Runes</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('all')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 sm:px-4.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-[13.5px] font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === 'all'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-[#2dd5b7] text-[#07120e] shadow-md shadow-[#2dd5b7]/20'
+                    : 'text-[#c1c497] hover:text-[#e2e5b8] hover:bg-[#192e26]'
                 }`}
               >
-                <Layers className="w-4 h-4" />
+                <Layers className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 <span>All-in-One</span>
               </button>
             </div>
@@ -529,9 +533,15 @@ const AppContent: React.FC = () => {
         version={version}
       />
 
+      {/* Theme Settings Modal */}
+      <ThemeModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
+      />
+
       {/* Mobile Sticky Bottom Tab Bar (Thumb Navigation) */}
       {isMobile && (
-        <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-1.5 flex items-center justify-around shadow-lg select-none font-['Barlow_Condensed']">
+        <nav className="fixed bottom-0 inset-x-0 z-40 bg-[#13221c]/95 backdrop-blur-md border-t border-[#26433a] px-3 py-1.5 flex items-center justify-around shadow-lg select-none font-['Barlow_Condensed']">
           <button
             onClick={() => {
               setActiveTab('items');
@@ -539,8 +549,8 @@ const AppContent: React.FC = () => {
             }}
             className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
               activeTab === 'items'
-                ? 'text-emerald-600 font-black'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-[#2dd5b7] font-black'
+                : 'text-[#769382] hover:text-[#e2e5b8]'
             }`}
           >
             <ShoppingBag className="w-4 h-4" />
@@ -554,8 +564,8 @@ const AppContent: React.FC = () => {
             }}
             className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
               activeTab === 'abilities'
-                ? 'text-emerald-600 font-black'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-[#2dd5b7] font-black'
+                : 'text-[#769382] hover:text-[#e2e5b8]'
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -569,8 +579,8 @@ const AppContent: React.FC = () => {
             }}
             className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
               activeTab === 'runes'
-                ? 'text-emerald-600 font-black'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-[#2dd5b7] font-black'
+                : 'text-[#769382] hover:text-[#e2e5b8]'
             }`}
           >
             <Compass className="w-4 h-4" />
@@ -584,8 +594,8 @@ const AppContent: React.FC = () => {
             }}
             className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all touch-manipulation active:scale-95 cursor-pointer ${
               activeTab === 'all'
-                ? 'text-emerald-600 font-black'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-[#2dd5b7] font-black'
+                : 'text-[#769382] hover:text-[#e2e5b8]'
             }`}
           >
             <Layers className="w-4 h-4" />
@@ -595,18 +605,18 @@ const AppContent: React.FC = () => {
       )}
 
       {/* Footer */}
-      <footer className={`border-t border-slate-200 bg-white py-2 text-center text-[11px] text-slate-500 font-['Barlow_Condensed'] ${isMobile ? 'pb-14' : ''}`}>
+      <footer className={`border-t border-[#26433a] bg-[#13221c] py-2 text-center text-[11px] text-[#769382] font-['Barlow_Condensed'] ${isMobile ? 'pb-14' : ''}`}>
         <div className="max-w-7xl mx-auto px-3 sm:px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
-          <span className="uppercase tracking-wider font-medium">HexCards • Anti-Slop Tactical LoL Companion</span>
+          <span className="uppercase tracking-wider font-medium text-[#c1c497]">HexCards • Anti-Slop Tactical LoL Companion</span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsGlossaryOpen(true)}
-              className="text-emerald-700 hover:text-emerald-800 hover:underline uppercase tracking-wide font-bold cursor-pointer"
+              className="text-[#2dd5b7] hover:text-[#9eebb3] hover:underline uppercase tracking-wide font-bold cursor-pointer"
             >
               LoL Terminology Glossary
             </button>
-            <span>•</span>
-            <span className="text-amber-800 font-bold">Riot Patch v{version}</span>
+            <span className="text-[#26433a]">•</span>
+            <span className="text-[#e5c736] font-bold">Riot Patch v{version}</span>
           </div>
         </div>
       </footer>
@@ -616,10 +626,14 @@ const AppContent: React.FC = () => {
 
 export const App: React.FC = () => {
   return (
-    <PinnedCardProvider>
-      <AppContent />
-      <PinnedWindowManager />
-    </PinnedCardProvider>
+    <ThemeProvider>
+      <ZoomProvider>
+        <PinnedCardProvider>
+          <AppContent />
+          <PinnedWindowManager />
+        </PinnedCardProvider>
+      </ZoomProvider>
+    </ThemeProvider>
   );
 };
 

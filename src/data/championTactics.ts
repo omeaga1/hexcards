@@ -995,6 +995,7 @@ export function getTacticsForChampion(championId: string, tags: string[] = [], n
       skillMaxReason: meta.skillMaxReason || handcrafted.skillMaxReason,
       coreBuild: {
         starter: meta.starter || handcrafted.coreBuild.starter,
+        starterIds: meta.starterIds,
         firstItem: {
           itemId: meta.firstItemId || handcrafted.coreBuild.firstItem.itemId,
           name: meta.firstItemName || handcrafted.coreBuild.firstItem.name,
@@ -1093,6 +1094,7 @@ export function getTacticsForChampion(championId: string, tags: string[] = [], n
       },
       coreBuild: {
         starter: meta.starter,
+        starterIds: meta.starterIds,
         firstItem: {
           itemId: meta.firstItemId,
           name: meta.firstItemName,

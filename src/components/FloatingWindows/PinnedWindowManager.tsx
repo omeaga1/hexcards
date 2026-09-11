@@ -46,10 +46,10 @@ export const PinnedWindowManager: React.FC = () => {
         <div className="fixed bottom-4 right-4 pointer-events-auto">
           <button
             onClick={closeAllCards}
-            className="px-3 py-1 rounded bg-[#18231c]/90 hover:bg-rose-950/80 border border-[#2f4234] hover:border-rose-500 text-xs font-black uppercase text-[#cbdad0] hover:white shadow-xl transition-all font-['Barlow_Condensed'] flex items-center gap-1.5 backdrop-blur-sm cursor-pointer"
+            className="px-3 py-1 rounded bg-[#13221c]/90 hover:bg-[#2b181e] border border-[#26433a] hover:border-[#d2689c] text-xs font-black uppercase text-[#c1c497] hover:text-[#e2e5b8] shadow-xl transition-all font-['Barlow_Condensed'] flex items-center gap-1.5 backdrop-blur-sm cursor-pointer"
           >
             <span>Close All ({frozenCards.length})</span>
-            <span className="text-[10px] text-[#86998b] font-sans">[Esc]</span>
+            <span className="text-[10px] text-[#769382] font-sans">[Esc]</span>
           </button>
         </div>
       )}

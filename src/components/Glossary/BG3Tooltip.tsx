@@ -46,7 +46,7 @@ export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, chi
   };
 
   if (!termData) {
-    return <span className="font-semibold text-emerald-700">{children || displayText || termId}</span>;
+    return <span className="font-semibold text-[#2dd5b7]">{children || displayText || termId}</span>;
   }
 
   return (
@@ -55,7 +55,7 @@ export const BG3Tooltip: React.FC<BG3TooltipProps> = ({ termId, displayText, chi
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative inline-block cursor-pointer group font-semibold text-emerald-700 hover:text-emerald-800 transition-colors border-b border-dotted border-emerald-500 hover:border-emerald-700 px-0.5"
+      className="relative inline-block cursor-pointer group font-semibold text-[#2dd5b7] hover:text-[#9eebb3] transition-colors border-b border-dotted border-[#2dd5b7]/60 hover:border-[#2dd5b7] px-0.5"
     >
       <span>{children || displayText || termData.term}</span>
     </span>

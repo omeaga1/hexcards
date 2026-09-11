@@ -138,6 +138,7 @@ export interface TacticalGuide {
   };
   coreBuild: {
     starter: string;
+    starterIds?: string[];
     firstItem: CoreItemRecommendation;
     secondItem: CoreItemRecommendation;
     thirdItem: CoreItemRecommendation;

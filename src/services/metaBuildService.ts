@@ -10,6 +10,7 @@ export interface ChampionMetaBuild {
   skillMaxOrder: string;
   skillMaxReason: string;
   starter: string;
+  starterIds?: string[];
   firstItemId: string;
   firstItemName: string;
   secondItemId: string;

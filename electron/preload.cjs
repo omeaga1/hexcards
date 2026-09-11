@@ -1,8 +1,24 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer, webFrame } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   isDesktop: true,
   platform: process.platform,
+
+  // Zoom / Display Scale Controls
+  setZoomFactor: (factor) => {
+    try {
+      webFrame.setZoomFactor(factor);
+    } catch (e) {
+      console.error("[Preload] Failed to set zoom factor:", e);
+    }
+  },
+  getZoomFactor: () => {
+    try {
+      return webFrame.getZoomFactor();
+    } catch {
+      return 1;
+    }
+  },
 
   // LCU Bridge Triggers
   checkChampSelect: () => ipcRenderer.invoke("lcu:checkChampSelect"),

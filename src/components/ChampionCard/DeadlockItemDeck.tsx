@@ -2,9 +2,10 @@ import React, { useState, useRef, useMemo } from 'react';
 import { TacticalGuide, ItemData } from '../../types';
 import { getItemIconUrl } from '../../services/ddragon';
 import { GlossaryText } from '../Glossary/BG3Tooltip';
-import { X, ArrowRight, ArrowLeftRight, Shield, Zap } from 'lucide-react';
+import { X, ArrowRight, ArrowLeftRight, Shield, Zap, Info, Layers } from 'lucide-react';
 import { usePinnedCards } from '../../context/PinnedCardContext';
 import { useDevice } from '../../hooks/useDevice';
+import { ITEM_ESSENCE_MAP } from '../../data/itemEssence';
 
 interface DeadlockItemDeckProps {
   version: string;
@@ -54,7 +55,6 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   tactics,
   allItems
 }) => {
-  const [showInspector, setShowInspector] = useState<boolean>(false);
   const [hoveredCard, setHoveredCard] = useState<TacticalCard | null>(null);
   const [selectedCard, setSelectedCard] = useState<TacticalCard | null>(null);
   const { isMobile, isTouch } = useDevice();
@@ -67,13 +67,39 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   const isSupport = tactics?.role === 'Support';
   const isJungle = tactics?.role === 'Jungle';
   const isADC = tactics?.role === 'ADC';
-  const isMage = !isSupport && tactics?.damageType === 'Magic Heavy';
-  const isTank = tactics?.playstyle === 'Teamfight Tank' || (isSupport && tactics?.damageType !== 'Magic Heavy');
-  const isBruiser = !isADC && !isMage && !isTank && !isSupport;
+  const isMagicDamage = tactics?.damageType === 'Magic Heavy';
 
   const core1 = tactics?.coreBuild?.firstItem || { itemId: '3078', name: 'Trinity Force', why: 'Core Spike', order: 1 };
   const core2 = tactics?.coreBuild?.secondItem || { itemId: '3053', name: "Sterak's Gage", why: 'Kit Synergy', order: 2 };
   const core3 = tactics?.coreBuild?.thirdItem || { itemId: '3026', name: 'Guardian Angel', why: 'Peak Scaling', order: 3 };
+
+  // Helper to check if an item is already present in core 1, 2, or 3
+  const isAlreadyInCore = (id: string, name?: string): boolean => {
+    const idStr = String(id);
+    const n = (name || '').toLowerCase();
+    return [core1, core2, core3].some(
+      c => String(c.itemId) === idStr || (n && c.name.toLowerCase() === n)
+    );
+  };
+
+  // Check for Lifeline passive collisions (Sterak's, Maw, Shieldbow share unique Lifeline)
+  const hasLifelineInCore = [core1.name, core2.name, core3.name].some(
+    n => n.includes("Sterak") || n.includes("Shieldbow") || n.includes("Maw")
+  );
+
+  // Distinct tactical archetype classification
+  const isEnchanter = isSupport && (isMagicDamage || ['Ardent Censer', 'Moonstone Renewer', "Shurelya's Battlesong", 'Echoes of Helia', 'Staff of Flowing Water', 'Redemption', 'Imperial Mandate'].includes(core1.name) || ['Ardent Censer', 'Moonstone Renewer'].includes(core2.name));
+  const isEngageSupport = isSupport && !isEnchanter;
+  const isTank = tactics?.playstyle === 'Teamfight Tank' ||
+    (isSupport && !isEnchanter && !isMagicDamage) ||
+    ['Sunfire Aegis', 'Heartsteel', 'Hollow Radiance', 'Kaenic Rookern', 'Unending Despair', "Jak'Sho, The Protean", 'Iceborn Gauntlet', 'Abyssal Mask', 'Thornmail'].includes(core1.name) ||
+    ['Sunfire Aegis', 'Heartsteel', 'Hollow Radiance', 'Kaenic Rookern', 'Unending Despair', "Jak'Sho, The Protean", 'Iceborn Gauntlet', 'Abyssal Mask', 'Thornmail'].includes(core2.name);
+  const isAssassin = tactics?.playstyle === 'Burst Assassin' || ['Opportunity', 'Profane Hydra', 'Ghostblade', 'Hubris', 'Voltaic Cyclosword'].includes(core1.name);
+  const isAPAssassin = (isAssassin && isMagicDamage) || ['Hextech Rocketbelt', 'Hextech Gunblade', 'Stormsurge', 'Night Harvester', 'Lich Bane'].includes(core1.name);
+  const isADAssassin = isAssassin && !isMagicDamage && !isAPAssassin;
+  const isMage = isMagicDamage && !isSupport && !isAPAssassin && !isTank;
+  const isMarksman = isADC;
+  const isBruiser = !isMarksman && !isMage && !isAPAssassin && !isADAssassin && !isTank && !isSupport;
   const bootsRec = tactics?.coreBuild?.bootsRecommendation || {
     defaultId: '3047',
     defaultName: 'Plated Steelcaps',
@@ -216,46 +242,203 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: 'Defensive alternative to recommended boots'
   }), [altBootsId, altBootsName, bootsRec]);
 
-  // Early Laning Items
-  const starterCard: TacticalCard = useMemo(() => ({
-    id: isSupport ? '3865' : isJungle ? '3563' : isMage ? '1056' : isTank ? '1054' : '1055',
-    name: isSupport ? "World Atlas" : isJungle ? "Scorchclaw Pup" : isMage ? "Doran's Ring" : isTank ? "Doran's Shield" : "Doran's Blade",
-    category: isSupport ? 'utility' : isJungle ? 'weapon' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: 'START',
-    whatItDoes: isSupport
-      ? 'Support quest item executing minions to share gold.'
-      : isJungle
-      ? 'Companion pet damaging monsters and burning enemies.'
-      : 'Essential starter item providing early health, sustain, and combat stats.',
-    whenToBuy: 'Purchase immediately at 0:00 spawn.',
-    timing: 'Match Start (0:00)'
-  }), [isSupport, isJungle, isMage, isTank]);
+  // Starter Item ID to Category & default description lookup
+  const getStarterMeta = (id: string): { category: ItemCategory; whatItDoes: string; whenToBuy: string; badge: string } => {
+    switch (id) {
+      case '1054':
+        return {
+          category: 'vitality',
+          whatItDoes: '+80 Health and restores health over 8s after taking champion damage.',
+          whenToBuy: 'Premier defensive starting item vs poke and heavy harass.',
+          badge: 'DEFENSE'
+        };
+      case '1055':
+        return {
+          category: 'weapon',
+          whatItDoes: '+10 Attack Damage, +80 Health, and 3.5% Lifesteal.',
+          whenToBuy: 'Standard aggressive physical trading start.',
+          badge: 'START'
+        };
+      case '1056':
+        return {
+          category: 'spirit',
+          whatItDoes: '+18 Ability Power, +90 Health, and restores mana on minion kills.',
+          whenToBuy: 'Standard spellcasting start for mana management and lane poke.',
+          badge: 'START'
+        };
+      case '1082':
+        return {
+          category: 'spirit',
+          whatItDoes: '+15 Ability Power, +40 Health, stacks AP on champion takedowns.',
+          whenToBuy: 'High-risk, high-reward snowball start with early roam kill pressure.',
+          badge: 'SNOWBALL'
+        };
+      case '3865':
+        return {
+          category: 'utility',
+          whatItDoes: 'Support quest starter: execute minions to share gold and upgrade wards.',
+          whenToBuy: 'Mandatory starter for all Support roles at 0:00.',
+          badge: 'QUEST'
+        };
+      case '1102':
+        return {
+          category: 'utility',
+          whatItDoes: 'Jungle companion: grants bonus movespeed in brush and on monster kills.',
+          whenToBuy: 'Premier mobility starter for ganking and fast rotations.',
+          badge: 'JUNGLE'
+        };
+      case '1103':
+        return {
+          category: 'vitality',
+          whatItDoes: 'Jungle companion: grants a permanent tenacity and slow resist shield.',
+          whenToBuy: 'Defensive frontline starter vs heavy CC and burst.',
+          badge: 'JUNGLE'
+        };
+      case '3563':
+        return {
+          category: 'weapon',
+          whatItDoes: 'Jungle companion: burns targets for slow and bonus damage on attacks.',
+          whenToBuy: 'Skirmishing jungle starter for dueling and single-target burn.',
+          badge: 'JUNGLE'
+        };
+      case '3070':
+        return {
+          category: 'spirit',
+          whatItDoes: '+240 Mana and stacks +3 max mana on ability hits.',
+          whenToBuy: 'Scaling mana start for heavy mana-dependent kits.',
+          badge: 'SCALING'
+        };
+      case '1083':
+        return {
+          category: 'weapon',
+          whatItDoes: '+7 Attack Damage, +3 HP on hit, grants 450 gold upon 100 CS.',
+          whenToBuy: 'Greedy scaling start in passive farm lanes.',
+          badge: 'FARM'
+        };
+      case '2031':
+        return {
+          category: 'vitality',
+          whatItDoes: 'Restores 100 health over 12s; holds 2 charges and refills at fountain.',
+          whenToBuy: 'Cost-effective sustain alongside Dark Seal or corrupting starts.',
+          badge: 'POTION'
+        };
+      case '2003':
+        return {
+          category: 'vitality',
+          whatItDoes: 'Restores 120 health over 15 seconds.',
+          whenToBuy: 'Standard early lane sustain for trading.',
+          badge: 'POTION'
+        };
+      default:
+        return {
+          category: isMagicDamage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'utility' : 'weapon',
+          whatItDoes: 'Initial match starter item for early laning combat.',
+          whenToBuy: 'Purchase immediately at 0:00 spawn.',
+          badge: 'START'
+        };
+    }
+  };
 
-  const potionCard: TacticalCard = useMemo(() => ({
-    id: '2003',
-    name: 'Health Potion',
-    category: 'vitality',
-    buyOrderBadge: 'POTION',
-    whatItDoes: 'Restores 120 health over 15 seconds.',
-    whenToBuy: 'Standard lane sustain for early trading.',
-    timing: 'Match Start (0:00)'
-  }), []);
+  // Authentic Dynamic Starter Cards
+  const starterCards: TacticalCard[] = useMemo(() => {
+    let ids: string[] = tactics?.coreBuild?.starterIds || [];
 
-  const firstBackCard: TacticalCard = useMemo(() => ({
-    id: isSupport ? '3067' : isADC ? '6670' : isMage ? '3802' : isTank ? '6660' : '3134',
-    name: isSupport ? 'Kindlegem' : isADC ? 'Noonquiver' : isMage ? 'Lost Chapter' : isTank ? "Bami's Cinder" : 'Serrated Dirk',
-    category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: 'RECALL',
-    whatItDoes: isSupport
-      ? '+200 Health and +10 Ability Haste.'
-      : isMage
-      ? 'Restores 20% max mana upon level-up and grants AP + Haste.'
-      : isTank
-      ? 'Immolate aura deals continuous magic damage around you.'
-      : 'Early Attack Damage and minion execute / Lethality.',
-    whenToBuy: 'Recall at 800–1300 gold to secure lane advantage.',
-    timing: '1st Recall (~4:00 - 6:00)'
-  }), [isSupport, isADC, isMage, isTank]);
+    if (ids.length === 0 && tactics?.coreBuild?.starter) {
+      const parts = tactics.coreBuild.starter.split(' + ').map(s => s.trim());
+      const NAME_MAP: Record<string, string> = {
+        "Doran's Blade": '1055',
+        "Doran's Ring": '1056',
+        "Doran's Shield": '1054',
+        "Doran's Helm": '1054',
+        "Doran's Bow": '1055',
+        "World Atlas": '3865',
+        "Dark Seal": '1082',
+        "Tear of the Goddess": '3070',
+        "Cull": '1083',
+        "Long Sword": '1036',
+        "Boots": '1001',
+        "Scorchclaw Pup": '3563',
+        "Gustwalker Hatchling": '1102',
+        "Mosstomper Seedling": '1103',
+        "Health Potion": '2003',
+        "Refillable Potion": '2031'
+      };
+      ids = parts.map(p => NAME_MAP[p] || '1055');
+    }
+
+    if (ids.length === 0) {
+      ids = isSupport ? ['3865', '2003', '2003'] : isJungle ? ['1102'] : isMage ? ['1056', '2003'] : isTank ? ['1054', '2003'] : ['1055', '2003'];
+    }
+
+    const counts: Record<string, number> = {};
+    for (const id of ids) {
+      counts[id] = (counts[id] || 0) + 1;
+    }
+
+    const uniqueIds = Array.from(new Set(ids));
+    return uniqueIds.map(id => {
+      const itemData = allItems ? allItems[id] : null;
+      const itemName = itemData?.name || (id === '1055' ? "Doran's Blade" : id === '1056' ? "Doran's Ring" : id === '1054' ? "Doran's Shield" : id === '3865' ? "World Atlas" : id === '2003' ? "Health Potion" : id === '2031' ? "Refillable Potion" : "Starter Item");
+      const meta = getStarterMeta(id);
+      const count = counts[id];
+      const countLabel = count > 1 ? ` x${count}` : '';
+
+      return {
+        id,
+        name: `${itemName}${countLabel}`,
+        category: meta.category,
+        buyOrderBadge: count > 1 ? `${meta.badge} x${count}` : meta.badge,
+        whatItDoes: meta.whatItDoes,
+        whenToBuy: meta.whenToBuy,
+        timing: 'Match Start (0:00)'
+      };
+    });
+  }, [tactics?.coreBuild?.starterIds, tactics?.coreBuild?.starter, allItems, isSupport, isJungle, isMage, isTank, isMagicDamage]);
+
+  // Dynamic 1st Recall Component Derived from Core #1 Recipe
+  const firstBackCard: TacticalCard = useMemo(() => {
+    const c1Data = allItems ? allItems[core1.itemId] : null;
+    let chosenComponentId: string | null = null;
+    let chosenComponentName: string = '';
+
+    if (c1Data && c1Data.from && c1Data.from.length > 0) {
+      const sortedFrom = [...c1Data.from].sort((a, b) => {
+        const goldA = allItems[a]?.gold?.total || 0;
+        const goldB = allItems[b]?.gold?.total || 0;
+        return goldB - goldA;
+      });
+
+      const majorComp = sortedFrom.find(id => (allItems[id]?.gold?.total || 0) >= 700);
+      chosenComponentId = majorComp || sortedFrom[0];
+      chosenComponentName = allItems[chosenComponentId]?.name || '';
+    }
+
+    if (!chosenComponentId || !chosenComponentName) {
+      if (isSupport) { chosenComponentId = '3067'; chosenComponentName = 'Kindlegem'; }
+      else if (isMarksman) { chosenComponentId = '6670'; chosenComponentName = 'Noonquiver'; }
+      else if (isMage) { chosenComponentId = '3802'; chosenComponentName = 'Lost Chapter'; }
+      else if (isTank) { chosenComponentId = '6660'; chosenComponentName = "Bami's Cinder"; }
+      else if (isADAssassin) { chosenComponentId = '3134'; chosenComponentName = 'Serrated Dirk'; }
+      else { chosenComponentId = '3044'; chosenComponentName = 'Phage'; }
+    }
+
+    const compData = allItems ? allItems[chosenComponentId] : null;
+    const compGold = compData?.gold?.total || 1000;
+    const cat: ItemCategory = isMage || isAPAssassin ? 'spirit' : isTank ? 'vitality' : isSupport ? 'utility' : 'weapon';
+
+    return {
+      id: chosenComponentId,
+      name: chosenComponentName,
+      category: cat,
+      buyOrderBadge: 'RECALL',
+      lineageType: 'component',
+      buildsIntoId: core1.itemId,
+      buildsIntoName: core1.name,
+      whatItDoes: compData?.plaintext || `Core component rushing toward ${core1.name}. Grants early trading power.`,
+      whenToBuy: `Recall at ${compGold}–${compGold + 300} gold to secure lane spike before first Dragon / Voidgrubs.`,
+      timing: `1st Recall Spike (Builds ${core1.name})`
+    };
+  }, [core1.itemId, core1.name, allItems, isSupport, isMarksman, isMage, isAPAssassin, isTank, isADAssassin]);
 
   const tier1BootsCard: TacticalCard = useMemo(() => ({
     id: '1001',
@@ -270,21 +453,20 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: 'Early Recall (~5:00)'
   }), [bootsRec.defaultId, bootsRec.defaultName]);
 
-  // Situational Counter Pods (Realistic Meta Targets: 1st Back, Core #2, Core #3)
+  // Situational Counter Pods (Context-Aware Meta Targets: 1st Back, Core #2, Core #3)
   const antiHeal800g: TacticalCard = useMemo(() => {
-    const id = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3916' : '3076') : isMage ? '3916' : isTank ? '3076' : '3123';
-    const name = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Oblivion Orb' : 'Bramble Vest') : isMage ? 'Oblivion Orb' : isTank ? 'Bramble Vest' : "Executioner's Calling";
-    const upgradeId = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3165' : '3075') : isMage ? '3165' : isTank ? '3075' : isADC ? '3033' : '6609';
-    const upgradeName = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Morellonomicon' : 'Thornmail') : isMage ? 'Morellonomicon' : isTank ? 'Thornmail' : isADC ? 'Mortal Reminder' : 'Chempunk Chainsword';
+    const id = isTank ? '3076' : (isMagicDamage || isEnchanter) ? '3916' : '3123';
+    const name = isTank ? 'Bramble Vest' : (isMagicDamage || isEnchanter) ? 'Oblivion Orb' : "Executioner's Calling";
+    const upgradeId = isTank ? '3075' : (isMagicDamage || isEnchanter) ? '3165' : isMarksman ? '3033' : '6609';
+    const upgradeName = isTank ? 'Thornmail' : (isMagicDamage || isEnchanter) ? 'Morellonomicon' : isMarksman ? 'Mortal Reminder' : 'Chempunk Chainsword';
 
-    const isCore2IE = core2Card.name.toLowerCase().includes('infinity edge');
-    const finalSwapSlot: 'Core #2' | 'Core #3' = isADC ? (isCore2IE ? 'Core #2' : 'Core #3') : 'Core #3';
-    const finalSwapItemName = isADC ? (isCore2IE ? core2Card.name : core3Card.name) : core3Card.name;
+    const finalSwapSlot: 'Core #2' | 'Core #3' = upgradeName.toLowerCase() === core3Card.name.toLowerCase() ? 'Core #2' : 'Core #3';
+    const finalSwapItemName = finalSwapSlot === 'Core #2' ? core2Card.name : core3Card.name;
 
     return {
       id,
       name,
-      category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
+      category: isMagicDamage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'utility' : 'weapon',
       buyOrderBadge: '800G COMP',
       lineageType: 'component',
       buildsIntoId: upgradeId,
@@ -293,27 +475,26 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       finalSwapItemName,
       replacesSlot: '1st Back',
       replacesItemName: firstBackCard.name,
-      swapReason: `Sit on 800g ${name} on early recall against high sustain / healing laners. Later in teamfights, upgrade to ${upgradeName} to swap out ${finalSwapItemName} (${finalSwapSlot}).`,
+      swapReason: `Sit on 800g ${name} on early recall against high sustain / healing laners. Later, finish ${upgradeName} to replace your situational/armor pen slot (${finalSwapSlot}).`,
       whatItDoes: 'Applies 40% Grievous Wounds on hit or spell damage to cut enemy healing.',
       whenToBuy: 'Crucial vs heavy healing picks. Buy on 1st recall and sit on it in inventory.',
       timing: `Buy 800g early ➔ Upgrade to ${upgradeName} late (swaps ${finalSwapItemName})`
     };
-  }, [isSupport, tactics?.damageType, isMage, isTank, isADC, firstBackCard.name, core2Card.name, core3Card.name]);
+  }, [isTank, isMagicDamage, isEnchanter, isMarksman, core3Card.name, core2Card.name, firstBackCard.name, isSupport]);
 
   const antiHealFull: TacticalCard = useMemo(() => {
-    const id = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3165' : '3075') : isMage ? '3165' : isTank ? '3075' : isADC ? '3033' : '6609';
-    const name = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Morellonomicon' : 'Thornmail') : isMage ? 'Morellonomicon' : isTank ? 'Thornmail' : isADC ? 'Mortal Reminder' : 'Chempunk Chainsword';
-    const componentId = isSupport ? (tactics?.damageType === 'Magic Heavy' ? '3916' : '3076') : isMage ? '3916' : isTank ? '3076' : '3123';
-    const componentName = isSupport ? (tactics?.damageType === 'Magic Heavy' ? 'Oblivion Orb' : 'Bramble Vest') : isMage ? 'Oblivion Orb' : isTank ? 'Bramble Vest' : "Executioner's Calling";
+    const id = isTank ? '3075' : (isMagicDamage || isEnchanter) ? '3165' : isMarksman ? '3033' : '6609';
+    const name = isTank ? 'Thornmail' : (isMagicDamage || isEnchanter) ? 'Morellonomicon' : isMarksman ? 'Mortal Reminder' : 'Chempunk Chainsword';
+    const componentId = isTank ? '3076' : (isMagicDamage || isEnchanter) ? '3916' : '3123';
+    const componentName = isTank ? 'Bramble Vest' : (isMagicDamage || isEnchanter) ? 'Oblivion Orb' : "Executioner's Calling";
 
-    const isCore2IE = core2Card.name.toLowerCase().includes('infinity edge');
-    const targetSlot: 'Core #2' | 'Core #3' = isADC ? (isCore2IE ? 'Core #2' : 'Core #3') : 'Core #3';
-    const targetItemName = isADC ? (isCore2IE ? core2Card.name : core3Card.name) : core3Card.name;
+    const targetSlot: 'Core #2' | 'Core #3' = name.toLowerCase() === core3Card.name.toLowerCase() ? 'Core #2' : 'Core #3';
+    const targetItemName = targetSlot === 'Core #2' ? core2Card.name : core3Card.name;
 
     return {
       id,
       name,
-      category: isMage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'vitality' : 'weapon',
+      category: isMagicDamage ? 'spirit' : isTank ? 'vitality' : isSupport ? 'utility' : 'weapon',
       buyOrderBadge: 'FULL UPGRADE',
       lineageType: 'upgrade',
       buildsFromId: componentId,
@@ -321,118 +502,169 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       replacesSlot: targetSlot,
       replacesItemName: targetItemName,
       swapReason: `Upgraded from 800g ${componentName}. Swaps out ${targetItemName} (${targetSlot}) to retain Grievous Wounds while providing high combat stats and % penetration.`,
-      whatItDoes: isADC
+      whatItDoes: isMarksman
         ? 'Permanent 40% Grievous Wounds + 35% Armor Penetration & 25% Critical Strike.'
         : 'Permanent 40% Grievous Wounds with high combat stats and penetration.',
       whenToBuy: `Complete from ${componentName} as ${targetSlot} when enemy healing dominates teamfights.`,
       timing: `Completed Upgrade (Swaps ${targetItemName})`
     };
-  }, [isSupport, tactics?.damageType, isMage, isTank, isADC, core2Card.name, core3Card.name]);
+  }, [isTank, isMagicDamage, isEnchanter, isMarksman, core3Card.name, isSupport]);
 
   const antiBurst1: TacticalCard = useMemo(() => {
-    if (isSupport) {
+    if (isEnchanter) {
       return {
-        id: '3222',
-        name: "Mikael's Blessing",
-        category: 'utility',
-        buyOrderBadge: 'CORE #2',
-        replacesSlot: 'Core #2',
-        replacesItemName: core2Card.name,
-        swapReason: 'Cleanse high CC picks targeting your carry',
+        id: '3222', name: "Mikael's Blessing", category: 'utility', buyOrderBadge: 'CORE #2',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: 'Cleanse high CC picks targeting your carry + +50 Magic Resist.',
         isActive: true,
-        whatItDoes: 'Active: Instantly cleanses stuns/roots from an ally carry and heals them.',
+        whatItDoes: 'Active: Instantly cleanses stuns/roots from an ally carry and heals them for 100-180 HP.',
         whenToBuy: 'When enemy crowd control threatens instant elimination of your carry.',
         timing: 'Build 2nd or 3rd on enchanter supports'
       };
     }
-    if (isADC) {
+    if (isMarksman) {
       return {
-        id: '3091',
-        name: "Wit's End",
-        category: 'weapon',
-        buyOrderBadge: 'CORE #3',
-        replacesSlot: 'Core #3',
-        replacesItemName: core3Card.name,
-        swapReason: 'Provides +45 Magic Resist and 20% Tenacity without sacrificing DPS (+55% Attack Speed and on-hit magic damage).',
+        id: '3091', name: "Wit's End", category: 'weapon', buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+        swapReason: 'Provides +45 Magic Resist and 20% Tenacity without sacrificing DPS (+55% Attack Speed).',
         whatItDoes: '+45 Magic Resist, +55% Attack Speed, +20% Tenacity, and on-hit magic damage.',
         whenToBuy: 'Enemy team has heavy AP poke / DPS mages (Azir, Cassiopeia, Teemo, Swain).',
         timing: '3rd or 4th item slot vs AP DPS'
       };
     }
+    if (isMage || isAPAssassin) {
+      return {
+        id: '3102', name: "Banshee's Veil", category: 'spirit', buyOrderBadge: 'CORE #2',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: 'Spell shield & +50 Magic Resist prevents AP burst combos from one-shotting you.',
+        whatItDoes: 'Blocks the next enemy ability and grants 105 AP + 50 Magic Resist.',
+        whenToBuy: 'Enemy has dangerous long-range AP initiation or burst assassins (Syndra, LeBlanc, Evelynn).',
+        timing: '2nd or 3rd item slot vs heavy AP'
+      };
+    }
+    if (isADAssassin) {
+      return {
+        id: '3814', name: 'Edge of Night', category: 'weapon', buyOrderBadge: 'CORE #2',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: 'Spell shield blocks AP crowd control while preserving +50 AD and +15 Lethality.',
+        whatItDoes: 'Blocks the next hostile enemy ability, protecting your assassination combo.',
+        whenToBuy: 'When enemy mages attempt to peel or burst you with crowd control.',
+        timing: '2nd or 3rd item slot vs AP'
+      };
+    }
+    // Tank / Bruiser
     return {
-      id: '2504',
-      name: 'Kaenic Rookern',
-      category: 'vitality',
-      buyOrderBadge: 'CORE #3',
-      replacesSlot: 'Core #3',
-      replacesItemName: core3Card.name,
-      swapReason: 'Enemy team has fed AP burst mages one-shotting you',
-      whatItDoes: 'Grants an automatic 18% max HP magic damage shield refreshing out of combat.',
+      id: '2504', name: 'Kaenic Rookern', category: 'vitality', buyOrderBadge: 'CORE #3',
+      replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+      swapReason: 'Enemy team has fed AP burst mages one-shotting frontliners.',
+      whatItDoes: 'Grants an automatic 18% max HP magic damage shield refreshing out of combat + 80 MR.',
       whenToBuy: 'When enemy magic burst threatens instant elimination.',
       timing: 'Build 3rd or 4th on tanks and bruisers'
     };
-  }, [isSupport, isADC, core2Card.name, core3Card.name]);
+  }, [isEnchanter, isMarksman, isMage, isAPAssassin, isADAssassin, core2Card.name, core3Card.name]);
 
-  const antiBurst2: TacticalCard = useMemo(() => ({
-    id: isSupport ? '3109' : isMage ? '3102' : isTank ? '4401' : '3156',
-    name: isSupport ? "Knight's Vow" : isMage ? "Banshee's Veil" : isTank ? 'Force of Nature' : 'Maw of Malmortius',
-    category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: 'CORE #2',
-    replacesSlot: 'Core #2',
-    replacesItemName: core2Card.name,
-    swapReason: isSupport
-      ? 'Redirect 12% ally carry damage onto yourself'
-      : isMage
-      ? 'Spell shield & MR against enemy burst mages'
-      : isTank
-      ? 'Max movement speed & magic damage reduction vs DPS mages'
-      : 'Rush Maw 2nd vs fed AP assassins to prevent one-shots',
-    whatItDoes: isSupport
-      ? 'Designate carry: redirect 12% damage onto yourself and heal from their damage.'
-      : isMage
-      ? 'Grants a spell shield blocking the next enemy ability + 50 MR.'
-      : isTank
-      ? 'Builds up to 70 bonus MR and 6% move speed when taking magic damage.'
-      : 'Triggers a massive Lifeline magic shield on taking lethal AP burst + 10% lifesteal.',
-    whenToBuy: 'Against fed AP threats or magic burst.',
-    timing: '2nd or 3rd item slot vs heavy AP'
-  }), [isSupport, isMage, isTank, core2Card.name]);
-
-  const antiBurst3: TacticalCard = useMemo(() => {
-    // Determine what GA-tier item to use based on role
+  const antiBurst2: TacticalCard = useMemo(() => {
     let id: string;
     let name: string;
-    let category: 'weapon' | 'spirit' | 'vitality' | 'utility';
-    let buyOrderBadge: string;
-    let replacesSlot: '1st Back' | 'Core #1' | 'Core #2' | 'Core #3' | 'Boots' | undefined;
-    let replacesItemName: string;
-    let swapReason: string;
-    let isActive: boolean;
-    let whatItDoes: string;
-    let whenToBuy: string;
-    let timing: string;
+    let category: ItemCategory;
+    let swapReason = '';
+    let whatItDoes = '';
+    let whenToBuy = '';
 
-    if (isMage) {
-      id = '3157'; name = "Zhonya's Hourglass"; category = 'spirit';
-      buyOrderBadge = 'CORE #2'; replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
-      swapReason = 'Rush Zhonya 2nd vs AD assassins for Golden Stasis';
-      isActive = true;
-      whatItDoes = 'Active: Completely invulnerable and untargetable for 2.5 seconds in golden Stasis.';
-      whenToBuy = 'Enemy team has heavy burst elimination threats.';
-      timing = 'Rush 2nd item';
-    } else if (isSupport) {
-      id = '3190'; name = 'Locket of the Iron Solari'; category = 'utility';
-      buyOrderBadge = 'CORE #2'; replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
-      swapReason = 'Insurance revive / shield against lethal burst';
-      isActive = true;
-      whatItDoes = 'Active: Grants instant 200–360 shield to all 5 allies simultaneously.';
-      whenToBuy = 'Enemy team has heavy burst elimination threats.';
-      timing = 'Insurance item 3rd/4th';
+    if (isEnchanter) {
+      id = isAlreadyInCore('3190') ? '3107' : '3190';
+      name = isAlreadyInCore('3190') ? 'Redemption' : 'Locket of the Iron Solari';
+      category = 'utility';
+      swapReason = 'AoE teamwide magic shielding against AoE AP ultimates (Karthus, Kennen, Brand).';
+      whatItDoes = 'Instantly shields all 5 allies for 200-360 damage.';
+      whenToBuy: 'Against AoE magic damage compositions.';
+    } else if (isEngageSupport) {
+      if (!isAlreadyInCore('3190', 'Locket of the Iron Solari')) {
+        id = '3190'; name = 'Locket of the Iron Solari'; category = 'utility';
+        swapReason = 'Teamwide magic defense & active shield against lethal AoE AP burst.';
+        whatItDoes = 'Active: Grants instant 200–360 shield to all 5 allies simultaneously.';
+        whenToBuy: 'Enemy team has heavy magic damage burst.';
+      } else {
+        id = '4401'; name = 'Force of Nature'; category = 'vitality';
+        swapReason = 'Maximum magic resist and movespeed against sustained magic DPS.';
+        whatItDoes = 'Reduces magic damage taken by up to 10% and stacks bonus movespeed.';
+        whenToBuy: 'Facing heavy AP poke or multiple magic damage threats.';
+      }
+    } else if (isMage || isAPAssassin) {
+      id = '4632'; name = 'Verdant Barrier'; category = 'spirit';
+      swapReason = 'Sit on 1600g MR component early; builds into Banshee late.';
+      whatItDoes = '+35 AP and +30 Magic Resist with early spell shield passive.';
+      whenToBuy: 'Buy on 2nd back vs dangerous AP matchup.';
+    } else if (isTank) {
+      id = '4401'; name = 'Force of Nature'; category = 'vitality';
+      swapReason = 'Builds up to 70 bonus MR and 6% move speed when taking magic damage.';
+      whatItDoes = 'Max movement speed & continuous magic damage reduction vs DPS mages (Cassiopeia, Ryze, Brand).';
+      whenToBuy: 'Enemy team has multiple sustained magic damage dealers.';
     } else {
-      // Non-mage, non-support: Guardian Angel OR collision fallback
-      const gaIsCore3 = core3.itemId === '3026' || core3.name === 'Guardian Angel';
-      if (gaIsCore3) {
-        // core3 is already GA — use Randuin's Omen instead (physical & crit mitigation, unique to this pod)
+      const canUseMaw = !hasLifelineInCore && !isAlreadyInCore('3156');
+      id = canUseMaw ? '3156' : '4401';
+      name = canUseMaw ? 'Maw of Malmortius' : 'Force of Nature';
+      category = canUseMaw ? 'weapon' : 'vitality';
+      swapReason = canUseMaw ? 'Triggers a massive Lifeline magic shield on taking lethal AP burst + 10% lifesteal.' : 'Continuous magic damage reduction and movespeed.';
+      whatItDoes = canUseMaw ? 'Emergency Lifeline shield absorbing up to 500+ magic damage.' : 'Reduces magic damage taken by 10% and stacks bonus MR.';
+      whenToBuy = 'Against fed AP assassins or burst mages.';
+    }
+
+    return {
+      id, name, category, buyOrderBadge: 'CORE #2', replacesSlot: 'Core #2',
+      replacesItemName: core2Card.name, swapReason, whatItDoes, whenToBuy, timing: '2nd or 3rd slot vs heavy AP'
+    };
+  }, [isEnchanter, isEngageSupport, isMage, isAPAssassin, isTank, hasLifelineInCore, core2Card.name]);
+
+  const antiBurst3: TacticalCard = useMemo(() => {
+    let id: string;
+    let name: string;
+    let category: ItemCategory;
+    let replacesSlot: '1st Back' | 'Core #1' | 'Core #2' | 'Core #3' | 'Boots' = 'Core #2';
+    let replacesItemName = core2Card.name;
+    let swapReason = '';
+    let whatItDoes = '';
+    let whenToBuy = '';
+
+    if (isMage || isAPAssassin) {
+      if (!isAlreadyInCore('3157', "Zhonya's Hourglass")) {
+        id = '3157'; name = "Zhonya's Hourglass"; category = 'spirit';
+        replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
+        swapReason = 'Rush Zhonya 2nd vs AD assassins for 2.5s Golden Stasis.';
+        whatItDoes = 'Active: Completely invulnerable and untargetable for 2.5 seconds in golden Stasis + 50 Armor.';
+        whenToBuy = 'Enemy team has lethal AD burst assassins (Zed, Talon, Naafiri, Nocturne).';
+      } else {
+        id = '4629'; name = 'Cosmic Drive'; category = 'spirit';
+        replacesSlot = 'Core #3'; replacesItemName = core3Card.name;
+        swapReason = 'Kiting speed & CDR to stay out of physical dive range.';
+        whatItDoes = '+25 Ability Haste and stacking move speed on spell hits.';
+        whenToBuy = 'Facing mobile AD bruisers that you need to kite out.';
+      }
+    } else if (isEnchanter) {
+      id = isAlreadyInCore('3190') ? '2065' : '3190';
+      name = isAlreadyInCore('3190') ? "Shurelya's Battlesong" : 'Locket of the Iron Solari';
+      category = 'utility';
+      replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
+      swapReason = 'Emergency team shield to absorb physical dive burst.';
+      whatItDoes = 'Active: Grants instant 200–360 shield to all 5 nearby allies simultaneously.';
+      whenToBuy = 'When enemy assassins dive your team in teamfights.';
+    } else if (isEngageSupport) {
+      id = isAlreadyInCore('3109') ? '3110' : '3109';
+      name = isAlreadyInCore('3109') ? 'Frozen Heart' : "Knight's Vow";
+      category = 'vitality';
+      replacesSlot = 'Core #2'; replacesItemName = core2Card.name;
+      swapReason = 'Redirect 12% carry damage onto yourself or reduce enemy attack speed.';
+      whatItDoes = 'Protects your carry by absorbing damage and slowing enemy auto-attackers.';
+      whenToBuy = 'Enemy AD carries or assassins focus your primary damage dealer.';
+    } else if (isTank) {
+      id = '3143'; name = "Randuin's Omen"; category = 'vitality';
+      replacesSlot = 'Core #3'; replacesItemName = core3Card.name;
+      swapReason = 'Massive armor + reduces incoming critical strike damage by 20%.';
+      whatItDoes = 'Cuts 20% critical damage and slows nearby enemies by 70% for 2 seconds.';
+      whenToBuy = 'Enemy team has fed crit carries (Jinx, Caitlyn, Yasuo, Yone).';
+    } else {
+      const gaIsCore = isAlreadyInCore('3026', 'Guardian Angel');
+      if (gaIsCore) {
         id = '3143'; name = "Randuin's Omen"; category = 'vitality';
         whatItDoes = 'Massive armor + reduces critical strike damage taken by 20%. Active slows nearby enemies.';
         whenToBuy = 'Enemy team has multiple crit-based carries (Jinx, Jhin, Yasuo, Yone).';
@@ -441,158 +673,16 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         id = '3026'; name = 'Guardian Angel'; category = 'weapon';
         whatItDoes = 'Upon death, revive with 50% base HP and 30% max mana.';
         whenToBuy = 'Enemy team has heavy burst elimination threats.';
-        swapReason = 'Insurance revive / shield against lethal burst';
+        swapReason = 'Insurance revive against lethal burst combos.';
       }
-      buyOrderBadge = 'CORE #3'; replacesSlot = 'Core #3'; replacesItemName = core3Card.name;
-      isActive = false;
-      timing = 'Insurance item 3rd/4th';
+      replacesSlot = 'Core #3'; replacesItemName = core3Card.name;
     }
 
     return {
-      id, name, category, buyOrderBadge, replacesSlot, replacesItemName,
-      swapReason, isActive, whatItDoes, whenToBuy, timing
+      id, name, category, buyOrderBadge: replacesSlot === 'Core #2' ? 'CORE #2' : 'CORE #3',
+      replacesSlot, replacesItemName, swapReason, whatItDoes, whenToBuy, timing: 'Defensive Armor Pivot'
     };
-  }, [isMage, isSupport, core2Card.name, core3Card.name, core3.itemId, core3.name]);
-
-  const shred1: TacticalCard = useMemo(() => ({
-    id: isSupport ? '8020' : isMage ? '3135' : isADC ? '3036' : isBruiser ? '3071' : '6665',
-    name: isSupport ? 'Abyssal Mask' : isMage ? 'Void Staff' : isADC ? "Lord Dominik's Regards" : isBruiser ? 'Black Cleaver' : "Jak'Sho",
-    category: isSupport ? 'vitality' : isMage ? 'spirit' : isTank ? 'vitality' : 'weapon',
-    buyOrderBadge: 'CORE #3',
-    replacesSlot: 'Core #3',
-    replacesItemName: core3Card.name,
-    swapReason: 'Mandatory 3rd slot when enemy frontline stacks armor or magic resistance.',
-    whatItDoes: isMage
-      ? 'Ignores 40% enemy Magic Resistance.'
-      : isBruiser
-      ? 'Shreds up to 30% total enemy armor for entire team.'
-      : isSupport
-      ? 'Aura shreds nearby enemy MR by up to 25.'
-      : 'Ignores 35% total enemy armor.',
-    whenToBuy: 'Mandatory when enemy tanks build resistances.',
-    timing: '3rd or 4th slot vs tanks'
-  }), [isSupport, isMage, isADC, isBruiser, isTank, core3Card.name]);
-
-  const shred2: TacticalCard = useMemo(() => {
-    const id = isSupport ? '3001' : isMage ? '3137' : isADC ? '3153' : isBruiser ? '6694' : '8020';
-    const name = isSupport ? 'Trailblazer' : isMage ? 'Cryptbloom' : isADC ? 'Blade of the Ruined King' : isBruiser ? "Serylda's Grudge" : 'Abyssal Mask';
-    const category: ItemCategory = isMage ? 'spirit' : isSupport ? 'utility' : isTank ? 'vitality' : 'weapon';
-    const whatItDoes = isMage
-      ? '30% Magic Pen + releases healing nova for allies on champion takedowns.'
-      : isADC
-      ? 'Deals 9% current HP physical on-hit + steals 25% movespeed on 3rd attack to melt colossal health tanks.'
-      : isBruiser
-      ? '30% Armor Pen + slows enemies below 50% health.'
-      : isSupport
-      ? 'Grants movespeed aura to allies and slows enemies on attack.'
-      : 'Aura reduces nearby enemy Magic Resistance by up to 25.';
-
-    return {
-      id,
-      name,
-      category,
-      buyOrderBadge: 'ALT SHRED',
-      replacesSlot: 'Core #3',
-      replacesItemName: core3Card.name,
-      swapReason: isADC
-        ? 'Melt colossal health-stacking tanks (Heartsteel Sion, ChoGath, Warmogs) with 9% current HP on-hit physical damage.'
-        : 'Alternative % penetration or resistance shred for extended teamfights.',
-      whatItDoes,
-      whenToBuy: isADC ? 'Enemy frontline stacks massive bonus Health (Heartsteel / Warmogs).' : 'Alternative % resistance shred vs durable tank compositions.',
-      timing: '3rd or 4th item slot'
-    };
-  }, [isSupport, isMage, isADC, isBruiser, isTank, core3Card.name]);
-
-  const antiCC1: TacticalCard = useMemo(() => {
-    if (isMage) {
-      return {
-        id: '4632',
-        name: 'Verdant Barrier',
-        category: 'spirit',
-        buyOrderBadge: '1600G COMP',
-        lineageType: 'component',
-        buildsIntoId: '3102',
-        buildsIntoName: "Banshee's Veil",
-        finalSwapSlot: 'Core #2',
-        finalSwapItemName: core2Card.name,
-        replacesSlot: '1st Back',
-        replacesItemName: firstBackCard.name,
-        swapReason: `Sit on 1600g Verdant Barrier component early vs lethal AP burst or initiation. Later, finish Banshee's Veil to swap out ${core2Card.name}.`,
-        isActive: false,
-        whatItDoes: 'Grants 35 Ability Power and 30 Magic Resistance + Annul spell shield passive.',
-        whenToBuy: 'Enemy team has dangerous long-range engage or crowd control.',
-        timing: 'Buy early component, sit on it!'
-      };
-    }
-    return {
-      id: '3140',
-      name: 'Quicksilver Sash',
-      category: 'weapon',
-      buyOrderBadge: '1300G QSS',
-      lineageType: 'component',
-      buildsIntoId: '3139',
-      buildsIntoName: 'Mercurial Scimitar',
-      finalSwapSlot: 'Core #3',
-      finalSwapItemName: core3Card.name,
-      replacesSlot: '1st Back',
-      replacesItemName: firstBackCard.name,
-      swapReason: `Buy 1300g QSS on early recall vs point-and-click suppression (Malzahar, Warwick, Skarner). Sit on it, then upgrade to Mercurial Scimitar late (swaps ${core3Card.name}).`,
-      isActive: true,
-      whatItDoes: 'Active cleanses all crowd control (including Suppression) immediately.',
-      whenToBuy: 'Enemy has point-and-click Suppression (Malzahar, Warwick, Skarner).',
-      timing: 'Buy 1300g component early, sit on it!'
-    };
-  }, [isMage, firstBackCard.name, core2Card.name, core3Card.name]);
-
-  const antiCC2: TacticalCard = useMemo(() => {
-    if (isMage) {
-      return {
-        id: '3102',
-        name: "Banshee's Veil",
-        category: 'spirit',
-        buyOrderBadge: 'FULL UPGRADE',
-        lineageType: 'upgrade',
-        buildsFromId: '4632',
-        buildsFromName: 'Verdant Barrier',
-        replacesSlot: 'Core #2',
-        replacesItemName: core2Card.name,
-        swapReason: `Upgraded from 1600g Verdant Barrier. Swaps ${core2Card.name} to gain 105 AP and an active spell shield blocking enemy initiation.`,
-        isActive: false,
-        whatItDoes: 'Grants a spell shield that blocks the next enemy ability, plus 105 AP and 50 MR.',
-        whenToBuy: 'Complete from Verdant Barrier when enemy pick potential threatens teamfights.',
-        timing: `Completed Upgrade (Swaps ${core2Card.name})`
-      };
-    }
-    return {
-      id: '3139',
-      name: 'Mercurial Scimitar',
-      category: 'weapon',
-      buyOrderBadge: 'FULL UPGRADE',
-      lineageType: 'upgrade',
-      buildsFromId: '3140',
-      buildsFromName: 'Quicksilver Sash',
-      replacesSlot: 'Core #3',
-      replacesItemName: core3Card.name,
-      swapReason: `Finish QSS into full item to retain CC cleanse while gaining +50 AD, +40 MR, and +50% move speed burst. Swaps ${core3Card.name}.`,
-      isActive: true,
-      whatItDoes: 'Active cleanses all CC and grants +50% move speed for 1.5 seconds, plus 50 AD and 40 MR.',
-      whenToBuy: 'Complete from Quicksilver Sash after your core damage is built.',
-      timing: `Completed Upgrade (Swaps ${core3Card.name})`
-    };
-  }, [isMage, core2Card.name, core3Card.name]);
-
-  const antiCC3: TacticalCard = useMemo(() => ({
-    id: isMage ? '3102' : '3814',
-    name: isMage ? "Banshee's Veil" : 'Edge of Night',
-    category: isMage ? 'spirit' : 'weapon',
-    buyOrderBadge: 'CORE #2',
-    replacesSlot: 'Core #2',
-    replacesItemName: core2Card.name,
-    swapReason: 'Spell shield blocks critical engagement spells (Blitz hook, Malphite R) before fights start.',
-    whatItDoes: 'Spell shield that blocks the next hostile enemy ability.',
-    whenToBuy: 'Against lethal engagement picks seeking pick-offs.',
-    timing: 'Build 2nd or 3rd defensive slot'
-  }), [isMage, core2Card.name]);
+  }, [isMage, isAPAssassin, isEnchanter, isEngageSupport, isTank, core2Card.name, core3Card.name]);
 
   const flex1: TacticalCard = useMemo(() => ({
     id: isSupport ? '3107' : isMage ? '4645' : '6695',
@@ -617,63 +707,80 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   }), [isSupport, isMage, core2Card.name]);
 
   const flex2: TacticalCard = useMemo(() => {
-    if (isADC) {
+    if (isMarksman) {
+      const shieldbowOk = !hasLifelineInCore && !isAlreadyInCore('6673');
+      const id = shieldbowOk ? '6673' : '3072';
+      const name = shieldbowOk ? 'Immortal Shieldbow' : 'Bloodthirster';
       return {
-        id: '6673',
-        name: 'Immortal Shieldbow',
-        category: 'weapon',
-        buyOrderBadge: 'CORE #3',
-        replacesSlot: 'Core #3',
-        replacesItemName: core3Card.name,
-        swapReason: 'Lifeline shield (320-720 HP) prevents burst assassins from 100-to-0 executing you while preserving 25% Crit and 55 AD.',
-        whatItDoes: 'Grants a massive 320–720 emergency shield when taking damage that drops you below 30% HP.',
+        id, name, category: 'weapon', buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+        swapReason: shieldbowOk ? 'Lifeline emergency shield (320-720 HP) prevents burst assassins from one-shotting you.' : 'Massive lifesteal & overshield for dueling sustain.',
+        whatItDoes: shieldbowOk ? 'Grants a massive 320–720 emergency shield when taking damage dropping you below 30% HP.' : '+18% Lifesteal and up to 400 HP overshield.',
         whenToBuy: 'Enemy team has lethal burst assassins (Zed, Talon, Rengar, Kayn).',
         timing: '3rd or 4th defensive slot'
       };
     }
-    if (isBruiser) {
-      // Collision guard: if core3 is already Death's Dance (e.g. Darius), use Sterak's Gage instead
-      const isDDcore = core3Card.id === '6333' || core3Card.name === "Death's Dance";
-      if (isDDcore) {
-        return {
-          id: '3053',
-          name: "Sterak's Gage",
-          category: 'vitality',
-          buyOrderBadge: 'CORE #3',
-          replacesSlot: 'Core #3',
-          replacesItemName: core3Card.name,
-          swapReason: 'Lifeline shield (100% base AD) + 40% Tenacity when burst attempts to kill you. Best vs mixed burst comps.',
-          whatItDoes: 'Triggers a decaying shield equal to 100% base AD and grants 40% Tenacity for 4 seconds when dropping below 30% HP.',
-          whenToBuy: 'Mixed burst comps — one physical and one magical assassin.',
-          timing: '3rd or 4th item slot'
-        };
-      }
+    if (isADAssassin) {
+      const id = isAlreadyInCore('3814') ? '6333' : '3814';
+      const name = isAlreadyInCore('3814') ? "Death's Dance" : 'Edge of Night';
       return {
-        id: '6333',
-        name: "Death's Dance",
-        category: 'weapon',
-        buyOrderBadge: 'CORE #3',
-        replacesSlot: 'Core #3',
-        replacesItemName: core3Card.name,
-        swapReason: 'Stores 30% of incoming physical & magic burst as true damage bleed over 3 seconds. Takedowns cleanse the bleed and heal 120% bonus AD.',
-        whatItDoes: 'Delays lethal burst damage and cleanses remaining bleed on champion takedown.',
+        id, name, category: 'weapon', buyOrderBadge: 'CORE #2',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: 'Spell shield or damage bleed mitigation while maintaining Lethality.',
+        whatItDoes: 'Blocks initiation spells or buffers burst damage into a bleed.',
+        whenToBuy: 'When enemy team has high counter-dive burst.',
+        timing: '2nd or 3rd lethality defensive flex'
+      };
+    }
+    if (isMage || isAPAssassin) {
+      const id = isAlreadyInCore('3102') ? '4645' : '3102';
+      const name = isAlreadyInCore('3102') ? 'Shadowflame' : "Banshee's Veil";
+      return {
+        id, name, category: 'spirit', buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+        swapReason: 'Spell shield & Ability Power against mixed burst compositions.',
+        whatItDoes: 'Grants a spell shield blocking the next hostile enemy ability + AP.',
+        whenToBuy: 'Against pick comps and long-range CC hooks.',
+        timing: '3rd slot defensive AP flex'
+      };
+    }
+    if (isEnchanter) {
+      const id = isAlreadyInCore('2065') ? '3107' : '2065';
+      const name = isAlreadyInCore('2065') ? 'Redemption' : "Shurelya's Battlesong";
+      return {
+        id, name, category: 'utility', buyOrderBadge: 'CORE #2',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: 'AoE movespeed engage/disengage or long-range heal beam.',
+        whatItDoes: 'Active teamwide speed boost to kite away from physical divers.',
+        whenToBuy: 'When enemy dive compositions force fast disengages.',
+        timing: '2nd or 3rd enchanter utility slot'
+      };
+    }
+    if (isBruiser) {
+      const ddIsCore = isAlreadyInCore('6333', "Death's Dance");
+      const id = ddIsCore ? '3742' : '6333';
+      const name = ddIsCore ? "Dead Man's Plate" : "Death's Dance";
+      return {
+        id, name, category: 'weapon', buyOrderBadge: 'CORE #3',
+        replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+        swapReason: 'Buffers 30% physical burst into a bleed and heals 120% bonus AD on takedowns.',
+        whatItDoes: 'Stores incoming physical burst to bleed over 3 seconds; cleanses on kill.',
         whenToBuy: 'Against heavy physical dive / burst compositions.',
         timing: '3rd or 4th item slot'
       };
     }
+    // Tank
+    const id = isAlreadyInCore('3110') ? '3742' : '3110';
+    const name = isAlreadyInCore('3110') ? "Dead Man's Plate" : 'Frozen Heart';
     return {
-      id: '3110',
-      name: 'Frozen Heart',
-      category: 'vitality',
-      buyOrderBadge: 'CORE #2',
-      replacesSlot: 'Core #2',
-      replacesItemName: core2Card.name,
-      swapReason: 'Multiple enemy basic attack carries (Master Yi, Yasuo, Yone).',
-      whatItDoes: 'Aura reduces nearby enemy attack speed by 20% and reduces incoming basic attack damage.',
-      whenToBuy: 'Multiple heavy auto-attackers.',
+      id, name, category: 'vitality', buyOrderBadge: 'CORE #2',
+      replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+      swapReason: 'Aura reduces enemy basic attack speed by 20% and provides 65 Armor.',
+      whatItDoes: 'Heavily cripples auto-attack carries like Master Yi, Yasuo, Yone, and ADCs.',
+      whenToBuy: 'Multiple heavy auto-attackers on enemy team.',
       timing: 'Cheap 2nd or 3rd slot armor'
     };
-  }, [isADC, isBruiser, core2Card.name, core3Card.name]);
+  }, [isMarksman, isADAssassin, isMage, isAPAssassin, isEnchanter, isBruiser, hasLifelineInCore, core2Card.name, core3Card.name]);
 
   const flex3: TacticalCard = useMemo(() => ({
     id: isSupport ? '3107' : '3083',
@@ -691,12 +798,203 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     timing: 'Late game utility'
   }), [isSupport, core3Card.name]);
 
+  const shred1: TacticalCard = useMemo(() => {
+    let id: string;
+    let name: string;
+    let category: ItemCategory;
+    let whatItDoes = '';
+    let swapReason = '';
+
+    if (isMage || isAPAssassin) {
+      const hasVoid = isAlreadyInCore('3135');
+      id = hasVoid ? '3137' : '3135';
+      name = hasVoid ? 'Cryptbloom' : 'Void Staff';
+      category = 'spirit';
+      whatItDoes = hasVoid ? '30% Magic Pen + healing nova on takedowns.' : 'Ignores 40% enemy Magic Resistance.';
+      swapReason = 'Mandatory 3rd slot when enemy frontline stacks 100+ Magic Resistance.';
+    } else if (isMarksman) {
+      const hasLdr = isAlreadyInCore('3036');
+      id = hasLdr ? '3153' : '3036';
+      name = hasLdr ? 'Blade of the Ruined King' : "Lord Dominik's Regards";
+      category = 'weapon';
+      whatItDoes = hasLdr ? 'Deals 9% current HP physical damage on-hit.' : 'Ignores 35% total enemy armor + 25% Critical Strike.';
+      swapReason = hasLdr ? 'Melt massive health stackers (Warmog / Heartsteel).' : 'Mandatory 3rd slot when enemy tanks build Armor.';
+    } else if (isADAssassin) {
+      const hasSerylda = isAlreadyInCore('6694');
+      id = hasSerylda ? '3071' : '6694';
+      name = hasSerylda ? 'Black Cleaver' : "Serylda's Grudge";
+      category = 'weapon';
+      whatItDoes = hasSerylda ? 'Carves up to 30% enemy armor for the entire team.' : '30% Armor Penetration scaling with Lethality.';
+      swapReason = 'Pierce armor stacking on enemy bruisers and tanks.';
+    } else if (isTank) {
+      id = '8020'; name = 'Abyssal Mask'; category = 'vitality';
+      whatItDoes = 'Aura shreds nearby enemy Magic Resistance by up to 25 and grants bonus MR per enemy.';
+      swapReason = 'Amplifies your magic damage and your team mages magic damage while tanking.';
+    } else if (isEnchanter || isEngageSupport) {
+      id = '8020'; name = 'Abyssal Mask'; category = 'vitality';
+      whatItDoes = 'Aura shreds nearby enemy MR by up to 25.';
+      swapReason = 'Teamwide resistance shred for magic-heavy allied compositions.';
+    } else {
+      const hasCleaver = isAlreadyInCore('3071');
+      id = hasCleaver ? '3153' : '3071';
+      name = hasCleaver ? 'Blade of the Ruined King' : 'Black Cleaver';
+      category = 'weapon';
+      whatItDoes = hasCleaver ? 'Deals 9% current HP physical on-hit to shred health tanks.' : 'Shreds up to 30% total enemy armor on physical hits.';
+      swapReason = 'Essential when enemy frontliners stack 200+ armor.';
+    }
+
+    return {
+      id, name, category, buyOrderBadge: 'CORE #3', replacesSlot: 'Core #3',
+      replacesItemName: core3Card.name, swapReason, whatItDoes,
+      whenToBuy: 'Mandatory when enemy tanks build resistances.', timing: '3rd or 4th slot vs tanks'
+    };
+  }, [isMage, isAPAssassin, isMarksman, isADAssassin, isTank, isEnchanter, isEngageSupport, core3Card.name]);
+
+  const shred2: TacticalCard = useMemo(() => {
+    let id: string;
+    let name: string;
+    let category: ItemCategory;
+    let whatItDoes = '';
+    let swapReason = '';
+
+    if (isMarksman) {
+      id = '3153'; name = 'Blade of the Ruined King'; category = 'weapon';
+      whatItDoes = 'Deals 9% current HP physical on-hit + steals 25% movespeed on 3rd attack.';
+      swapReason = 'Melt colossal health-stacking tanks (Heartsteel Sion, ChoGath, Warmogs) with % HP damage.';
+    } else if (isADAssassin) {
+      id = '6695'; name = "Serpent's Fang"; category = 'weapon';
+      whatItDoes = 'Reduces enemy shields gained by 50% and carves existing shields instantly.';
+      swapReason = 'Counter heavy shield compositions (Sett, Tahm Kench, Karma, Lulu, Steraks).';
+    } else if (isMage || isAPAssassin) {
+      id = '3137'; name = 'Cryptbloom'; category = 'spirit';
+      whatItDoes = '30% Magic Pen + releases healing nova for allies on champion takedowns.';
+      swapReason = 'Alternative % penetration providing teamfight sustain.';
+    } else if (isTank) {
+      id = '3068'; name = 'Sunfire Aegis'; category = 'vitality';
+      whatItDoes = 'Immolate aura burns nearby enemies for stacking magic damage in prolonged fights.';
+      swapReason = 'Maximize continuous damage and waveclear in frontline brawls.';
+    } else if (isSupport) {
+      id = '4005'; name = 'Imperial Mandate'; category = 'utility';
+      whatItDoes = 'Marks champions with spells; ally attack detonates mark for bonus magic damage and movespeed.';
+      swapReason = 'Coordinate team focus-fire damage amplification.';
+    } else {
+      id = '3153'; name = 'Blade of the Ruined King'; category = 'weapon';
+      whatItDoes = 'Deals 9% current HP physical on-hit + movespeed steal.';
+      swapReason = 'Duel colossal health-stackers that cannot be burst down.';
+    }
+
+    return {
+      id, name, category, buyOrderBadge: 'ALT SHRED', replacesSlot: 'Core #3',
+      replacesItemName: core3Card.name, swapReason, whatItDoes,
+      whenToBuy: 'Alternative penetration / shred option depending on enemy defense type.', timing: '3rd or 4th item slot'
+    };
+  }, [isMarksman, isADAssassin, isMage, isAPAssassin, isTank, isSupport, core3Card.name]);
+
+  const antiCC1: TacticalCard = useMemo(() => {
+    if (isMage || isAPAssassin) {
+      return {
+        id: '4632', name: 'Verdant Barrier', category: 'spirit', buyOrderBadge: '1600G COMP',
+        lineageType: 'component', buildsIntoId: '3102', buildsIntoName: "Banshee's Veil",
+        finalSwapSlot: 'Core #2', finalSwapItemName: core2Card.name, replacesSlot: '1st Back',
+        replacesItemName: firstBackCard.name,
+        swapReason: `Sit on 1600g Verdant Barrier component early vs lethal AP burst or initiation. Later, finish Banshee's Veil to swap out ${core2Card.name}.`,
+        isActive: false, whatItDoes: 'Grants 35 Ability Power and 30 Magic Resistance + Annul spell shield passive.',
+        whenToBuy: 'Enemy team has dangerous long-range engage or crowd control.', timing: 'Buy early component, sit on it!'
+      };
+    }
+    if (isEnchanter || isEngageSupport) {
+      return {
+        id: '3012', name: 'Chalice of Blessing', category: 'utility', buyOrderBadge: '900G COMP',
+        lineageType: 'component', buildsIntoId: '3222', buildsIntoName: "Mikael's Blessing",
+        finalSwapSlot: 'Core #2', finalSwapItemName: core2Card.name, replacesSlot: '1st Back',
+        replacesItemName: firstBackCard.name,
+        swapReason: `Early health and mana regen component building directly into Mikael's Blessing CC cleanse.`,
+        isActive: false, whatItDoes: '+200 Health and +100% Base Mana Regen.',
+        whenToBuy: 'Enemy team has point-and-click crowd control (Ashe, Leona, Nautilus, Morgana).', timing: 'Buy early component, sit on it!'
+      };
+    }
+    if (isTank) {
+      return {
+        id: '1057', name: 'Negatron Cloak', category: 'vitality', buyOrderBadge: '900G COMP',
+        lineageType: 'component', buildsIntoId: '2504', buildsIntoName: 'Kaenic Rookern',
+        finalSwapSlot: 'Core #3', finalSwapItemName: core3Card.name, replacesSlot: '1st Back',
+        replacesItemName: firstBackCard.name,
+        swapReason: `Sit on 900g Negatron Cloak for +50 Magic Resist early; upgrade to Kaenic Rookern late.`,
+        isActive: false, whatItDoes: '+50 Magic Resistance to shrug off magic crowd control and poke.',
+        whenToBuy: 'Facing dangerous magic crowd control in laning phase.', timing: 'Buy early component, sit on it!'
+      };
+    }
+    return {
+      id: '3140', name: 'Quicksilver Sash', category: 'weapon', buyOrderBadge: '1300G QSS',
+      lineageType: 'component', buildsIntoId: '3139', buildsIntoName: 'Mercurial Scimitar',
+      finalSwapSlot: 'Core #3', finalSwapItemName: core3Card.name, replacesSlot: '1st Back',
+      replacesItemName: firstBackCard.name,
+      swapReason: `Buy 1300g QSS on early recall vs point-and-click suppression (Malzahar, Warwick, Skarner). Sit on it, then upgrade to Mercurial Scimitar late (swaps ${core3Card.name}).`,
+      isActive: true, whatItDoes: 'Active cleanses all crowd control (including Suppression) immediately.',
+      whenToBuy: 'Enemy has point-and-click Suppression (Malzahar, Warwick, Skarner).', timing: 'Buy 1300g component early, sit on it!'
+    };
+  }, [isMage, isAPAssassin, isEnchanter, isEngageSupport, isTank, core2Card.name, core3Card.name, firstBackCard.name]);
+
+  const antiCC2: TacticalCard = useMemo(() => {
+    if (isMage || isAPAssassin) {
+      return {
+        id: '3102', name: "Banshee's Veil", category: 'spirit', buyOrderBadge: 'FULL UPGRADE',
+        lineageType: 'upgrade', buildsFromId: '4632', buildsFromName: 'Verdant Barrier',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: `Upgraded from 1600g Verdant Barrier. Swaps ${core2Card.name} to gain 105 AP and an active spell shield blocking enemy initiation.`,
+        isActive: false, whatItDoes: 'Grants a spell shield that blocks the next enemy ability, plus 105 AP and 50 MR.',
+        whenToBuy: 'Complete from Verdant Barrier when enemy pick potential threatens teamfights.', timing: `Completed Upgrade (Swaps ${core2Card.name})`
+      };
+    }
+    if (isEnchanter || isEngageSupport) {
+      return {
+        id: '3222', name: "Mikael's Blessing", category: 'utility', buyOrderBadge: 'FULL UPGRADE',
+        lineageType: 'upgrade', buildsFromId: '3012', buildsFromName: 'Chalice of Blessing',
+        replacesSlot: 'Core #2', replacesItemName: core2Card.name,
+        swapReason: `Active instantly cleanses all stuns, roots, silences, and slows on your carry and heals them for 100-180 HP. Swaps ${core2Card.name}.`,
+        isActive: true, whatItDoes: 'Target ally carry to purge crowd control and heal them.',
+        whenToBuy: 'When enemy team attempts to chain-CC and eliminate your carry.', timing: `Completed Upgrade (Swaps ${core2Card.name})`
+      };
+    }
+    if (isTank) {
+      return {
+        id: '2504', name: 'Kaenic Rookern', category: 'vitality', buyOrderBadge: 'FULL UPGRADE',
+        lineageType: 'upgrade', buildsFromId: '1057', buildsFromName: 'Negatron Cloak',
+        replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+        swapReason: `Absorbs retaliatory CC burst with 18% max HP regenerating magic shield. Swaps ${core3Card.name}.`,
+        isActive: false, whatItDoes: 'Grants an 18% max HP magic damage shield refreshing out of combat + 80 MR.',
+        whenToBuy: 'Complete from Negatron Cloak for teamfight magic frontline durability.', timing: `Completed Upgrade (Swaps ${core3Card.name})`
+      };
+    }
+    return {
+      id: '3139', name: 'Mercurial Scimitar', category: 'weapon', buyOrderBadge: 'FULL UPGRADE',
+      lineageType: 'upgrade', buildsFromId: '3140', buildsFromName: 'Quicksilver Sash',
+      replacesSlot: 'Core #3', replacesItemName: core3Card.name,
+      swapReason: `Finish QSS into full item to retain CC cleanse while gaining +50 AD, +40 MR, and +50% move speed burst. Swaps ${core3Card.name}.`,
+      isActive: true, whatItDoes: 'Active cleanses all CC and grants +50% move speed for 1.5 seconds, plus 50 AD and 40 MR.',
+      whenToBuy: 'Complete from Quicksilver Sash after your core damage is built.', timing: `Completed Upgrade (Swaps ${core3Card.name})`
+    };
+  }, [isMage, isAPAssassin, isEnchanter, isEngageSupport, isTank, core2Card.name, core3Card.name]);
+
+  const antiCC3: TacticalCard = useMemo(() => ({
+    id: isMage ? '3102' : '3814',
+    name: isMage ? "Banshee's Veil" : 'Edge of Night',
+    category: isMage ? 'spirit' : 'weapon',
+    buyOrderBadge: 'CORE #2',
+    replacesSlot: 'Core #2',
+    replacesItemName: core2Card.name,
+    swapReason: 'Spell shield blocks critical engagement spells (Blitz hook, Malphite R) before fights start.',
+    whatItDoes: 'Spell shield that blocks the next hostile enemy ability.',
+    whenToBuy: 'Against lethal engagement picks seeking pick-offs.',
+    timing: 'Build 2nd or 3rd defensive slot'
+  }), [isMage, core2Card.name]);
+
   // Situational Pods organized by Mobalytics Threat Scenarios (Balanced 2-card presentation)
   const situationalPods = useMemo(() => [
     {
       title: 'Anti-Heal (Grievous)',
-      subtitle: isADC 
-        ? "Sit on Executioner's (800g) ➔ Upgrade late to swap Infinity Edge"
+      subtitle: isMarksman 
+        ? "Sit on Executioner's (800g) ➔ Upgrade late to swap Armor Pen slot"
         : 'Sit on 800g component early ➔ Finish full upgrade late',
       accent: 'border-rose-400 bg-rose-50/20 text-rose-800',
       badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
@@ -706,7 +1004,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Anti-Physical & Armor',
-      subtitle: isADC ? 'vs Lethal AD Assassins & Burst' : 'vs AD Burst & Assassins',
+      subtitle: isMarksman ? 'vs Lethal AD Assassins & Burst' : 'vs AD Burst & Assassins',
       accent: 'border-amber-400 bg-amber-50/20 text-amber-800',
       badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
       icon: '🛡️',
@@ -714,7 +1012,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Magic Resist & Shields',
-      subtitle: isADC ? 'vs Fed AP Mages & Magic Poke' : 'vs Fed AP Mages & Poke',
+      subtitle: isMarksman ? 'vs Fed AP Mages & Magic Poke' : 'vs Fed AP Mages & Poke',
       accent: 'border-purple-400 bg-purple-50/20 text-purple-800',
       badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
       icon: '🔮',
@@ -722,7 +1020,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Armor / MR Penetration',
-      subtitle: isADC ? 'vs High Armor & Health Tanks' : 'vs Tanks & Resistances',
+      subtitle: isMarksman ? 'vs High Armor & Health Tanks' : 'vs Tanks & Resistances',
       accent: 'border-sky-400 bg-sky-50/20 text-sky-800',
       badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
       icon: '⚔️',
@@ -730,10 +1028,14 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     },
     {
       title: 'Cleanse & Suppression',
-      subtitle: isADC
+      subtitle: isMarksman
         ? 'Sit on QSS (1300g) ➔ Finish Mercurial Scimitar late'
-        : isMage
+        : (isMage || isAPAssassin)
         ? "Verdant Barrier (1600g) ➔ Upgrade to Banshee's Veil"
+        : (isEnchanter || isEngageSupport)
+        ? "Chalice (900g) ➔ Upgrade to Mikael's Blessing"
+        : isTank
+        ? "Negatron Cloak (900g) ➔ Upgrade to Kaenic Rookern"
         : 'Sit on 1300g QSS ➔ Finish Mercurial Scimitar late',
       accent: 'border-emerald-400 bg-emerald-50/20 text-emerald-800',
       badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -742,8 +1044,12 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       cards: [antiCC1, antiCC2]
     }
   ], [
-    isADC,
+    isMarksman,
     isMage,
+    isAPAssassin,
+    isEnchanter,
+    isEngageSupport,
+    isTank,
     antiHeal800g, antiHealFull,
     antiBurst3, flex2,
     antiBurst1, antiBurst2,
@@ -758,7 +1064,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         return {
           border: 'border-orange-500',
           ring: 'ring-orange-500',
-          bg: 'bg-white',
+          bg: 'bg-[#13221c]',
           glow: 'shadow-[0_1px_3px_rgba(249,115,22,0.18)]',
           glowStrong: '0_4px_14px_rgba(249,115,22,0.35)',
           badgeBg: 'bg-orange-500 text-white font-black',
@@ -769,7 +1075,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         return {
           border: 'border-purple-500',
           ring: 'ring-purple-500',
-          bg: 'bg-white',
+          bg: 'bg-[#13221c]',
           glow: 'shadow-[0_1px_3px_rgba(168,85,247,0.18)]',
           glowStrong: '0_4px_14px_rgba(168,85,247,0.35)',
           badgeBg: 'bg-purple-600 text-white font-black',
@@ -780,7 +1086,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         return {
           border: 'border-emerald-600',
           ring: 'ring-emerald-500',
-          bg: 'bg-white',
+          bg: 'bg-[#13221c]',
           glow: 'shadow-[0_1px_3px_rgba(16,185,129,0.18)]',
           glowStrong: '0_4px_14px_rgba(16,185,129,0.35)',
           badgeBg: 'bg-emerald-600 text-white font-black',
@@ -791,7 +1097,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         return {
           border: 'border-sky-500',
           ring: 'ring-sky-500',
-          bg: 'bg-white',
+          bg: 'bg-[#13221c]',
           glow: 'shadow-[0_1px_3px_rgba(14,165,233,0.18)]',
           glowStrong: '0_4px_14px_rgba(14,165,233,0.35)',
           badgeBg: 'bg-sky-600 text-white font-black',
@@ -799,6 +1105,124 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           chipBg: 'bg-sky-50 border-sky-200 text-sky-800'
         };
     }
+  };
+
+  // Deadlock Tactical Category Aura & Glowing Accents
+  const getCategoryAura = (category: ItemCategory) => {
+    switch (category) {
+      case 'weapon':
+        return {
+          badgeBg: 'bg-amber-950/80 text-amber-300 border-amber-500/40',
+          glowRing: 'group-hover:border-amber-400/80 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.25)]',
+          bgAura: 'from-amber-500/10 via-transparent to-transparent',
+          accentText: 'text-amber-400',
+          borderAccent: 'border-amber-500/50'
+        };
+      case 'vitality':
+        return {
+          badgeBg: 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40',
+          glowRing: 'group-hover:border-[#2dd5b7]/80 group-hover:shadow-[0_0_15px_rgba(45,213,183,0.25)]',
+          bgAura: 'from-emerald-500/10 via-transparent to-transparent',
+          accentText: 'text-[#2dd5b7]',
+          borderAccent: 'border-emerald-500/50'
+        };
+      case 'spirit':
+        return {
+          badgeBg: 'bg-purple-950/80 text-purple-300 border-purple-500/40',
+          glowRing: 'group-hover:border-purple-400/80 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.25)]',
+          bgAura: 'from-purple-500/10 via-transparent to-transparent',
+          accentText: 'text-purple-400',
+          borderAccent: 'border-purple-500/50'
+        };
+      case 'utility':
+      default:
+        return {
+          badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-500/40',
+          glowRing: 'group-hover:border-sky-400/80 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.25)]',
+          bgAura: 'from-sky-500/10 via-transparent to-transparent',
+          accentText: 'text-sky-400',
+          borderAccent: 'border-sky-500/50'
+        };
+    }
+  };
+
+  // Helper to extract clean list of stats from Riot item data
+  const getItemStatsList = (itemData: ItemData | null | undefined): string[] => {
+    if (!itemData) return [];
+    const list: string[] = [];
+    const s = itemData.stats || {};
+    if (s.FlatPhysicalDamageMod) list.push(`+${s.FlatPhysicalDamageMod} AD`);
+    if (s.FlatMagicDamageMod) list.push(`+${s.FlatMagicDamageMod} AP`);
+    if (s.FlatHPPoolMod) list.push(`+${s.FlatHPPoolMod} HP`);
+    if (s.FlatArmorMod) list.push(`+${s.FlatArmorMod} Armor`);
+    if (s.FlatSpellBlockMod) list.push(`+${s.FlatSpellBlockMod} MR`);
+    if (s.PercentAttackSpeedMod) list.push(`+${Math.round(s.PercentAttackSpeedMod * 100)}% AS`);
+    if (s.PercentMovementSpeedMod) list.push(`+${Math.round(s.PercentMovementSpeedMod * 100)}% MS`);
+    if (s.FlatMovementSpeedMod) list.push(`+${s.FlatMovementSpeedMod} MS`);
+    if (s.PercentLifeStealMod) list.push(`+${Math.round(s.PercentLifeStealMod * 100)}% Vamp`);
+    if (s.FlatCritChanceMod) list.push(`+${Math.round(s.FlatCritChanceMod * 100)}% Crit`);
+    if (s.FlatMPPoolMod) list.push(`+${s.FlatMPPoolMod} Mana`);
+
+    const desc = itemData.description || '';
+    const hasteMatch = desc.match(/(\d+)\s*(?:Ability Haste|ability haste)/i);
+    if (hasteMatch && !list.some(x => x.includes('Haste'))) {
+      list.push(`+${hasteMatch[1]} Haste`);
+    }
+    const lethalityMatch = desc.match(/(\d+)\s*(?:Lethality|lethality)/i);
+    if (lethalityMatch && !list.some(x => x.includes('Lethality'))) {
+      list.push(`+${lethalityMatch[1]} Lethality`);
+    }
+
+    return list;
+  };
+
+  // Concise 1-2 stat preview for on-card face display
+  const getItemStatPreview = (itemData: ItemData | null | undefined): string => {
+    const stats = getItemStatsList(itemData);
+    if (stats.length === 0) return '';
+    if (stats.length === 1) return stats[0];
+    return `${stats[0]} • ${stats[1]}`;
+  };
+
+  // Tactical essence / mechanic tag resolver
+  const getItemEssenceTag = (id: string, name: string, itemData?: ItemData | null): string => {
+    if (ITEM_ESSENCE_MAP[id]?.tags?.length) {
+      const rawTag = ITEM_ESSENCE_MAP[id].tags[0];
+      switch (rawTag) {
+        case 'Spellblade': return 'SPELLBLADE';
+        case 'Lifeline': return 'LIFELINE';
+        case 'ArmorPen': return 'ARMOR PEN';
+        case 'MagicPen': return 'MAGIC PEN';
+        case 'Lethality': return 'LETHALITY';
+        case 'Burn': return 'BURN';
+        case 'AntiHeal': return 'ANTI-HEAL';
+        case 'Stasis': return 'STASIS';
+        case 'OnHit': return 'ON-HIT';
+        case 'Omnivamp': return 'OMNIVAMP';
+        case 'Tenacity': return 'TENACITY';
+        case 'TankAura': return 'TANK AURA';
+        case 'ManaSurge': return 'MANA SURGE';
+        case 'ShieldAmp': return 'SHIELD AMP';
+        case 'Execute': return 'EXECUTE';
+        case 'MoveSpeed': return 'SPEED';
+        default: return 'TACTICAL';
+      }
+    }
+
+    const n = (name || '').toLowerCase();
+    if (n.includes('boots') || n.includes('treads') || n.includes('greaves') || n.includes('steelcaps') || n.includes('ionian')) return 'SPEED';
+    if (n.includes('blade') || n.includes('sword') || n.includes('glaive') || n.includes('hydra')) return 'PHYSICAL';
+    if (n.includes('ring') || n.includes('wand') || n.includes('staff') || n.includes('tome') || n.includes('hourglass')) return 'MAGIC / AP';
+    if (n.includes('shield') || n.includes('plate') || n.includes('vest') || n.includes('heart') || n.includes('aegis') || n.includes('mask')) return 'DEFENSE';
+    if (n.includes('potion') || n.includes('refillable')) return 'CONSUMABLE';
+
+    if (itemData?.tags?.includes('Damage')) return 'ATTACK DMG';
+    if (itemData?.tags?.includes('SpellDamage')) return 'ABILITY PWR';
+    if (itemData?.tags?.includes('Armor') || itemData?.tags?.includes('SpellBlock')) return 'RESISTANCE';
+    if (itemData?.tags?.includes('Health')) return 'HEALTH';
+    if (itemData?.tags?.includes('Boots')) return 'MOBILITY';
+
+    return 'TACTICAL';
   };
 
   const defaultCard = core1Card;
@@ -921,7 +1345,16 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     return false;
   };
 
-  // Render an Authentic Deadlock-Style Uniform Square Item Tile
+  const getCategorySymbol = (cat: ItemCategory): string => {
+    switch (cat) {
+      case 'weapon': return '⌖';
+      case 'vitality': return '✚';
+      case 'spirit': return '⬡';
+      case 'utility': return '⚡';
+    }
+  };
+
+  // Render an Authentic Deadlock-Style Tactical Item Card Frame
   const renderCardNode = (card: TacticalCard, isDarkTier = false) => {
     const itemData = allItems ? allItems[card.id] : null;
     const gold = itemData?.gold?.total;
@@ -938,27 +1371,29 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
     const isConnected = isHovered || isTarget || isFinalSwapTarget || isUpgrade || isComponent || isSeedComponent || isCandidate;
     const isDimmed = Boolean(hoveredCard && cardHasSwapConnection(hoveredCard) && !isConnected);
 
-    let connectionRing = '';
+    const aura = getCategoryAura(card.category);
+    const essenceTag = getItemEssenceTag(card.id, card.name, itemData);
+    const statPreview = getItemStatPreview(itemData);
+
+    let connectionTheme = '';
     if (isFinalSwapTarget) {
-      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.6)] z-30 animate-pulse';
+      connectionTheme = '!bg-rose-500 [filter:drop-shadow(0_0_18px_rgba(244,63,94,0.95))] scale-105 -translate-y-1 z-30 animate-pulse';
     } else if (isTarget) {
-      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-rose-500 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)] z-30 animate-pulse';
+      connectionTheme = '!bg-rose-500 [filter:drop-shadow(0_0_18px_rgba(244,63,94,0.9))] scale-105 -translate-y-1 z-30 animate-pulse';
     } else if (isUpgrade) {
-      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-emerald-500 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.6)] z-30 animate-pulse';
+      connectionTheme = '!bg-emerald-400 [filter:drop-shadow(0_0_18px_rgba(16,185,129,0.95))] scale-105 -translate-y-1 z-30 animate-pulse';
     } else if (isComponent || isSeedComponent) {
-      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-amber-500 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.6)] z-30 animate-pulse';
+      connectionTheme = '!bg-amber-400 [filter:drop-shadow(0_0_18px_rgba(245,158,11,0.95))] scale-105 -translate-y-1 z-30 animate-pulse';
     } else if (isCandidate) {
-      connectionRing = 'scale-105 -translate-y-1 ring-4 ring-sky-500 border-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.5)] z-30 animate-pulse';
-    } else if (isHovered) {
-      connectionRing = isDarkTier
-        ? 'scale-105 -translate-y-1 border-[#34d399] shadow-[0_0_14px_rgba(52,211,153,0.4)] z-25 ring-2 ring-[#34d399]'
-        : 'scale-105 -translate-y-1 shadow-md z-25 ring-2 ring-emerald-600 border-emerald-600';
+      connectionTheme = '!bg-sky-400 [filter:drop-shadow(0_0_18px_rgba(14,165,233,0.9))] scale-105 -translate-y-1 z-30 animate-pulse';
     } else if (isSelected) {
-      connectionRing = 'ring-2 ring-emerald-500 shadow-sm';
+      connectionTheme = '!bg-[#2dd5b7] [filter:drop-shadow(0_0_16px_rgba(45,213,183,0.9))] scale-[1.02] z-20';
+    } else if (isHovered) {
+      connectionTheme = 'scale-105 -translate-y-1 z-25 [filter:drop-shadow(0_0_16px_rgba(45,213,183,0.8))]';
     } else if (isDimmed) {
-      connectionRing = 'opacity-30 grayscale-[50%] transition-opacity duration-200';
+      connectionTheme = 'opacity-25 grayscale-[70%] transition-opacity duration-200 pointer-events-none';
     } else {
-      connectionRing = 'hover:-translate-y-0.5 hover:shadow-xs';
+      connectionTheme = 'hover:-translate-y-1 hover:scale-[1.02]';
     }
 
     return (
@@ -967,12 +1402,10 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         data-card-id={card.id}
         title={card.name}
         onClick={() => {
-          setSelectedCard(card);
+          setSelectedCard(selectedCard?.id === card.id ? null : card);
           setHoveredCard(card);
           if (isMobile) {
             setShowMobileDrawer(true);
-          } else {
-            setShowInspector(true);
           }
         }}
         onMouseEnter={(e) => {
@@ -1017,111 +1450,152 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
           setHoveredCard(null);
           unregisterHover(card.id);
         }}
-        className={`group relative w-[88px] sm:w-[94px] md:w-[96px] h-[128px] sm:h-[132px] rounded-md overflow-hidden flex flex-col justify-between cursor-pointer select-none transition-all duration-150 border shadow-2xs ${
-          isDarkTier
-            ? 'bg-[#15201a] border-[#2a3c30]'
-            : 'bg-[#faf9f4] border-[#c4ccbe]'
-        } ${connectionRing}`}
+        className={`group deadlock-tactical-card card-theme-${card.category} w-[98px] sm:w-[108px] md:w-[116px] lg:w-[122px] xl:w-[128px] min-h-[164px] sm:min-h-[172px] lg:min-h-[180px] p-[1.5px] cursor-pointer select-none transition-all duration-200 ${connectionTheme}`}
       >
-        {/* Top Order / Role Strip */}
-        <div className="w-full flex items-center justify-between px-1.5 py-0.5 bg-[#eae8de] border-b border-[#dad9cd] text-[9px] sm:text-[9.5px] font-black font-mono leading-none flex-shrink-0">
-          <div className="flex items-center gap-1 min-w-0">
-            {card.isCore ? (
-              <span className="text-sky-600 font-black text-[10px] leading-none">★</span>
-            ) : (
-              <span className="text-[#687a64] text-[8px] leading-none">●</span>
-            )}
-            <span className="text-[#2b3829] tracking-wider uppercase font-['Barlow_Condensed'] font-black truncate">
-              {card.buyOrderBadge || (card.isCore ? `CORE #${card.coreOrder}` : 'ITEM')}
-            </span>
-          </div>
-          {card.isActive && (
-            <span className="bg-[#101712] text-[#86efac] text-[7.5px] font-black uppercase px-1 py-0.2 rounded-xs border border-[#233527] leading-none flex-shrink-0">
-              ACT
-            </span>
-          )}
-        </div>
+        <div className="deadlock-tactical-inner w-full flex-1">
+          {/* Top Order / Role Strip with Sci-Fi Angled Header Tab */}
+          <div className="relative z-10 w-full flex items-center justify-between px-1.5 py-1 bg-[#12221a]/95 border-b border-white/10 text-[9.5px] sm:text-[10px] font-black font-mono leading-none flex-shrink-0">
+            <div className="tactical-header-notch flex items-center gap-1 min-w-0 pr-1">
+              <span className="text-xs leading-none">
+                {card.isCore ? (
+                  <span className="text-[#2dd5b7] font-black animate-pulse">★</span>
+                ) : (
+                  <span className="text-[#769382]">
+                    {getCategorySymbol(card.category)}
+                  </span>
+                )}
+              </span>
+              <span className="text-[#e2e5b8] tracking-wider uppercase font-['Barlow_Condensed'] font-black truncate">
+                {card.buyOrderBadge || (card.isCore ? `CORE #${card.coreOrder}` : card.category.toUpperCase())}
+              </span>
+            </div>
 
-        {/* Middle Artwork Area */}
-        <div className="relative flex-1 p-1 flex items-center justify-center min-h-0">
-          {/* Item Icon */}
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded overflow-hidden bg-black/10 border border-black/10 flex-shrink-0 shadow-2xs">
-            <img
-              src={getItemIconUrl(version, card.id)}
-              alt={card.name}
-              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-              loading="lazy"
+            {/* Gold Chit or Active Neon Pill */}
+            {card.isActive ? (
+              <span className="bg-[#102920] text-[#2dd5b7] text-[8px] sm:text-[8.5px] font-black uppercase px-1 py-0.2 rounded border border-[#2dd5b7]/50 leading-none flex-shrink-0 shadow-xs">
+                ACT
+              </span>
+            ) : gold ? (
+              <span className="tactical-gold-chit px-1 py-0.2 text-[8px] sm:text-[8.5px] leading-none flex-shrink-0">
+                {gold}g
+              </span>
+            ) : null}
+          </div>
+
+          {/* Middle Artwork Area with Tactical Aperture Housing */}
+          <div className="relative z-10 flex-1 p-1.5 flex flex-col items-center justify-center min-h-0">
+            {/* Ambient category radial aura */}
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity"
+              style={{
+                background: card.category === 'weapon'
+                  ? 'radial-gradient(circle at center, rgba(245, 158, 11, 0.35) 0%, transparent 70%)'
+                  : card.category === 'vitality'
+                  ? 'radial-gradient(circle at center, rgba(45, 213, 183, 0.35) 0%, transparent 70%)'
+                  : card.category === 'spirit'
+                  ? 'radial-gradient(circle at center, rgba(192, 132, 252, 0.35) 0%, transparent 70%)'
+                  : 'radial-gradient(circle at center, rgba(56, 189, 248, 0.35) 0%, transparent 70%)'
+              }}
             />
+
+            {/* Item Icon Aperture */}
+            <div className="tactical-aperture relative w-12 h-12 sm:w-13 sm:h-13 lg:w-14 lg:h-14 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
+              <img
+                src={getItemIconUrl(version, card.id)}
+                alt={card.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+
+              {/* Stamped Active indicator inside aperture if active */}
+              {card.isActive && (
+                <span className="absolute top-1 left-1 w-2 h-2 rounded-full bg-[#2dd5b7] shadow-[0_0_6px_#2dd5b7] animate-pulse z-10" title="Active Item Ability" />
+              )}
+            </div>
+
+            {/* Tactical Essence Badge Pill */}
+            <div className="mt-1 flex items-center justify-center w-full px-0.5 z-10">
+              <span className={`text-[8px] sm:text-[8.5px] xl:text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded border font-['Barlow_Condensed'] truncate leading-tight ${aura.badgeBg}`}>
+                {essenceTag}
+              </span>
+            </div>
+
+            {/* Key Stat Preview Calibration Chip */}
+            <div className="mt-0.5 max-w-[95%] text-center z-10">
+              {statPreview ? (
+                <span className="text-[8px] sm:text-[8.5px] font-mono font-bold text-[#c1c497] truncate block leading-tight bg-black/45 px-1 py-0.2 rounded border border-white/5">
+                  {statPreview}
+                </span>
+              ) : (
+                <span className="text-[8px] sm:text-[8.5px] font-sans text-[#769382] italic truncate block leading-tight">
+                  {card.category.toUpperCase()}
+                </span>
+              )}
+            </div>
+
+            {/* High-Contrast Badges over icon on hover connection */}
+            {isFinalSwapTarget && (
+              <div className="absolute inset-0 bg-rose-700/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
+                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-rose-200 leading-none mb-0.5 font-['Barlow_Condensed']">
+                  SWAP OUT FOR
+                </span>
+                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                  UPGRADE
+                </span>
+              </div>
+            )}
+            {!isFinalSwapTarget && isTarget && (
+              <div className="absolute inset-0 bg-rose-600/90 flex items-center justify-center p-1 z-20 animate-in fade-in duration-100">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                  SWAP OUT
+                </span>
+              </div>
+            )}
+            {isUpgrade && (
+              <div className="absolute inset-0 bg-emerald-600/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
+                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-emerald-200 leading-none mb-0.5 font-['Barlow_Condensed']">
+                  BUILDS INTO
+                </span>
+                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                  UPGRADE
+                </span>
+              </div>
+            )}
+            {isComponent && (
+              <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
+                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
+                  BUILDS FROM
+                </span>
+                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                  800G COMP
+                </span>
+              </div>
+            )}
+            {isSeedComponent && (
+              <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-1 z-20 animate-in fade-in duration-100">
+                <span className="text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
+                  EARLY SEED
+                </span>
+                <span className="text-[9.5px] sm:text-[10.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                  800G COMP
+                </span>
+              </div>
+            )}
+            {!isUpgrade && !isSeedComponent && isCandidate && (
+              <div className="absolute inset-0 bg-sky-600/90 flex items-center justify-center p-1 z-20 animate-in fade-in duration-100">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
+                  SWAP IN
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* High-Contrast Badges over icon on hover connection */}
-          {isFinalSwapTarget && (
-            <div className="absolute inset-0 bg-rose-700/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
-              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-rose-200 leading-none mb-0.5 font-['Barlow_Condensed']">
-                SWAP OUT FOR
-              </span>
-              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
-                UPGRADE
-              </span>
-            </div>
-          )}
-          {!isFinalSwapTarget && isTarget && (
-            <div className="absolute inset-0 bg-rose-600/90 flex items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
-              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
-                SWAP OUT
-              </span>
-            </div>
-          )}
-          {isUpgrade && (
-            <div className="absolute inset-0 bg-emerald-600/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
-              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-emerald-200 leading-none mb-0.5 font-['Barlow_Condensed']">
-                BUILDS INTO
-              </span>
-              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
-                UPGRADE
-              </span>
-            </div>
-          )}
-          {isComponent && (
-            <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
-              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
-                BUILDS FROM
-              </span>
-              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
-                800G COMP
-              </span>
-            </div>
-          )}
-          {isSeedComponent && (
-            <div className="absolute inset-0 bg-amber-600/90 flex flex-col items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
-              <span className="text-[7px] sm:text-[7.5px] font-black uppercase tracking-wider text-amber-100 leading-none mb-0.5 font-['Barlow_Condensed']">
-                EARLY SEED
-              </span>
-              <span className="text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
-                800G COMP
-              </span>
-            </div>
-          )}
-          {!isUpgrade && !isSeedComponent && isCandidate && (
-            <div className="absolute inset-0 bg-sky-600/90 flex items-center justify-center p-0.5 z-10 animate-in fade-in duration-100">
-              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-white text-center leading-tight font-['Barlow_Condensed']">
-                SWAP IN
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Shaded Name Plate: 100% full text display with zero truncation */}
-        <div
-          className={`px-1 py-0.5 text-center min-h-[38px] flex items-center justify-center border-t flex-shrink-0 transition-colors ${
-            isDarkTier
-              ? 'bg-[#101814] border-[#1f2d24] text-[#d6ede1]'
-              : 'bg-[#eae8de] border-[#dad9cd] text-[#222920]'
-          }`}
-        >
-          <span className="text-[10px] sm:text-[10.5px] font-bold leading-[1.12] font-sans tracking-tight break-words text-center">
-            {card.name}
-          </span>
+          {/* Bottom Shaded Name Plate */}
+          <div className="relative z-10 px-1 py-1 text-center min-h-[34px] sm:min-h-[36px] flex items-center justify-center border-t border-white/10 flex-shrink-0 bg-[#0c1611]/95 text-[#c1c497] group-hover:text-[#e2e5b8] transition-colors">
+            <span className="text-[10px] sm:text-[10.5px] xl:text-[11px] font-black leading-tight font-sans tracking-tight break-words text-center">
+              {card.name}
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -1130,56 +1604,56 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-2xl border-2 border-[#323d30] bg-[#dbe2d6] p-3 sm:p-4 lg:p-5 shadow-xl overflow-hidden font-['Barlow_Condensed'] select-none"
-      style={{
-        backgroundImage: 'radial-gradient(#b4c1ae 1.5px, transparent 1.5px)',
-        backgroundSize: '18px 18px'
-      }}
+      className="relative w-full h-auto min-h-0 flex flex-col justify-between rounded-2xl border deadlock-frame retro-futuristic-card p-3 sm:p-4 lg:p-5 shadow-xl overflow-hidden font-['Barlow_Condensed'] select-none"
     >
-      {/* Printed Corner Registration Marks */}
-      <span className="absolute top-2 left-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌜</span>
-      <span className="absolute top-2 right-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌝</span>
-      <span className="absolute bottom-2 left-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌞</span>
-      <span className="absolute bottom-2 right-2 text-xs font-mono text-[#7a8874] select-none pointer-events-none">⌟</span>
+      {/* Printed Corner Registration Marks in glowing cyber-jade */}
+      <span className="absolute top-2 left-2 text-xs font-mono text-[#2dd5b7]/70 select-none pointer-events-none font-black">⌜</span>
+      <span className="absolute top-2 right-2 text-xs font-mono text-[#2dd5b7]/70 select-none pointer-events-none font-black">⌝</span>
+      <span className="absolute bottom-2 left-2 text-xs font-mono text-[#2dd5b7]/70 select-none pointer-events-none font-black">⌞</span>
+      <span className="absolute bottom-2 right-2 text-xs font-mono text-[#2dd5b7]/70 select-none pointer-events-none font-black">⌟</span>
 
       {/* DEADLOCK HEADER BAR: Binder Tabs & Mystic Requisitions Stamp */}
-      <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 pb-2.5 mb-3 border-b-2 border-[#bcc7b6]">
+      <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 pb-2.5 mb-3 border-b border-[#26433a]">
         <div className="flex items-center gap-3">
           {/* Deadlock Iconic Spine Tabs */}
-          <div className="hidden sm:flex items-center gap-1 bg-[#c8d4c2] p-1 rounded-md border border-[#a4b49c] shadow-2xs">
-            <span className="w-6 h-6 rounded bg-[#4f9dbf] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Core Spikes">★</span>
-            <span className="w-6 h-6 rounded bg-[#df8634] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Weapon / AD Damage">⌖</span>
-            <span className="w-6 h-6 rounded bg-[#7cb342] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Vitality / Armor">✚</span>
-            <span className="w-6 h-6 rounded bg-[#9c6bb5] text-white flex items-center justify-center text-xs font-black shadow-2xs select-none" title="Spirit / Magic">⬡</span>
+          <div className="hidden sm:flex items-center gap-1 bg-[#162921] p-1 rounded-md border border-[#26433a] shadow-xs">
+            <span className="w-6 h-6 rounded bg-[#0284c7] text-white flex items-center justify-center text-xs font-black shadow-xs select-none" title="Core Spikes">★</span>
+            <span className="w-6 h-6 rounded bg-[#ea580c] text-white flex items-center justify-center text-xs font-black shadow-xs select-none" title="Weapon / AD Damage">⌖</span>
+            <span className="w-6 h-6 rounded bg-[#16a34a] text-white flex items-center justify-center text-xs font-black shadow-xs select-none" title="Vitality / Armor">✚</span>
+            <span className="w-6 h-6 rounded bg-[#9333ea] text-white flex items-center justify-center text-xs font-black shadow-xs select-none" title="Spirit / Magic">⬡</span>
           </div>
 
           {/* Mystic Requisitions Stamped Brand Box */}
-          <div className="flex items-center gap-2.5 bg-[#cbd7c5] border border-[#a4b49c] rounded-md px-3 py-1.5 shadow-2xs">
-            <div className="flex items-center justify-center w-7 h-7 rounded bg-[#2e3b2c] text-[#7de39b] font-black text-sm tracking-tighter">
+          <div className="flex items-center gap-2.5 bg-[#162921] border border-[#26433a] rounded-md px-3 py-1.5 shadow-xs">
+            <div className="flex items-center justify-center w-7 h-7 rounded bg-[#1e3b30] text-[#2dd5b7] font-black text-sm tracking-tighter border border-[#2dd5b7]/30 shadow-xs">
               ⬡
             </div>
             <div className="flex flex-col">
-              <span className="text-xs sm:text-[13px] font-black uppercase tracking-wider text-[#263124] leading-tight font-['Barlow_Condensed']">
+              <span className="text-xs sm:text-[13px] font-black uppercase tracking-wider text-[#e2e5b8] leading-tight font-['Barlow_Condensed']">
                 MPS • MYSTIC COMBAT REQUISITIONS
               </span>
-              <span className="text-[10px] font-bold text-[#4e5e4b] italic leading-tight">
+              <span className="text-[10px] font-bold text-[#769382] italic leading-tight">
                 VOTED #1 PHARMACY & ARMORY FOR CHAMPIONS
               </span>
             </div>
           </div>
         </div>
 
-        {/* Slanted Version Tag */}
+        {/* Slanted Version Tag & Blueprint Badge */}
         <div className="flex items-center gap-2">
-          <span className="inline-block -rotate-1 bg-[#182319] text-[#7de39b] font-mono font-black text-[11px] px-2.5 py-1 rounded shadow-2xs border border-[#2a3c2c]">
-            PATCH 15.x COMPLIANT
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#14261f] border border-[#26433a] text-xs font-black uppercase text-[#769382]">
+            <Layers className="w-3.5 h-3.5 text-[#2dd5b7]" />
+            <span className="text-[#c1c497]">4 CHRONO PHASES</span>
+          </div>
+          <span className="inline-block -rotate-1 bg-[#163126] text-[#2dd5b7] font-mono font-black text-[11px] px-2.5 py-1 rounded shadow-xs border border-[#2dd5b7]/40">
+            PATCH {version} COMPLIANT
           </span>
         </div>
       </div>
 
       {/* Mobile Stage Filter Tabs */}
       {isMobile && (
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2.5 border-b border-[#bcc7b6]">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 mb-2.5 border-b border-[#26433a]">
           {[
             { id: 'all', label: 'All Build Steps' },
             { id: 'early', label: '1: Early & Back' },
@@ -1192,8 +1666,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
               onClick={() => setMobileStageFilter(tab.id as any)}
               className={`px-2.5 py-1 rounded text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-all touch-manipulation ${
                 mobileStageFilter === tab.id
-                  ? 'bg-[#182319] text-[#7de39b] border border-[#2e4030] shadow-xs'
-                  : 'bg-[#cbd7c5] text-[#2c372a] hover:bg-white border border-[#a4b49c]'
+                  ? 'bg-[#183327] text-[#2dd5b7] border border-[#2dd5b7]/40 shadow-xs'
+                  : 'bg-[#162821] text-[#c1c497] hover:bg-[#1a3128] border border-[#26433a]'
               }`}
             >
               {tab.label}
@@ -1212,34 +1686,42 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
           {/* SUB-STAGE A: EARLY GAME & 1ST RECALL (3 COLS) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'early') && (
-            <div className="lg:col-span-3 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative">
-              <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-[#c8d4c2]">
+            <div className="lg:col-span-3 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative">
+              <div className="flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
                 <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs px-2 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
-                    0:00 - 5:00
+                  <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
+                    STAGE 01
                   </span>
-                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                    Early Game & Back
-                  </h3>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
+                      Early Protocol
+                    </h3>
+                    <span className="text-[10px] text-[#769382] font-mono block leading-none">
+                      0:00 - 5:00 LANING INCEPTION
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Cards Grid */}
               <div className="space-y-2 flex-1 flex flex-col justify-around">
                 {/* Starters Sub-Group */}
-                <div className="bg-[#e4ebde] p-1.5 rounded-lg border border-[#c4d0be]">
-                  <span className="text-[10px] font-bold text-[#4d5d4a] uppercase block mb-1 font-sans text-center">
+                <div className="bg-[#0f1b16] p-1.5 rounded-lg border border-[#26433a]">
+                  <span className="text-xs font-bold text-[#769382] uppercase block mb-1 font-sans text-center">
                     0:00 Initial Spawn
                   </span>
-                  <div className="flex items-center justify-center gap-2">
-                    {renderCardNode(starterCard)}
-                    {renderCardNode(potionCard)}
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                    {starterCards.map((card, idx) => (
+                      <React.Fragment key={`${card.id}-${idx}`}>
+                        {renderCardNode(card)}
+                      </React.Fragment>
+                    ))}
                   </div>
                 </div>
 
                 {/* 1st Recall Sub-Group */}
-                <div className="bg-[#e4ebde] p-1.5 rounded-lg border border-[#c4d0be]">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase block mb-1 font-sans text-center">
+                <div className="bg-[#0f1b16] p-1.5 rounded-lg border border-[#26433a]">
+                  <span className="text-xs font-bold text-[#2dd5b7] uppercase block mb-1 font-sans text-center">
                     ~4:30 1st Recall Spike
                   </span>
                   <div className="flex items-center justify-center gap-2">
@@ -1249,8 +1731,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </div>
               </div>
 
-              <div className="mt-2 pt-1 border-t border-[#c8d4c2] text-center">
-                <span className="text-[10.5px] text-[#556652] font-sans font-medium">
+              <div className="mt-2 pt-1 border-t border-[#26433a] text-center">
+                <span className="text-xs text-[#769382] font-sans font-medium">
                   Establish lane wave-control & recall at 1100–1300g
                 </span>
               </div>
@@ -1259,73 +1741,97 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
           {/* SUB-STAGE B: THE CORE BUILD HIGHWAY (6 COLS - RUSH 1 -> 2 -> 3) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'core') && (
-            <div className="lg:col-span-6 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative overflow-hidden">
-              {/* Radar Circles Watermark */}
+            <div className="lg:col-span-6 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative overflow-hidden">
+              {/* Radar Circles Watermark in cyber-jade glow */}
               <div 
-                className="absolute inset-0 pointer-events-none opacity-15"
+                className="absolute inset-0 pointer-events-none opacity-20"
                 style={{
-                  backgroundImage: 'radial-gradient(circle, transparent 20%, #b8c7b2 21%, transparent 22%, transparent 40%, #b8c7b2 41%, transparent 42%, transparent 60%, #b8c7b2 61%, transparent 62%)',
+                  backgroundImage: 'radial-gradient(circle, transparent 20%, rgba(45, 213, 183, 0.25) 21%, transparent 22%, transparent 40%, rgba(45, 213, 183, 0.25) 41%, transparent 42%, transparent 60%, rgba(45, 213, 183, 0.25) 61%, transparent 62%)',
                   backgroundPosition: 'center center'
                 }}
               />
 
-              <div className="relative z-10 flex items-center justify-between pb-1.5 mb-2 border-b border-[#c8d4c2]">
+              <div className="relative z-10 flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
-                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                    The Core Build Highway
-                  </h3>
+                  <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
+                    STAGE 02
+                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
+                      Core Combat Highway
+                    </h3>
+                    <span className="text-[10px] text-[#2dd5b7] font-mono block leading-none">
+                      RUSH SEQUENCE 1 ➔ 2 ➔ 3
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] font-black uppercase text-[#1a231b] bg-[#c8d8c2] px-2 py-0.5 rounded border border-[#a8be9e]">
-                  RECOMMENDED RUSH
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="tactical-gold-chit px-2 py-0.5 text-[10px] font-bold">
+                    ~9,000g Engine
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#2dd5b7] bg-[#183327] px-2 py-0.5 rounded border border-[#2dd5b7]/40">
+                    RECOMMENDED RUSH
+                  </span>
+                </div>
               </div>
 
-              {/* The 3 Core Items with Chevrons */}
-              <div className="relative z-10 flex-1 flex flex-col justify-around">
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 py-1">
+              {/* The 3 Core Items with Chevrons and Milestones */}
+              <div className="relative z-10 flex-1 flex flex-col justify-around py-1">
+                <div className="flex items-center justify-center gap-2 sm:gap-3">
                   <div className="flex flex-col items-center">
                     {renderCardNode(core1Card)}
-                    <span className="text-[10px] font-bold text-[#4d5d4a] uppercase mt-1 font-sans">
-                      Primary Spike
+                    <span className="text-xs font-black text-[#2dd5b7] uppercase mt-1 font-['Barlow_Condensed']">
+                      1st Spike (~11m)
                     </span>
                   </div>
 
-                  <ArrowRight className="w-5 h-5 text-[#3a4938] flex-shrink-0 animate-pulse -mt-4" />
+                  <ArrowRight className="w-6 h-6 text-[#2dd5b7] flex-shrink-0 animate-pulse -mt-6" />
 
                   <div className="flex flex-col items-center">
                     {renderCardNode(core2Card)}
-                    <span className="text-[10px] font-bold text-[#4d5d4a] uppercase mt-1 font-sans">
-                      Kit Synergy
+                    <span className="text-xs font-black text-[#769382] uppercase mt-1 font-['Barlow_Condensed']">
+                      2nd Synergy (~19m)
                     </span>
                   </div>
 
-                  <ArrowRight className="w-5 h-5 text-[#3a4938] flex-shrink-0 animate-pulse -mt-4" />
+                  <ArrowRight className="w-6 h-6 text-[#2dd5b7] flex-shrink-0 animate-pulse -mt-6" />
 
                   <div className="flex flex-col items-center">
                     {renderCardNode(core3Card)}
-                    <span className="text-[10px] font-bold text-[#4d5d4a] uppercase mt-1 font-sans">
-                      Capstone Spike
+                    <span className="text-xs font-black text-[#769382] uppercase mt-1 font-['Barlow_Condensed']">
+                      3rd Peak (~26m)
                     </span>
                   </div>
                 </div>
 
-
+                {/* Core Engine Synergy Callout */}
+                <div className="mt-2.5 p-2 rounded-lg bg-[#0f1b16] border border-[#26433a] flex items-center gap-2 text-xs text-[#c1c497] font-sans">
+                  <Info className="w-4 h-4 text-[#2dd5b7] flex-shrink-0" />
+                  <div>
+                    <strong className="text-[#e2e5b8] font-bold">Engine Synergy: </strong>
+                    <span>{core1.name} triggers early {tactics.playstyle || 'combat'} dominance, bridging smoothly into {core2.name} defense and {core3.name} peak teamfight scaling.</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
           {/* SUB-STAGE C: BOOTS ENGINE (3 COLS) */}
           {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'boots') && (
-            <div className="lg:col-span-3 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative">
-              <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-[#c8d4c2]">
+            <div className="lg:col-span-3 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between relative">
+              <div className="flex items-center justify-between pb-1.5 mb-2 stage-conduit-header">
                 <div className="flex items-center gap-2">
-                  <span className="inline-block -rotate-2 bg-[#182319] text-[#7de39b] font-mono font-black text-xs px-2 py-0.5 rounded shadow-xs border border-[#2a3c2c]">
-                    T2 BOOTS
+                  <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
+                    STAGE 03
                   </span>
-                  <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                    Boots Engine
-                  </h3>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
+                      Boots Engine
+                    </h3>
+                    <span className="text-[10px] text-[#769382] font-mono block leading-none">
+                      STANDARD VS COUNTER
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -1333,34 +1839,34 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
               <div className="space-y-2 flex-1 flex flex-col justify-around">
                 <div className="flex items-center justify-around gap-2 py-0.5">
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black uppercase text-emerald-800 mb-1">Standard</span>
+                    <span className="text-xs font-black uppercase text-[#2dd5b7] mb-1">Standard</span>
                     {renderCardNode(defaultBootsCard)}
                   </div>
 
                   <div className="flex flex-col items-center px-1">
-                    <ArrowLeftRight className="w-4 h-4 text-[#3a4938] animate-pulse my-1" />
-                    <span className="text-[9px] font-black uppercase text-[#5a6c56]">SWAP</span>
+                    <ArrowLeftRight className="w-5 h-5 text-[#2dd5b7] animate-pulse my-1" />
+                    <span className="text-[10px] font-black uppercase text-[#769382]">SWAP</span>
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black uppercase text-sky-800 mb-1">Alternative</span>
+                    <span className="text-xs font-black uppercase text-sky-400 mb-1">Alternative</span>
                     {renderCardNode(altBootsCard)}
                   </div>
                 </div>
 
                 {/* Defensive Comparison Details */}
-                <div className="p-2 rounded-lg bg-[#e4ebde] border border-[#c4d0be] text-[10.5px] text-[#4d5d4a] leading-snug font-sans space-y-1">
-                  <div className="font-bold text-[#2d392b]">
-                    ● {defaultBootsCard.name}: <span className="font-normal text-[#556652]">{bootsRec.why}</span>
+                <div className="p-2 rounded-lg bg-[#0f1b16] border border-[#26433a] text-xs text-[#c1c497] leading-snug font-sans space-y-1">
+                  <div className="font-bold text-[#e2e5b8]">
+                    ● {defaultBootsCard.name}: <span className="font-normal text-[#769382]">{bootsRec.why}</span>
                   </div>
-                  <div className="font-bold text-[#1f4e5b]">
-                    ● {altBootsCard.name}: <span className="font-normal text-[#556652]">{bootsRec.alternative}</span>
+                  <div className="font-bold text-sky-300">
+                    ● {altBootsCard.name}: <span className="font-normal text-[#769382]">{bootsRec.alternative}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-2 pt-1 border-t border-[#c8d4c2] text-center">
-                <span className="text-[10.5px] text-[#556652] font-sans font-medium">
+              <div className="mt-2 pt-1 border-t border-[#26433a] text-center">
+                <span className="text-xs text-[#769382] font-sans font-medium">
                   Upgrade T1 Boots after Core #1 for roam tempo
                 </span>
               </div>
@@ -1373,17 +1879,22 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
         {/* SECTION 2: SWAPPABLE SITUATIONAL PIVOTS (THREAT ARSENAL)     */}
         {/* ============================================================ */}
         {(!isMobile || mobileStageFilter === 'all' || mobileStageFilter === 'counters') && (
-          <div className="relative z-10 rounded-xl bg-[#edf2e8] border-2 border-[#b5c2af] p-2.5 sm:p-3 shadow-2xs flex flex-col">
-            <div className="flex items-center justify-between pb-1.5 mb-2.5 border-b border-[#c8d4c2]">
+          <div className="relative z-10 rounded-xl retro-pod p-2.5 sm:p-3 shadow-2xs flex flex-col">
+            <div className="flex items-center justify-between pb-1.5 mb-2.5 stage-conduit-header">
               <div className="flex items-center gap-2.5">
-                <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-[#1f281d]">
-                  Swappable Situational Pivots
-                </h3>
-                <span className="text-xs font-bold text-[#576854] font-sans hidden sm:inline">
-                  — Substitute into Core #2, Core #3, or Early Recall when facing specific enemy threats
+                <span className="inline-block -rotate-1 bg-[#183327] text-[#2dd5b7] font-mono font-black text-[11px] px-2 py-0.5 rounded shadow-xs border border-[#2dd5b7]/40">
+                  STAGE 04
                 </span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black uppercase tracking-wide text-[#e2e5b8] leading-tight">
+                    Swappable Situational Pivots
+                  </h3>
+                  <span className="text-[10px] text-[#769382] font-mono block leading-none">
+                    DYNAMIC COUNTER-MEASURE ARSENAL • 5 THREAT PROFILES
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono font-bold text-[#1f281d] uppercase bg-[#dae4d4] px-2 py-0.5 rounded border border-[#b8c6b2]">
+              <span className="text-[11px] font-mono font-bold text-[#2dd5b7] uppercase bg-[#183327] px-2 py-0.5 rounded border border-[#2dd5b7]/40">
                 5 Threat Profiles
               </span>
             </div>
@@ -1393,13 +1904,13 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
               {situationalPods.map((pod, idx) => (
                 <div
                   key={idx}
-                  className={`rounded-xl border-2 ${pod.accent} p-2 sm:p-2.5 flex flex-col justify-between shadow-2xs bg-white hover:shadow-md transition-shadow`}
+                  className={`rounded-xl border-2 ${pod.accent} p-2 sm:p-2.5 flex flex-col justify-between shadow-2xs bg-[#162921] hover:bg-[#1a3128] transition-all`}
                 >
                   {/* Category Header */}
-                  <div className="pb-1.5 mb-1.5 border-b border-slate-100 flex items-center justify-between">
+                  <div className="pb-1.5 mb-1.5 border-b border-[#26433a] flex items-center justify-between">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <span className="text-sm flex-shrink-0">{pod.icon}</span>
-                      <span className="text-xs sm:text-[12.5px] font-black uppercase tracking-wide text-slate-900">
+                      <span className="text-[13px] sm:text-sm font-black uppercase tracking-wide text-[#e2e5b8]">
                         {pod.title}
                       </span>
                     </div>
@@ -1411,15 +1922,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                       <>
                         {renderCardNode(pod.cards[0], false)}
                         <div className="flex flex-col items-center justify-center px-0.5 flex-shrink-0">
-                          <span className={`text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider px-1 py-0.2 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
+                          <span className={`text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded leading-none mb-0.5 font-['Barlow_Condensed'] ${
                             pod.accent.includes('emerald')
-                              ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
-                              : 'text-rose-700 bg-rose-50 border border-rose-200'
+                              ? 'text-emerald-300 bg-emerald-950/60 border border-emerald-500/40'
+                              : 'text-rose-300 bg-rose-950/60 border border-rose-500/40'
                           }`}>
                             BUILDS
                           </span>
-                          <ArrowRight className={`w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse ${
-                            pod.accent.includes('emerald') ? 'text-emerald-500' : 'text-rose-500'
+                          <ArrowRight className={`w-4 h-4 animate-pulse ${
+                            pod.accent.includes('emerald') ? 'text-[#2dd5b7]' : 'text-rose-400'
                           }`} />
                         </div>
                         {renderCardNode(pod.cards[1], false)}
@@ -1430,8 +1941,8 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                   </div>
 
                   {/* Threat Subtitle Footer */}
-                  <div className="mt-1.5 pt-1.5 border-t border-slate-100 text-center">
-                    <span className="text-[10.5px] text-slate-500 font-sans leading-tight block font-semibold">
+                  <div className="mt-1.5 pt-1.5 border-t border-[#26433a] text-center">
+                    <span className="text-xs text-[#769382] font-sans leading-tight block font-semibold">
                       {pod.subtitle}
                     </span>
                   </div>
@@ -1446,20 +1957,20 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
       {/* MOBILE BOTTOM SHEET ITEM INSPECTOR */}
       {isMobile && showMobileDrawer && activeInspectorCard && (
         <div 
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs p-0 animate-in fade-in duration-150"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-xs p-0 animate-in fade-in duration-150"
           onClick={() => setShowMobileDrawer(false)}
         >
           <div 
-            className="w-full max-w-lg bg-white rounded-t-2xl p-4 shadow-2xl border-t-2 border-emerald-500 max-h-[85vh] overflow-y-auto font-sans animate-in slide-in-from-bottom duration-200"
+            className="w-full max-w-lg deadlock-frame retro-futuristic-card bg-[#13221c] text-[#e2e5b8] rounded-t-2xl p-4 shadow-2xl border-t-2 border-[#2dd5b7] border-x border-[#26433a] max-h-[85vh] overflow-y-auto font-sans animate-in slide-in-from-bottom duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
-            <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-3" />
+            <div className="w-10 h-1 bg-[#26433a] rounded-full mx-auto mb-3" />
 
             {/* Header with Item Icon, Name, Category & Gold */}
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#26433a]">
               <div className="flex items-center gap-2.5">
-                <div className="w-12 h-12 rounded-lg border-2 border-emerald-500 overflow-hidden bg-white flex-shrink-0 shadow-sm">
+                <div className="w-12 h-12 rounded-lg border-2 border-[#2dd5b7] overflow-hidden bg-[#0f1c17] flex-shrink-0 shadow-sm">
                   <img
                     src={getItemIconUrl(version, activeInspectorCard.id)}
                     alt={activeInspectorCard.name}
@@ -1468,11 +1979,11 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="text-base font-black text-slate-900 leading-none uppercase tracking-wide font-['Barlow_Condensed']">
+                    <h3 className="text-base font-black text-[#e2e5b8] leading-none uppercase tracking-wide font-['Barlow_Condensed']">
                       {activeInspectorCard.name}
                     </h3>
                     {inspectedGold && (
-                      <span className="text-amber-800 font-bold text-xs bg-amber-50 px-1.5 py-0.2 rounded border border-amber-300 font-mono">
+                      <span className="text-[#e5c736] font-bold text-xs bg-[#262413] px-1.5 py-0.2 rounded border border-[#e5c736]/40 font-mono">
                         {inspectedGold}g
                       </span>
                     )}
@@ -1480,15 +1991,15 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
                   <div className="flex items-center gap-1 mt-1 flex-wrap font-['Barlow_Condensed']">
                     {activeInspectorCard.isCore ? (
-                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-emerald-700 bg-emerald-50 border-emerald-300">
+                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-[#2dd5b7] bg-[#163026] border-[#2dd5b7]/50">
                         <span>CORE #{activeInspectorCard.coreOrder || '1'}</span>
                       </span>
                     ) : activeInspectorCard.replacesSlot ? (
-                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-rose-700 border-rose-300 bg-rose-50">
+                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-[#f43f5e] border-[#f43f5e]/50 bg-[#28131a]">
                         <span>REPLACES {activeInspectorCard.replacesSlot}</span>
                       </span>
                     ) : (
-                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-slate-700">
+                      <span className="deadlock-badge px-1.5 py-0 text-[9.5px] text-[#c1c497]">
                         <span>{activeInspectorCard.tag || 'SITUATIONAL'}</span>
                       </span>
                     )}
@@ -1503,7 +2014,7 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
               <button 
                 onClick={() => setShowMobileDrawer(false)}
-                className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer"
+                className="p-1.5 rounded-full bg-[#162821] hover:bg-[#192e26] text-[#c1c497] hover:text-[#e2e5b8] cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1511,57 +2022,57 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
 
             {/* Tactical Content */}
             <div className="space-y-2.5 text-xs sm:text-sm">
-              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-800 block mb-1 font-['Barlow_Condensed']">
+              <div className="p-3 rounded-lg bg-[#0f1c17] border border-[#26433a]">
+                <span className="text-xs font-black uppercase tracking-wider text-[#2dd5b7] block mb-1 font-['Barlow_Condensed']">
                   Kit Synergy & Combat Role
                 </span>
-                <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
+                <p className="text-[#c1c497] leading-relaxed text-xs sm:text-[13px] font-sans">
                   <GlossaryText text={activeInspectorCard.whatItDoes} />
                 </p>
               </div>
 
               {/* Build Lineage & Progression Plan */}
               {(activeInspectorCard.buildsIntoName || activeInspectorCard.buildsFromName || activeInspectorCard.finalSwapItemName) && (
-                <div className="p-3 rounded-lg bg-emerald-50/80 border border-emerald-300">
+                <div className="p-3 rounded-lg bg-[#162821] border border-[#2dd5b7]/40">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <ArrowLeftRight className="w-3.5 h-3.5 text-emerald-700" />
-                    <span className="text-xs font-black uppercase tracking-wider text-emerald-900 font-['Barlow_Condensed']">
+                    <ArrowLeftRight className="w-3.5 h-3.5 text-[#2dd5b7]" />
+                    <span className="text-xs font-black uppercase tracking-wider text-[#2dd5b7] font-['Barlow_Condensed']">
                       Build Lineage & Swap Plan
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-wrap text-xs bg-white p-2 rounded border border-emerald-200 font-sans">
+                  <div className="flex items-center gap-1.5 flex-wrap text-xs bg-[#0f1c17] p-2 rounded border border-[#26433a] font-sans">
                     {activeInspectorCard.buildsIntoName && (
                       <>
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-amber-700 font-mono">1. Early Buy</span>
-                          <span className="font-bold text-slate-900">{activeInspectorCard.name}</span>
+                          <span className="text-[9px] font-bold uppercase text-[#e5c736] font-mono">1. Early Buy</span>
+                          <span className="font-bold text-[#e2e5b8]">{activeInspectorCard.name}</span>
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                        <ArrowRight className="w-3.5 h-3.5 text-[#2dd5b7] animate-pulse" />
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-emerald-700 font-mono">2. Late Upgrade</span>
-                          <span className="font-bold text-slate-900">{activeInspectorCard.buildsIntoName}</span>
+                          <span className="text-[9px] font-bold uppercase text-[#2dd5b7] font-mono">2. Late Upgrade</span>
+                          <span className="font-bold text-[#e2e5b8]">{activeInspectorCard.buildsIntoName}</span>
                         </div>
                       </>
                     )}
                     {activeInspectorCard.buildsFromName && (
                       <>
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-amber-700 font-mono">1. Built From</span>
-                          <span className="font-bold text-slate-900">{activeInspectorCard.buildsFromName}</span>
+                          <span className="text-[9px] font-bold uppercase text-[#e5c736] font-mono">1. Built From</span>
+                          <span className="font-bold text-[#e2e5b8]">{activeInspectorCard.buildsFromName}</span>
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                        <ArrowRight className="w-3.5 h-3.5 text-[#2dd5b7] animate-pulse" />
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-emerald-700 font-mono">2. Full Upgrade</span>
-                          <span className="font-bold text-slate-900">{activeInspectorCard.name}</span>
+                          <span className="text-[9px] font-bold uppercase text-[#2dd5b7] font-mono">2. Full Upgrade</span>
+                          <span className="font-bold text-[#e2e5b8]">{activeInspectorCard.name}</span>
                         </div>
                       </>
                     )}
                     {activeInspectorCard.finalSwapItemName && (
                       <>
-                        <ArrowRight className="w-3.5 h-3.5 text-rose-500" />
+                        <ArrowRight className="w-3.5 h-3.5 text-[#f43f5e]" />
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-rose-700 font-mono">3. Swaps Out</span>
-                          <span className="font-bold text-rose-800">{activeInspectorCard.finalSwapItemName} ({activeInspectorCard.finalSwapSlot || 'Core'})</span>
+                          <span className="text-[9px] font-bold uppercase text-[#f43f5e] font-mono">3. Swaps Out</span>
+                          <span className="font-bold text-[#f43f5e]">{activeInspectorCard.finalSwapItemName} ({activeInspectorCard.finalSwapSlot || 'Core'})</span>
                         </div>
                       </>
                     )}
@@ -1569,18 +2080,18 @@ export const DeadlockItemDeck: React.FC<DeadlockItemDeckProps> = ({
                 </div>
               )}
 
-              <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200">
+              <div className="p-3 rounded-lg bg-[#262413] border border-[#e5c736]/40">
                 <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-xs font-black uppercase tracking-wider text-amber-900 font-['Barlow_Condensed']">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#e5c736] font-['Barlow_Condensed']">
                     When to Purchase / Swap Trigger
                   </span>
                   {activeInspectorCard.replacesItemName && (
-                    <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200 font-sans">
+                    <span className="text-[11px] font-bold text-[#f43f5e] bg-[#28131a] px-1.5 py-0.2 rounded border border-[#f43f5e]/40 font-sans">
                       Sub for {activeInspectorCard.replacesItemName}
                     </span>
                   )}
                 </div>
-                <p className="text-slate-800 leading-relaxed text-xs sm:text-[13px] font-sans">
+                <p className="text-[#c1c497] leading-relaxed text-xs sm:text-[13px] font-sans">
                   <GlossaryText text={activeInspectorCard.swapReason || activeInspectorCard.whenToBuy} />
                 </p>
               </div>

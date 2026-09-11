@@ -1,26 +1,158 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
+  /* Default: Osaka Jade Palette */
+  :root,
+  [data-theme="osaka-jade"] {
+    --deadlock-bg: #0d1713;
+    --deadlock-panel: #13221c;
+    --deadlock-panel-card: #162821;
+    --deadlock-border: #26433a;
+    --deadlock-border-bright: #2dd5b7;
+    --deadlock-border-emerald: #2dd5b7;
+    --deadlock-green-accent: #2dd5b7;
+    --deadlock-text-main: #e2e5b8;
+    --deadlock-text-cream: #c1c497;
+    --deadlock-text-muted: #769382;
+    --deadlock-gold-accent: #e5c736;
+    --deadlock-rose-accent: #d2689c;
+    --deadlock-mint-accent: #9eebb3;
+    color-scheme: dark;
+  }
+
+  [data-theme="tactical-light"] {
     --deadlock-bg: #f8fafc;
     --deadlock-panel: #ffffff;
+    --deadlock-panel-card: #f1f5f9;
     --deadlock-border: #e2e8f0;
+    --deadlock-border-bright: #10b981;
     --deadlock-border-emerald: #10b981;
     --deadlock-green-accent: #059669;
     --deadlock-text-main: #0f172a;
-    --deadlock-text-muted: #475569;
+    --deadlock-text-cream: #334155;
+    --deadlock-text-muted: #64748b;
+    --deadlock-gold-accent: #d97706;
+    --deadlock-rose-accent: #e11d48;
+    --deadlock-mint-accent: #059669;
+    color-scheme: light;
+  }
+
+  [data-theme="midnight-hextech"] {
+    --deadlock-bg: #070b14;
+    --deadlock-panel: #0d1527;
+    --deadlock-panel-card: #111d35;
+    --deadlock-border: #1e293b;
+    --deadlock-border-bright: #38bdf8;
+    --deadlock-border-emerald: #38bdf8;
+    --deadlock-green-accent: #38bdf8;
+    --deadlock-text-main: #f1f5f9;
+    --deadlock-text-cream: #cbd5e1;
+    --deadlock-text-muted: #64748b;
+    --deadlock-gold-accent: #f59e0b;
+    --deadlock-rose-accent: #ec4899;
+    --deadlock-mint-accent: #38bdf8;
+    color-scheme: dark;
+  }
+
+  [data-theme="noxian-blood"] {
+    --deadlock-bg: #0a0608;
+    --deadlock-panel: #160c11;
+    --deadlock-panel-card: #1f1017;
+    --deadlock-border: #3d1d26;
+    --deadlock-border-bright: #f43f5e;
+    --deadlock-border-emerald: #f43f5e;
+    --deadlock-green-accent: #f43f5e;
+    --deadlock-text-main: #fce7f3;
+    --deadlock-text-cream: #f5d0dc;
+    --deadlock-text-muted: #9f7d86;
+    --deadlock-gold-accent: #f59e0b;
+    --deadlock-rose-accent: #fb7185;
+    --deadlock-mint-accent: #fda4af;
+    color-scheme: dark;
   }
 
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--deadlock-bg);
+    color: var(--deadlock-text-main);
     font-family: 'Barlow Condensed', 'Chakra Petch', -apple-system, BlinkMacSystemFont, sans-serif;
     letter-spacing: 0.02em;
     margin: 0;
     padding: 0;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
+}
+
+/* ==========================================
+   RETRO-FUTURISTIC CRT SCANLINES & HUD MATRIX
+   ========================================== */
+.retro-futuristic-card {
+  position: relative;
+  background-color: var(--deadlock-panel);
+  border: 1px solid var(--deadlock-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(45, 213, 183, 0.03);
+  overflow: hidden;
+}
+
+/* Subtle CRT scanline overlay on retro futuristic components */
+[data-theme="osaka-jade"] .retro-futuristic-card::after,
+:root:not([data-theme="tactical-light"]):not([data-theme="midnight-hextech"]):not([data-theme="noxian-blood"]) .retro-futuristic-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  opacity: 0.55;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Retro Futuristic Top Laser Conduit */
+[data-theme="osaka-jade"] .retro-futuristic-card::before,
+:root:not([data-theme="tactical-light"]):not([data-theme="midnight-hextech"]):not([data-theme="noxian-blood"]) .retro-futuristic-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(45, 213, 183, 0.8) 50%, transparent 100%);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Retro Pod: Used for Stage A, B, C, Pivots in Item Deck */
+.retro-pod {
+  position: relative;
+  background-color: #14251f !important;
+  border: 1px solid #284c3e !important;
+  box-shadow: inset 0 0 15px rgba(45, 213, 183, 0.03), 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="tactical-light"] .retro-pod {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="midnight-hextech"] .retro-pod {
+  background-color: #0e172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.04), 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="noxian-blood"] .retro-pod {
+  background-color: #190e13 !important;
+  border: 1px solid #3d1d26 !important;
+  box-shadow: inset 0 0 15px rgba(244, 63, 94, 0.04), 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 /* Custom Clean Scrollbar */
@@ -28,109 +160,265 @@
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0d1713;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #26433a;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
+  background: #2dd5b7;
+}
+
+[data-theme="tactical-light"] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+[data-theme="tactical-light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+[data-theme="tactical-light"] ::-webkit-scrollbar-thumb:hover {
   background: #10b981;
 }
 
-/* Tactical Light Grid Background Texture */
+[data-theme="midnight-hextech"] ::-webkit-scrollbar-track {
+  background: #070b14;
+}
+[data-theme="midnight-hextech"] ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+[data-theme="midnight-hextech"] ::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+[data-theme="noxian-blood"] ::-webkit-scrollbar-track {
+  background: #0a0608;
+}
+[data-theme="noxian-blood"] ::-webkit-scrollbar-thumb {
+  background: #3d1d26;
+}
+[data-theme="noxian-blood"] ::-webkit-scrollbar-thumb:hover {
+  background: #f43f5e;
+}
+
+/* ==========================================
+   TACTICAL GRID CANVAS BACKGROUND (HATCHED)
+   ========================================== */
 .deadlock-hatched {
+  background-color: var(--deadlock-bg);
+  background-image: 
+    radial-gradient(rgba(45, 213, 183, 0.16) 1.25px, transparent 1.25px),
+    linear-gradient(rgba(45, 213, 183, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 213, 183, 0.02) 1px, transparent 1px);
+  background-size: 16px 16px, 48px 48px, 48px 48px;
+}
+
+[data-theme="tactical-light"] .deadlock-hatched {
   background-color: #f8fafc;
   background-image: radial-gradient(#e2e8f0 1.25px, transparent 1.25px);
   background-size: 16px 16px;
 }
 
-/* Deadlock Panel Frame (Light High-Contrast Mode) */
+[data-theme="midnight-hextech"] .deadlock-hatched {
+  background-color: #070b14;
+  background-image: 
+    radial-gradient(rgba(56, 189, 248, 0.16) 1.25px, transparent 1.25px),
+    linear-gradient(rgba(56, 189, 248, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+  background-size: 16px 16px, 48px 48px, 48px 48px;
+}
+
+[data-theme="noxian-blood"] .deadlock-hatched {
+  background-color: #0a0608;
+  background-image: 
+    radial-gradient(rgba(244, 63, 94, 0.16) 1.25px, transparent 1.25px),
+    linear-gradient(rgba(244, 63, 94, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 63, 94, 0.02) 1px, transparent 1px);
+  background-size: 16px 16px, 48px 48px, 48px 48px;
+}
+
+/* ==========================================
+   DEADLOCK PANEL FRAME
+   ========================================== */
 .deadlock-frame {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  background-color: var(--deadlock-panel);
+  border: 1px solid var(--deadlock-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(45, 213, 183, 0.02);
   position: relative;
 }
 
-/* Slanted Emerald Badge */
+[data-theme="tactical-light"] .deadlock-frame {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="midnight-hextech"] .deadlock-frame {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.02);
+}
+
+[data-theme="noxian-blood"] .deadlock-frame {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(244, 63, 94, 0.02);
+}
+
+/* ==========================================
+   SLANTED DEADLOCK BADGE
+   ========================================== */
 .deadlock-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background-color: #ecfdf5;
-  color: #047857;
+  background-color: #173228;
+  color: #2dd5b7;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
   text-transform: uppercase;
-  border: 1px solid #a7f3d0;
+  border: 1px solid #366654;
   transform: skewX(-8deg);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 10px rgba(45, 213, 183, 0.2);
 }
 
 .deadlock-badge > * {
   transform: skewX(8deg);
 }
 
-/* Deadlock Cards */
+[data-theme="tactical-light"] .deadlock-badge {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="midnight-hextech"] .deadlock-badge {
+  background-color: #0c2338;
+  color: #38bdf8;
+  border-color: #0284c7;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+[data-theme="noxian-blood"] .deadlock-badge {
+  background-color: #330d17;
+  color: #fb7185;
+  border-color: #be123c;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.2);
+}
+
+/* ==========================================
+   DEADLOCK CARDS & HOVER GLOWS
+   ========================================== */
 .deadlock-card-base {
   border-radius: 6px;
-  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .deadlock-card-base:hover {
-  transform: translateY(-2px) scale(1.04);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 0 10px rgba(16, 185, 129, 0.25);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(45, 213, 183, 0.45);
+  border-color: #2dd5b7 !important;
   z-index: 30;
+}
+
+[data-theme="tactical-light"] .deadlock-card-base {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="tactical-light"] .deadlock-card-base:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 0 10px rgba(16, 185, 129, 0.25);
 }
 
 /* Tiered Card Palettes */
 .tier-1-card {
+  background: #142821;
+  color: #9eebb3;
+  border: 1px solid #284c3e;
+}
+
+.tier-2-card {
+  background: #19332a;
+  color: #8cd3cb;
+  border: 1px solid #366654;
+}
+
+.tier-3-card {
+  background: #1e4437;
+  color: #ffffff;
+  border: 1px solid #2dd5b7;
+  box-shadow: 0 0 12px rgba(45, 213, 183, 0.3);
+}
+
+.tier-4-card {
+  background: #16362a;
+  color: #e5c736;
+  border: 1px solid #509475;
+  box-shadow: 0 0 12px rgba(229, 199, 54, 0.25);
+}
+
+[data-theme="tactical-light"] .tier-1-card {
   background: #f0fdf4;
   color: #14532d;
   border: 1px solid #bbf7d0;
 }
-
-.tier-2-card {
+[data-theme="tactical-light"] .tier-2-card {
   background: #ecfdf5;
   color: #064e3b;
   border: 1px solid #a7f3d0;
 }
-
-.tier-3-card {
+[data-theme="tactical-light"] .tier-3-card {
   background: #047857;
   color: #ffffff;
   border: 1px solid #065f46;
+  box-shadow: none;
 }
-
-.tier-4-card {
+[data-theme="tactical-light"] .tier-4-card {
   background: #064e3b;
   color: #ffffff;
   border: 1px solid #022c22;
+  box-shadow: none;
 }
 
 /* Category Palettes */
 .card-theme-weapon {
   --cat-accent: #ea580c;
-  --cat-light: #fff7ed;
-  --cat-glow: rgba(234, 88, 12, 0.2);
+  --cat-light: #241611;
+  --cat-glow: rgba(234, 88, 12, 0.3);
 }
 
 .card-theme-spirit {
+  --cat-accent: #c084fc;
+  --cat-light: #22142d;
+  --cat-glow: rgba(192, 132, 252, 0.3);
+}
+
+.card-theme-vitality {
+  --cat-accent: #2dd5b7;
+  --cat-light: #122822;
+  --cat-glow: rgba(45, 213, 183, 0.3);
+}
+
+.card-theme-utility {
+  --cat-accent: #38bdf8;
+  --cat-light: #102432;
+  --cat-glow: rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="tactical-light"] .card-theme-weapon {
+  --cat-accent: #ea580c;
+  --cat-light: #fff7ed;
+  --cat-glow: rgba(234, 88, 12, 0.2);
+}
+[data-theme="tactical-light"] .card-theme-spirit {
   --cat-accent: #9333ea;
   --cat-light: #faf5ff;
   --cat-glow: rgba(147, 51, 234, 0.2);
 }
-
-.card-theme-vitality {
+[data-theme="tactical-light"] .card-theme-vitality {
   --cat-accent: #16a34a;
   --cat-light: #f0fdf4;
   --cat-glow: rgba(22, 163, 74, 0.2);
 }
-
-.card-theme-utility {
+[data-theme="tactical-light"] .card-theme-utility {
   --cat-accent: #0284c7;
   --cat-light: #f0f9ff;
   --cat-glow: rgba(2, 132, 199, 0.2);
@@ -138,43 +426,222 @@
 
 /* Deadlock Active Pill */
 .deadlock-active-tag {
-  background: #0f172a;
-  color: #ffffff;
+  background: #0f1c17;
+  color: #2dd5b7;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.06em;
   padding: 1px 5px;
   border-radius: 2px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid #26433a;
   text-transform: uppercase;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Purchase Sequence Ribbon */
+/* ==============================================================
+   DEADLOCK TACTICAL ITEM CHASSIS & FACETED CARD ART
+   ============================================================== */
+
+/* ==============================================================
+   DEADLOCK TACTICAL ITEM CHASSIS & FACETED CARD ART
+   ============================================================== */
+
+/* Faceted Sci-Fi Chamfered Card Chassis */
+.deadlock-tactical-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  clip-path: polygon(
+    10px 0%,
+    calc(100% - 10px) 0%,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0% calc(100% - 10px),
+    0% 10px
+  );
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.65));
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Inner Chamfer Container to maintain crisp 1.5px beveled borders */
+.deadlock-tactical-inner {
+  position: relative;
+  width: 100%;
+  flex: 1 1 0%;
+  min-height: 0;
+  clip-path: polygon(
+    9px 0%,
+    calc(100% - 9px) 0%,
+    100% 9px,
+    100% calc(100% - 9px),
+    calc(100% - 9px) 100%,
+    9px 100%,
+    0% calc(100% - 9px),
+    0% 9px
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Carbon Weave & Micro-Hex Texture */
+.deadlock-tactical-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(
+      -45deg,
+      rgba(0, 0, 0, 0.35) 0px,
+      rgba(0, 0, 0, 0.35) 2px,
+      transparent 2px,
+      transparent 4px
+    ),
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Category Artistic Colorways & Ambient Flares */
+.deadlock-tactical-card.card-theme-weapon {
+  background: linear-gradient(135deg, #d97706 0%, #78350f 50%, #451a03 100%);
+}
+.deadlock-tactical-card.card-theme-weapon .deadlock-tactical-inner {
+  background: linear-gradient(180deg, #1f1007 0%, #140a04 55%, #0d0602 100%);
+}
+.deadlock-tactical-card.card-theme-weapon:hover,
+.deadlock-tactical-card.card-theme-weapon.is-active-card {
+  filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.65)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+}
+
+.deadlock-tactical-card.card-theme-vitality {
+  background: linear-gradient(135deg, #2dd5b7 0%, #059669 50%, #064e3b 100%);
+}
+.deadlock-tactical-card.card-theme-vitality .deadlock-tactical-inner {
+  background: linear-gradient(180deg, #091f17 0%, #061610 55%, #040e0a 100%);
+}
+.deadlock-tactical-card.card-theme-vitality:hover,
+.deadlock-tactical-card.card-theme-vitality.is-active-card {
+  filter: drop-shadow(0 0 16px rgba(45, 213, 183, 0.65)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+}
+
+.deadlock-tactical-card.card-theme-spirit {
+  background: linear-gradient(135deg, #c084fc 0%, #7e22ce 50%, #3b0764 100%);
+}
+.deadlock-tactical-card.card-theme-spirit .deadlock-tactical-inner {
+  background: linear-gradient(180deg, #1c0c28 0%, #110719 55%, #09030e 100%);
+}
+.deadlock-tactical-card.card-theme-spirit:hover,
+.deadlock-tactical-card.card-theme-spirit.is-active-card {
+  filter: drop-shadow(0 0 16px rgba(192, 132, 252, 0.65)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+}
+
+.deadlock-tactical-card.card-theme-utility {
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #082f49 100%);
+}
+.deadlock-tactical-card.card-theme-utility .deadlock-tactical-inner {
+  background: linear-gradient(180deg, #0a1b26 0%, #061119 55%, #030a0f 100%);
+}
+.deadlock-tactical-card.card-theme-utility:hover,
+.deadlock-tactical-card.card-theme-utility.is-active-card {
+  filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.65)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+}
+
+/* Tactical Aperture Housing for Item Artwork */
+.tactical-aperture {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 3px 10px rgba(0, 0, 0, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+}
+
+.tactical-aperture::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Minted Tactical Gold Chit */
+.tactical-gold-chit {
+  background: linear-gradient(135deg, #d97706 0%, #fbbf24 45%, #92400e 100%);
+  color: #080b09;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7), 0 0 10px rgba(245, 158, 11, 0.45);
+  border: 1px solid #fef08a;
+  border-radius: 3px;
+}
+
+/* Sci-Fi Angled Header Tab */
+.tactical-header-notch {
+  clip-path: polygon(0% 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+
+/* High-Tech Laser Conduit Border for Stage Pods */
+.stage-conduit-header {
+  position: relative;
+}
+.stage-conduit-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, #2dd5b7 0%, rgba(45, 213, 183, 0.3) 70%, transparent 100%);
+}
+
+[data-theme="tactical-light"] .deadlock-active-tag {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Sequence Ribbon */
 .sequence-ribbon {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem 0.6rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #14251f;
+  border: 1px solid #26433a;
   border-radius: 4px;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #475569;
+  color: #769382;
 }
 
 .sequence-ribbon strong {
-  color: #0f172a;
+  color: #e2e5b8;
 }
 
 .sequence-arrow {
-  color: #059669;
+  color: #2dd5b7;
   font-weight: 900;
+}
+
+[data-theme="tactical-light"] .sequence-ribbon {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+[data-theme="tactical-light"] .sequence-ribbon strong {
+  color: #0f172a;
+}
+[data-theme="tactical-light"] .sequence-arrow {
+  color: #059669;
 }
 
 /* Tactical Energy Conduits & Flowing Arrows */
@@ -189,19 +656,36 @@
 
 .energy-flow-active {
   animation: energyConduitFlow 0.75s linear infinite;
+  stroke: #2dd5b7;
 }
 
 .energy-flow-ambient {
   animation: energyConduitFlow 2.2s linear infinite;
+  stroke: #2dd5b7;
+}
+
+[data-theme="tactical-light"] .energy-flow-active,
+[data-theme="tactical-light"] .energy-flow-ambient {
+  stroke: #059669;
+}
+
+[data-theme="midnight-hextech"] .energy-flow-active,
+[data-theme="midnight-hextech"] .energy-flow-ambient {
+  stroke: #38bdf8;
+}
+
+[data-theme="noxian-blood"] .energy-flow-active,
+[data-theme="noxian-blood"] .energy-flow-ambient {
+  stroke: #f43f5e;
 }
 
 /* Tactical Target Slot Bracket */
 @keyframes targetSlotPulse {
   0%, 100% {
-    box-shadow: 0 0 14px rgba(244, 63, 94, 0.6), inset 0 0 10px rgba(244, 63, 94, 0.25);
+    box-shadow: 0 0 14px rgba(210, 104, 156, 0.6), inset 0 0 10px rgba(210, 104, 156, 0.25);
   }
   50% {
-    box-shadow: 0 0 26px rgba(244, 63, 94, 0.95), inset 0 0 16px rgba(244, 63, 94, 0.5);
+    box-shadow: 0 0 26px rgba(210, 104, 156, 0.95), inset 0 0 16px rgba(210, 104, 156, 0.5);
   }
 }
 
@@ -217,8 +701,8 @@
   left: -3px;
   width: 10px;
   height: 10px;
-  border-top: 2.5px solid #f43f5e;
-  border-left: 2.5px solid #f43f5e;
+  border-top: 2.5px solid #d2689c;
+  border-left: 2.5px solid #d2689c;
   pointer-events: none;
   z-index: 40;
 }
@@ -230,8 +714,371 @@
   right: -3px;
   width: 10px;
   height: 10px;
-  border-bottom: 2.5px solid #f43f5e;
-  border-right: 2.5px solid #f43f5e;
+  border-bottom: 2.5px solid #d2689c;
+  border-right: 2.5px solid #d2689c;
   pointer-events: none;
   z-index: 40;
+}
+
+/* ==========================================================================
+   OSAKA JADE COMPREHENSIVE UTILITY ENGINE (GO ALL OUT)
+   ========================================================================== */
+:root:not([data-theme="tactical-light"]):not([data-theme="midnight-hextech"]):not([data-theme="noxian-blood"]),
+[data-theme="osaka-jade"] {
+  /* Surfaces */
+  & .bg-\[\#f8fafc\] {
+    background-color: #0d1713 !important;
+  }
+
+  & .bg-white {
+    background-color: #13221c !important;
+  }
+
+  & .bg-white\/95 {
+    background-color: rgba(19, 34, 28, 0.95) !important;
+  }
+
+  & .bg-white\/90 {
+    background-color: rgba(19, 34, 28, 0.9) !important;
+  }
+
+  & .bg-white\/70 {
+    background-color: rgba(19, 34, 28, 0.7) !important;
+  }
+
+  & .bg-white\/60 {
+    background-color: rgba(19, 34, 28, 0.6) !important;
+  }
+
+  & .bg-slate-50,
+  & .bg-slate-50\/90 {
+    background-color: #162821 !important;
+  }
+
+  & .bg-slate-100 {
+    background-color: #192e26 !important;
+  }
+
+  & .bg-slate-200 {
+    background-color: #1f382e !important;
+  }
+
+  & .bg-slate-800,
+  & .bg-slate-900 {
+    background-color: #0d1713 !important;
+  }
+
+  & .bg-slate-950 {
+    background-color: #09110e !important;
+  }
+
+  & .bg-emerald-50,
+  & .bg-emerald-50\/90 {
+    background-color: #163026 !important;
+  }
+
+  & .bg-emerald-100,
+  & .bg-emerald-100\/90 {
+    background-color: #1b3d30 !important;
+  }
+
+  & .bg-emerald-600 {
+    background-color: #2dd5b7 !important;
+    color: #07120e !important;
+  }
+
+  & .bg-emerald-600:hover {
+    background-color: #26bba0 !important;
+  }
+
+  & .bg-amber-50 {
+    background-color: #252417 !important;
+  }
+
+  & .bg-amber-100 {
+    background-color: #35331e !important;
+  }
+
+  /* Comprehensive Khaki / Olive Legacy Overrides */
+  & .bg-\[\#dbe2d6\],
+  & .bg-\[\#edf2e8\],
+  & .bg-\[\#eef3ea\],
+  & .bg-\[\#e4ebde\],
+  & .bg-\[\#cbd7c5\],
+  & .bg-\[\#c8d4c2\],
+  & .bg-\[\#eae8de\],
+  & .bg-\[\#faf9f4\],
+  & .bg-\[\#dae4d4\],
+  & .bg-\[\#c8d8c2\] {
+    background-color: #14251f !important;
+  }
+
+  & .border-\[\#323d30\],
+  & .border-\[\#b5c2af\],
+  & .border-\[\#a4b49c\],
+  & .border-\[\#bcc7b6\],
+  & .border-\[\#c8d4c2\],
+  & .border-\[\#c4d0be\],
+  & .border-\[\#dad9cd\],
+  & .border-\[\#a8be9e\],
+  & .border-\[\#b8c6b2\] {
+    border-color: #26433a !important;
+  }
+
+  & .text-\[\#1f281d\],
+  & .text-\[\#263124\],
+  & .text-\[\#2b3829\],
+  & .text-\[\#222920\],
+  & .text-\[\#2d392b\],
+  & .text-\[\#1a231b\] {
+    color: #e2e5b8 !important;
+  }
+
+  & .text-\[\#4d5d4a\],
+  & .text-\[\#556652\],
+  & .text-\[\#7a8874\],
+  & .text-\[\#4e5e4b\],
+  & .text-\[\#687a64\],
+  & .text-\[\#576854\],
+  & .text-\[\#2c372a\] {
+    color: #769382 !important;
+  }
+
+  & .text-\[\#7de39b\],
+  & .text-\[\#86efac\] {
+    color: #2dd5b7 !important;
+  }
+
+  /* Borders */
+  & .border-slate-100,
+  & .border-slate-200,
+  & .border-slate-300,
+  & .border-slate-300\/80 {
+    border-color: #26433a !important;
+  }
+
+  & .border-slate-400 {
+    border-color: #355d51 !important;
+  }
+
+  & .border-emerald-200,
+  & .border-emerald-300 {
+    border-color: #355d51 !important;
+  }
+
+  & .border-emerald-500,
+  & .border-emerald-600 {
+    border-color: #2dd5b7 !important;
+  }
+
+  & .border-amber-200,
+  & .border-amber-300 {
+    border-color: #5c5324 !important;
+  }
+
+  /* Typography */
+  & .text-slate-900,
+  & .text-slate-950 {
+    color: #e2e5b8 !important;
+  }
+
+  & .text-slate-800,
+  & .text-slate-700 {
+    color: #c1c497 !important;
+  }
+
+  & .text-slate-600,
+  & .text-slate-500 {
+    color: #769382 !important;
+  }
+
+  & .text-slate-400,
+  & .text-slate-300 {
+    color: #5d7567 !important;
+  }
+
+  & .text-emerald-600,
+  & .text-emerald-700,
+  & .text-emerald-800,
+  & .text-emerald-900,
+  & .text-emerald-950 {
+    color: #2dd5b7 !important;
+  }
+
+  & .text-amber-800,
+  & .text-amber-900 {
+    color: #e5c736 !important;
+  }
+
+  /* Interactive inputs */
+  & input,
+  & textarea {
+    background-color: #101c17 !important;
+    color: #e2e5b8 !important;
+    border-color: #26433a !important;
+  }
+
+  & input::placeholder,
+  & textarea::placeholder {
+    color: #53685b !important;
+  }
+
+  & input:focus,
+  & textarea:focus {
+    border-color: #2dd5b7 !important;
+    box-shadow: 0 0 0 2px rgba(45, 213, 183, 0.25) !important;
+  }
+
+  & kbd {
+    background-color: #172c23 !important;
+    color: #8cd3cb !important;
+    border-color: #26433a !important;
+  }
+
+  & ::selection {
+    background-color: #2dd5b7 !important;
+    color: #0b1713 !important;
+  }
+}
+
+/* ==========================================================================
+   MIDNIGHT HEXTECH COMPREHENSIVE UTILITY ENGINE
+   ========================================================================== */
+[data-theme="midnight-hextech"] {
+  & .bg-\[\#f8fafc\],
+  & .bg-slate-900 {
+    background-color: #070b14 !important;
+  }
+
+  & .bg-white {
+    background-color: #0d1527 !important;
+  }
+
+  & .bg-white\/95 {
+    background-color: rgba(13, 21, 39, 0.95) !important;
+  }
+
+  & .bg-slate-50,
+  & .bg-slate-100 {
+    background-color: #111d35 !important;
+  }
+
+  & .bg-slate-200 {
+    background-color: #1a2a4c !important;
+  }
+
+  & .border-slate-100,
+  & .border-slate-200,
+  & .border-slate-300,
+  & .border-\[\#c8d4c2\] {
+    border-color: #1e293b !important;
+  }
+
+  & .text-slate-900,
+  & .text-slate-950 {
+    color: #f8fafc !important;
+  }
+
+  & .text-slate-800,
+  & .text-slate-700 {
+    color: #cbd5e1 !important;
+  }
+
+  & .text-slate-600,
+  & .text-slate-500 {
+    color: #94a3b8 !important;
+  }
+
+  & .text-emerald-600,
+  & .text-emerald-700,
+  & .text-emerald-800 {
+    color: #38bdf8 !important;
+  }
+
+  & .bg-emerald-600 {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+  }
+
+  & input,
+  & textarea {
+    background-color: #0a101f !important;
+    color: #f8fafc !important;
+    border-color: #1e293b !important;
+  }
+
+  & input:focus {
+    border-color: #38bdf8 !important;
+  }
+}
+
+/* ==========================================================================
+   NOXIAN BLOOD COMPREHENSIVE UTILITY ENGINE
+   ========================================================================== */
+[data-theme="noxian-blood"] {
+  & .bg-\[\#f8fafc\],
+  & .bg-slate-900 {
+    background-color: #0a0608 !important;
+  }
+
+  & .bg-white {
+    background-color: #160c11 !important;
+  }
+
+  & .bg-white\/95 {
+    background-color: rgba(22, 12, 17, 0.95) !important;
+  }
+
+  & .bg-slate-50,
+  & .bg-slate-100 {
+    background-color: #1f1017 !important;
+  }
+
+  & .bg-slate-200 {
+    background-color: #2d1822 !important;
+  }
+
+  & .border-slate-100,
+  & .border-slate-200,
+  & .border-slate-300,
+  & .border-\[\#c8d4c2\] {
+    border-color: #3d1d26 !important;
+  }
+
+  & .text-slate-900,
+  & .text-slate-950 {
+    color: #fce7f3 !important;
+  }
+
+  & .text-slate-800,
+  & .text-slate-700 {
+    color: #f5d0dc !important;
+  }
+
+  & .text-slate-600,
+  & .text-slate-500 {
+    color: #9f7d86 !important;
+  }
+
+  & .text-emerald-600,
+  & .text-emerald-700,
+  & .text-emerald-800 {
+    color: #fb7185 !important;
+  }
+
+  & .bg-emerald-600 {
+    background-color: #e11d48 !important;
+    color: #ffffff !important;
+  }
+
+  & input,
+  & textarea {
+    background-color: #11080d !important;
+    color: #fce7f3 !important;
+    border-color: #3d1d26 !important;
+  }
+
+  & input:focus {
+    border-color: #f43f5e !important;
+  }
 }

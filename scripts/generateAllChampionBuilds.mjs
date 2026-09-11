@@ -130,7 +130,12 @@ function parseOpGgResponse(text) {
     const bootNames = parseArray(coreItemMatches[1][2]);
 
     // 3rd CoreItems is starter
+    const starterIds = parseNumArray(coreItemMatches[2][1]);
     const starterNames = parseArray(coreItemMatches[2][2]);
+
+    // Damage type from OP.GG: Data("AD",... or Data("AP",... or Data("BOTH",...
+    const dmgMatch = text.match(/Data\(["']([^"']+)["']/);
+    const opggDamageType = dmgMatch ? dmgMatch[1].toUpperCase() : null;
 
     // Runes: Runes(id, primaryId, "PrimaryTree", [ids], ["Keystone", ...], secId, "SecondaryTree", [secIds], [secNames]...)
     const runeMatch = text.match(/Runes\(\d+,\d+,"([^"]+)",\[.*?\],\[(.*?)\],\d+,"([^"]+)",\[.*?\],\[(.*?)\](?:,\[.*?\],\[(.*?)\])?/);
@@ -194,6 +199,8 @@ function parseOpGgResponse(text) {
       bootsId: bootIds[0] || '3047',
       bootsName: bootNames[0] || 'Plated Steelcaps',
       starter: starterNames.join(' + ') || "Doran's Blade + Health Potion",
+      starterIds: starterIds.length > 0 ? starterIds : ['1055', '2003'],
+      opggDamageType,
       primaryTree,
       keystoneName,
       primaryRunes,
@@ -223,6 +230,7 @@ async function fetchOpGgBuild(champName, position) {
             champion: champName,
             position: position.toLowerCase(),
             desired_output_fields: [
+              'data.damage_type',
               'data.core_items',
               'data.boots',
               'data.starter_items',
@@ -257,6 +265,7 @@ function generateFallbackBuild(champ, role) {
   if (isMarksman) {
     return {
       starter: "Doran's Blade + Health Potion",
+      starterIds: ['1055', '2003'],
       firstItemId: '6672', firstItemName: 'Kraken Slayer',
       secondItemId: '3031', secondItemName: 'Infinity Edge',
       thirdItemId: '3036', thirdItemName: "Lord Dominik's Regards",
@@ -268,6 +277,7 @@ function generateFallbackBuild(champ, role) {
   if (isSupport) {
     return {
       starter: "World Atlas + 2 Health Potions",
+      starterIds: ['3865', '2003', '2003'],
       firstItemId: '3190', firstItemName: 'Locket of the Iron Solari',
       secondItemId: '3050', secondItemName: "Zeke's Convergence",
       thirdItemId: '3109', thirdItemName: "Knight's Vow",
@@ -279,6 +289,7 @@ function generateFallbackBuild(champ, role) {
   if (isMage) {
     return {
       starter: "Doran's Ring + 2 Health Potions",
+      starterIds: ['1056', '2003', '2003'],
       firstItemId: '6655', firstItemName: "Luden's Companion",
       secondItemId: '4645', secondItemName: 'Shadowflame',
       thirdItemId: '3089', thirdItemName: "Rabadon's Deathcap",
@@ -290,6 +301,7 @@ function generateFallbackBuild(champ, role) {
   if (isAssassin) {
     return {
       starter: "Doran's Blade + Health Potion",
+      starterIds: ['1055', '2003'],
       firstItemId: '6701', firstItemName: 'Opportunity',
       secondItemId: '6696', secondItemName: 'Profane Hydra',
       thirdItemId: '6694', thirdItemName: "Serylda's Grudge",
@@ -301,6 +313,7 @@ function generateFallbackBuild(champ, role) {
   if (isTank) {
     return {
       starter: "Doran's Shield + Health Potion",
+      starterIds: ['1054', '2003'],
       firstItemId: '3068', firstItemName: 'Sunfire Aegis',
       secondItemId: '2504', secondItemName: 'Kaenic Rookern',
       thirdItemId: '3075', thirdItemName: 'Thornmail',
@@ -313,6 +326,7 @@ function generateFallbackBuild(champ, role) {
   // Fighter / Bruiser
   return {
     starter: "Doran's Blade + Health Potion",
+    starterIds: ['1055', '2003'],
     firstItemId: '6630', firstItemName: 'Sundered Sky',
     secondItemId: '3053', secondItemName: "Sterak's Gage",
     thirdItemId: '6333', thirdItemName: "Death's Dance",
@@ -423,14 +437,41 @@ async function main() {
       process.stdout.write(`• [${id}: Fallback] `);
     }
 
-    // Determine damage type & playstyle
-    const isAP = tags.includes('Mage') || champ.info?.magic > 6;
-    const damageType = isAP ? 'Magic Heavy' : 'Physical Heavy';
+    // Determine authentic damage type & playstyle
+    let damageType = 'Physical Heavy';
+    if (buildData.opggDamageType === 'AD') {
+      damageType = 'Physical Heavy';
+    } else if (buildData.opggDamageType === 'AP') {
+      damageType = 'Magic Heavy';
+    } else if (buildData.opggDamageType === 'BOTH') {
+      damageType = 'True / Hybrid';
+    } else {
+      const isAP = tags.includes('Mage');
+      damageType = isAP ? 'Magic Heavy' : 'Physical Heavy';
+    }
+
+    // Sanity check: If core items are purely physical/crit/lethality, override to Physical Heavy
+    const core1Lower = (buildData.firstItemName || '').toLowerCase();
+    const core2Lower = (buildData.secondItemName || '').toLowerCase();
+    const isObviousAD = core1Lower.includes('collector') || core1Lower.includes('kraken') ||
+      core1Lower.includes('infinity') || core1Lower.includes('hubris') || core1Lower.includes('trinity') ||
+      core1Lower.includes('eclipse') || core1Lower.includes('stridebreaker') || core1Lower.includes('sundered') ||
+      core1Lower.includes('opportunity') || core1Lower.includes('profane') || core1Lower.includes('youmuu') ||
+      core1Lower.includes('essence reaver') || core2Lower.includes('collector') || core2Lower.includes('infinity edge');
+
+    if (isObviousAD) {
+      damageType = 'Physical Heavy';
+    }
+
+    const isAP = damageType === 'Magic Heavy';
+    const isTankChamp = tags.includes('Tank') || ['Sunfire Aegis', 'Heartsteel', 'Hollow Radiance', 'Kaenic Rookern', 'Unending Despair', "Jak'Sho, The Protean", 'Abyssal Mask', 'Thornmail'].some(t => core1Lower.includes(t.toLowerCase()) || core2Lower.includes(t.toLowerCase()));
+    const isAssassinChamp = tags.includes('Assassin');
+
     const playstyle = role === 'ADC' ? 'Sustained Marksman'
-      : role === 'Support' ? (isAP ? 'Enchanter / Peeler' : 'Engage Vanguard')
+      : role === 'Support' ? (isTankChamp ? 'Engage Vanguard' : isAP ? 'Enchanter / Peeler' : 'Engage Vanguard')
+      : isTankChamp ? 'Teamfight Tank'
+      : isAssassinChamp ? 'Burst Assassin'
       : isAP ? 'Control Mage'
-      : tags.includes('Tank') ? 'Teamfight Tank'
-      : tags.includes('Assassin') ? 'Burst Assassin'
       : 'Bruiser / Skirmisher';
 
     const kInfo = KEYSTONE_INFO[buildData.keystoneName] || {
@@ -464,6 +505,7 @@ async function main() {
       skillMaxOrder: buildData.skillMaxOrder,
       skillMaxReason: `Max primary damage and waveclear ability first to accelerate lane tempo and cooldown reduction.`,
       starter: buildData.starter,
+      starterIds: buildData.starterIds || [],
       firstItemId: String(buildData.firstItemId),
       firstItemName: buildData.firstItemName,
       secondItemId: String(buildData.secondItemId),
