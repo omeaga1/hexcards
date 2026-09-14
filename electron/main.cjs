@@ -582,6 +582,10 @@ function setupAutoUpdater() {
   });
 
   autoUpdater.on("update-available", (info) => {
+    if (info?.version === app.getVersion()) {
+      console.log("[AutoUpdater] Available version matches current version; ignoring.");
+      return;
+    }
     console.log("[AutoUpdater] New update available:", info.version);
     currentUpdateState = { status: "available", version: info.version, percent: 0 };
     mainWindow?.webContents.send("update:status", currentUpdateState);
@@ -598,6 +602,10 @@ function setupAutoUpdater() {
   });
 
   autoUpdater.on("update-downloaded", (info) => {
+    if (info?.version === app.getVersion()) {
+      console.log("[AutoUpdater] Downloaded version matches current version; ignoring.");
+      return;
+    }
     console.log("[AutoUpdater] Update downloaded; ready to install.", info.version);
     currentUpdateState = { status: "downloaded", version: info.version };
     mainWindow?.webContents.send("update:status", currentUpdateState);
@@ -607,19 +615,15 @@ function setupAutoUpdater() {
     console.warn("[AutoUpdater] Update check failed:", err.message);
   });
 
-  function clearUpdaterCacheAndCheck() {
-    try {
-      const updaterCacheDir = path.join(app.getPath("appData"), "..", "Local", "lol-quick-cards-updater");
-      if (fs.existsSync(updaterCacheDir)) {
-        fs.rmSync(updaterCacheDir, { recursive: true, force: true });
-      }
-    } catch { /* non-fatal */ }
-    autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  function routineUpdateCheck() {
+    autoUpdater.checkForUpdatesAndNotify().catch((err) => {
+      console.warn("[AutoUpdater] Routine update check failed:", err.message);
+    });
   }
 
   // Check 3 seconds after launch, then every 30 minutes
-  setTimeout(() => clearUpdaterCacheAndCheck(), 3000);
-  setInterval(() => clearUpdaterCacheAndCheck(), 30 * 60 * 1000);
+  setTimeout(() => routineUpdateCheck(), 3000);
+  setInterval(() => routineUpdateCheck(), 30 * 60 * 1000);
 }
 
 // App Lifecycle
