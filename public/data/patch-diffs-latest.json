@@ -1,8 +1,8 @@
 {
-  "version": "16.20.1",
-  "previousVersion": "16.19.1",
-  "releaseDate": "2026-10-20",
-  "summary": "Patch 16.20.1 balance changes and item tuning.",
+  "version": "16.21.1",
+  "previousVersion": "16.20.1",
+  "releaseDate": "2026-10-21",
+  "summary": "Patch 16.21.1 balance changes and item tuning.",
   "champions": {
     "Darius": {
       "id": "Darius",
@@ -150,6 +150,22 @@
     }
   },
   "items": {
+    "3008": {
+      "id": "3008",
+      "name": "Gluttonous Greaves",
+      "type": "nerf",
+      "summary": "Total Gold Cost changed to 1100 (+100g Cost)",
+      "deltas": [
+        {
+          "property": "cost",
+          "label": "Total Gold Cost",
+          "oldValue": 1000,
+          "newValue": 1100,
+          "deltaText": "+100g Cost",
+          "isPositive": false
+        }
+      ]
+    },
     "3036": {
       "id": "3036",
       "name": "Lord Dominik's Regards",
@@ -243,6 +259,22 @@
           "newValue": 0.25,
           "deltaText": "+0.04999999999999999 PercentAttackSpeed",
           "isPositive": true
+        }
+      ]
+    },
+    "3168": {
+      "id": "3168",
+      "name": "Immortal Path",
+      "type": "nerf",
+      "summary": "Total Gold Cost changed to 1100 (+100g Cost)",
+      "deltas": [
+        {
+          "property": "cost",
+          "label": "Total Gold Cost",
+          "oldValue": 1000,
+          "newValue": 1100,
+          "deltaText": "+100g Cost",
+          "isPositive": false
         }
       ]
     },
