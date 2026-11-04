@@ -1,8 +1,8 @@
 {
-  "version": "16.21.1",
-  "previousVersion": "16.20.1",
-  "releaseDate": "2026-11-03",
-  "summary": "Patch 16.21.1 balance changes and item tuning.",
+  "version": "16.22.1",
+  "previousVersion": "16.21.1",
+  "releaseDate": "2026-11-04",
+  "summary": "Patch 16.22.1 balance changes and item tuning.",
   "champions": {
     "Darius": {
       "id": "Darius",
@@ -150,6 +150,38 @@
     }
   },
   "items": {
+    "1086": {
+      "id": "1086",
+      "name": "Doran's Bow",
+      "type": "nerf",
+      "summary": "PhysicalDamage changed to 7 (-1 PhysicalDamage)",
+      "deltas": [
+        {
+          "property": "FlatPhysicalDamageMod",
+          "label": "PhysicalDamage",
+          "oldValue": 8,
+          "newValue": 7,
+          "deltaText": "-1 PhysicalDamage",
+          "isPositive": false
+        }
+      ]
+    },
+    "2501": {
+      "id": "2501",
+      "name": "Overlord's Bloodmail",
+      "type": "buff",
+      "summary": "PhysicalDamage changed to 40 (+10 PhysicalDamage)",
+      "deltas": [
+        {
+          "property": "FlatPhysicalDamageMod",
+          "label": "PhysicalDamage",
+          "oldValue": 30,
+          "newValue": 40,
+          "deltaText": "+10 PhysicalDamage",
+          "isPositive": true
+        }
+      ]
+    },
     "3008": {
       "id": "3008",
       "name": "Gluttonous Greaves",
