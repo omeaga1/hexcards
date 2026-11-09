@@ -1,7 +1,7 @@
 {
   "version": "16.22.1",
   "previousVersion": "16.21.1",
-  "releaseDate": "2026-11-08",
+  "releaseDate": "2026-11-09",
   "summary": "Patch 16.22.1 balance changes and item tuning.",
   "champions": {
     "Darius": {
