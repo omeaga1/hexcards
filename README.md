@@ -39,7 +39,9 @@ A high-performance, distraction-free companion web app for League of Legends pla
 
 ### 5. Always Up to Date with Live Riot Patches
 - Automatically queries Riot's official Data Dragon API on launch (`https://ddragon.leagueoflegends.com/api/versions.json`).
-- Automatically syncs the latest patch (currently `v16.17.1`), champion assets, item stats, and spell icons with **zero API keys required**.
+- Automatically syncs the latest patch, champion assets, item stats, and spell icons with **zero API keys required**.
+- **Patch changes panel**: every champion card shows what changed this patch for that champion (base stats, ability cooldowns, costs and ranges) and for the items in their build, tagged buff or nerf. A full patch overview lists every changed champion and item.
+- **Fresh builds on desktop**: the app loads the latest twice-daily build sync from GitHub, so desktop installs don't get stuck on the builds they shipped with.
 - Built-in local caching for instantaneous sub-second loading.
 
 ---

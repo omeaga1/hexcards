@@ -1,3 +1,5 @@
+import { loadSyncedData } from './liveData';
+
 export interface ChampionMetaBuild {
   championId: string;
   role: 'Top' | 'Jungle' | 'Mid' | 'ADC' | 'Support';
@@ -37,23 +39,26 @@ interface MetaBuildsPayload {
 }
 
 let cachedBuilds: Record<string, ChampionMetaBuild> = {};
+let buildsInfo: { patch: string; generatedAt: string } | null = null;
 let loadPromise: Promise<Record<string, ChampionMetaBuild>> | null = null;
 
-export async function loadMetaBuilds(): Promise<Record<string, ChampionMetaBuild>> {
-  if (Object.keys(cachedBuilds).length > 0) return cachedBuilds;
+export async function loadMetaBuilds(force = false): Promise<Record<string, ChampionMetaBuild>> {
+  if (!force && Object.keys(cachedBuilds).length > 0) return cachedBuilds;
   if (loadPromise) return loadPromise;
 
   loadPromise = (async () => {
     try {
-      const baseUrl = import.meta.env.BASE_URL || './';
-      const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-      const res = await fetch(`${cleanBase}data/meta-builds-latest.json`);
-      if (!res.ok) {
-        console.warn('[MetaBuildService] Failed to load meta builds:', res.statusText);
+      const data = await loadSyncedData<MetaBuildsPayload>(
+        'meta-builds-latest.json',
+        (d) => d.generatedAt,
+        (d) => Boolean(d.builds && Object.keys(d.builds).length > 0)
+      );
+      if (!data) {
+        console.warn('[MetaBuildService] Failed to load meta builds.');
         return {};
       }
-      const data: MetaBuildsPayload = await res.json();
       cachedBuilds = data.builds || {};
+      buildsInfo = { patch: data.patch, generatedAt: data.generatedAt };
       return cachedBuilds;
     } catch (err) {
       console.warn('[MetaBuildService] Error loading meta builds:', err);
@@ -68,4 +73,9 @@ export async function loadMetaBuilds(): Promise<Record<string, ChampionMetaBuild
 
 export function getMetaBuildForChampion(championId: string): ChampionMetaBuild | null {
   return cachedBuilds[championId] || null;
+}
+
+/** Patch and timestamp of the build data currently in use. */
+export function getMetaBuildsInfo(): { patch: string; generatedAt: string } | null {
+  return buildsInfo;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { 
   fetchLatestVersion, 
   fetchAllChampions, 
@@ -8,6 +8,9 @@ import {
   purgeStaleCache
 } from './services/ddragon';
 import { loadMetaBuilds } from './services/metaBuildService';
+import { loadPatchNotes, PatchNotes } from './services/patchNotesService';
+import { PatchChangesPanel } from './components/PatchNotes/PatchChangesPanel';
+import { PatchOverviewModal } from './components/PatchNotes/PatchOverviewModal';
 import { ChampionSummary, ChampionDetail, ItemData } from './types';
 import { getTacticsForChampion } from './data/championTactics';
 import { Header } from './components/Header';
@@ -19,7 +22,6 @@ import { RunesDemystified } from './components/ChampionCard/RunesDemystified';
 import { GlossaryModal } from './components/Glossary/GlossaryModal';
 import { ExportModal } from './components/LeagueExport/ExportModal';
 import { DownloadModal } from './components/DownloadModal';
-import { LandingPage } from './components/Landing/LandingPage';
 import { checkBridgeStatus } from './services/leagueExportService';
 import { GameSessionBanner } from './components/GameSessionBanner';
 import { PinnedCardProvider } from './context/PinnedCardContext';
@@ -30,6 +32,11 @@ import { ThemeModal } from './components/ThemeModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Loader2, AlertCircle, ShoppingBag, Sparkles, Compass, Layers, Download, Globe } from 'lucide-react';
 import { useDevice } from './hooks/useDevice';
+
+// Landing page is only shown on the web before entering the app, so load it on demand.
+const LandingPage = lazy(() =>
+  import('./components/Landing/LandingPage').then((m) => ({ default: m.LandingPage }))
+);
 
 const DEFAULT_FAVORITES = ['Darius', 'Garen', 'Jinx', 'Ahri', 'Warwick', 'Thresh'];
 
@@ -68,6 +75,8 @@ const AppContent: React.FC = () => {
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
   const [isBridgeConnected, setIsBridgeConnected] = useState<boolean>(false);
   const [downloadedUpdateVersion, setDownloadedUpdateVersion] = useState<string | null>(null);
+  const [patchNotes, setPatchNotes] = useState<PatchNotes | null>(null);
+  const [isPatchOverviewOpen, setIsPatchOverviewOpen] = useState<boolean>(false);
   const { isThemeModalOpen, setIsThemeModalOpen } = useTheme();
 
   useEffect(() => {
@@ -94,6 +103,11 @@ const AppContent: React.FC = () => {
       return DEFAULT_FAVORITES;
     }
   });
+
+  // Patch change notes load on their own so a slow fetch never blocks the app.
+  useEffect(() => {
+    loadPatchNotes().then(setPatchNotes).catch(() => setPatchNotes(null));
+  }, []);
 
   // Initial Load
   useEffect(() => {
@@ -150,10 +164,11 @@ const AppContent: React.FC = () => {
       const [champs, items] = await Promise.all([
         fetchAllChampions(targetVer),
         fetchAllItems(targetVer),
-        loadMetaBuilds()
+        loadMetaBuilds(true)
       ]);
       setAllChampions(champs);
       setAllItems(items);
+      loadPatchNotes(true).then(setPatchNotes).catch(() => {});
       const detail = await fetchChampionDetail(targetVer, selectedChampionId);
       if (detail) {
         setCurrentChampion(detail);
@@ -249,13 +264,15 @@ const AppContent: React.FC = () => {
 
   if (viewMode === 'landing' && !isDesktop) {
     return (
-      <LandingPage
-        version={version}
-        onLaunchWeb={() => {
-          setViewMode('app');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+      <Suspense fallback={null}>
+        <LandingPage
+          version={version}
+          onLaunchWeb={() => {
+            setViewMode('app');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      </Suspense>
     );
   }
 
@@ -428,6 +445,21 @@ const AppContent: React.FC = () => {
               onToggleFavorite={handleToggleFavorite}
             />
 
+            {/* What changed this patch for this champion and their build */}
+            {patchNotes && (
+              <ErrorBoundary fallbackTitle="Patch Changes">
+                <PatchChangesPanel
+                  key={currentChampion.id}
+                  version={version}
+                  champion={currentChampion}
+                  tactics={tactics}
+                  allItems={allItems}
+                  notes={patchNotes}
+                  onOpenOverview={() => setIsPatchOverviewOpen(true)}
+                />
+              </ErrorBoundary>
+            )}
+
             {/* View Selector Tabs */}
             <div className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl deadlock-frame retro-futuristic-card bg-[#13221c] border border-[#26433a] shadow-xs w-full sm:w-auto overflow-x-auto font-['Barlow_Condensed']">
               <button
@@ -532,6 +564,22 @@ const AppContent: React.FC = () => {
         onClose={() => setIsDownloadModalOpen(false)}
         version={version}
       />
+
+      {/* Full Patch Changes Overview */}
+      {patchNotes && (
+        <PatchOverviewModal
+          isOpen={isPatchOverviewOpen}
+          onClose={() => setIsPatchOverviewOpen(false)}
+          notes={patchNotes}
+          version={version}
+          allChampions={allChampions}
+          onSelectChampion={(id) => {
+            setSelectedChampionId(id);
+            setIsSelectorExpanded(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      )}
 
       {/* Theme Settings Modal */}
       <ThemeModal

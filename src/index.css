@@ -1184,3 +1184,88 @@
     border-color: #f43f5e !important;
   }
 }
+
+/* ==========================================
+   PATCH CHANGES (buff / nerf / adjusted)
+   ========================================== */
+:root {
+  --patch-buff: #4ade80;
+  --patch-nerf: #f87171;
+  --patch-adjusted: #fbbf24;
+}
+
+[data-theme="tactical-light"] {
+  --patch-buff: #15803d;
+  --patch-nerf: #dc2626;
+  --patch-adjusted: #b45309;
+}
+
+.patch-tone-buff { --tone: var(--patch-buff); }
+.patch-tone-nerf { --tone: var(--patch-nerf); }
+.patch-tone-adjusted,
+.patch-tone-neutral { --tone: var(--patch-adjusted); }
+
+.patch-tone-text { color: var(--tone); }
+
+.patch-tone-pill {
+  color: var(--tone);
+  background-color: color-mix(in srgb, var(--tone) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent);
+}
+
+.patch-row {
+  background-color: var(--deadlock-panel-card);
+  border: 1px solid var(--deadlock-border);
+  border-left: 3px solid var(--tone);
+}
+
+.patch-surface {
+  background-color: var(--deadlock-panel-card);
+  border: 1px solid var(--deadlock-border);
+}
+
+.patch-surface-interactive {
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.patch-surface-interactive:hover {
+  border-color: var(--deadlock-border-bright);
+  transform: translateY(-1px);
+}
+
+.patch-text-main { color: var(--deadlock-text-main); }
+.patch-text-cream { color: var(--deadlock-text-cream); }
+.patch-text-muted { color: var(--deadlock-text-muted); }
+.patch-accent { color: var(--deadlock-green-accent); }
+
+.patch-link-button {
+  color: var(--deadlock-green-accent);
+  border: 1px solid color-mix(in srgb, var(--deadlock-green-accent) 45%, transparent);
+  background-color: color-mix(in srgb, var(--deadlock-green-accent) 10%, transparent);
+  transition: background-color 0.15s ease;
+}
+
+.patch-link-button:hover {
+  background-color: color-mix(in srgb, var(--deadlock-green-accent) 20%, transparent);
+}
+
+.patch-tab {
+  color: var(--deadlock-text-cream);
+  border: 1px solid var(--deadlock-border);
+}
+
+.patch-tab[data-active="true"] {
+  color: var(--deadlock-bg);
+  background-color: var(--deadlock-green-accent);
+  border-color: var(--deadlock-green-accent);
+}
+
+.patch-modal {
+  background-color: var(--deadlock-panel);
+  border: 1px solid var(--deadlock-border);
+}
+
+.patch-modal-header {
+  background-color: var(--deadlock-bg);
+  border-bottom: 1px solid var(--deadlock-border);
+}
