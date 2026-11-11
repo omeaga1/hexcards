@@ -2,149 +2,168 @@
   "version": "16.22.1",
   "previousVersion": "16.21.1",
   "releaseDate": "2026-11-10",
-  "summary": "Patch 16.22.1 balance changes and item tuning.",
+  "source": "Riot Data Dragon (champion stats, ability cooldowns/costs/ranges, item stats and cost)",
+  "summary": "5 champions and 2 items changed in 16.22.1.",
+  "newChampions": [],
   "champions": {
-    "Darius": {
-      "id": "Darius",
-      "name": "Darius",
+    "Kayle": {
+      "id": "Kayle",
+      "name": "Kayle",
       "type": "buff",
-      "summary": "Base health and passive bleed damage slightly increased for better early dueling consistency.",
-      "statDeltas": [
+      "changes": [
         {
-          "property": "hp",
-          "label": "Base Health",
-          "oldValue": 652,
-          "newValue": 665,
-          "deltaText": "+13 HP",
-          "isPositive": true
+          "slot": "Q",
+          "label": "Radiant Blast cooldown",
+          "from": "12 / 11 / 10 / 9 / 8s",
+          "to": "10 / 9.5 / 9 / 8.5 / 8s",
+          "direction": "buff"
         },
         {
-          "property": "bleed_ratio",
-          "label": "Passive AD Ratio",
-          "oldValue": "30%",
-          "newValue": "35%",
-          "deltaText": "+5% bonus AD",
-          "isPositive": true
+          "slot": "R",
+          "label": "Divine Judgment cooldown",
+          "from": "160 / 120 / 80s",
+          "to": "140 / 110 / 80s",
+          "direction": "buff"
         }
       ]
     },
-    "Garen": {
-      "id": "Garen",
-      "name": "Garen",
-      "type": "nerf",
-      "summary": "Judgment spin base damage trimmed to curb high early waveclear priority.",
-      "statDeltas": [
-        {
-          "property": "e_damage",
-          "label": "E Base Damage / Spin",
-          "oldValue": 5.2,
-          "newValue": 4.8,
-          "deltaText": "-0.4 base per spin",
-          "isPositive": false
-        }
-      ]
-    },
-    "Jinx": {
-      "id": "Jinx",
-      "name": "Jinx",
-      "type": "nerf",
-      "summary": "Fishbones rocket bonus attack range reduced at early ranks.",
-      "statDeltas": [
-        {
-          "property": "q_range",
-          "label": "Q Rocket Range (Rank 1)",
-          "oldValue": 100,
-          "newValue": 80,
-          "deltaText": "-20 range rank 1",
-          "isPositive": false
-        }
-      ]
-    },
-    "Ahri": {
-      "id": "Ahri",
-      "name": "Ahri",
-      "type": "buff",
-      "summary": "Orb of Deception mana cost reduced and Fox-Fire cooldown lowered at later ranks.",
-      "statDeltas": [
-        {
-          "property": "q_cost",
-          "label": "Q Mana Cost",
-          "oldValue": "60/70/80/90/100",
-          "newValue": "55/65/75/85/95",
-          "deltaText": "-5 Mana Cost",
-          "isPositive": true
-        },
-        {
-          "property": "w_cooldown",
-          "label": "W Cooldown",
-          "oldValue": "9/8/7/6/5s",
-          "newValue": "8/7/6/5/4s",
-          "deltaText": "-1s Cooldown",
-          "isPositive": true
-        }
-      ]
-    },
-    "Yasuo": {
-      "id": "Yasuo",
-      "name": "Yasuo",
-      "type": "buff",
-      "summary": "Base armor increased and Sweeping Blade damage amplified.",
-      "statDeltas": [
-        {
-          "property": "armor",
-          "label": "Base Armor",
-          "oldValue": 30,
-          "newValue": 32,
-          "deltaText": "+2 Base Armor",
-          "isPositive": true
-        }
-      ]
-    },
-    "Warwick": {
-      "id": "Warwick",
-      "name": "Warwick",
+    "Mel": {
+      "id": "Mel",
+      "name": "Mel",
       "type": "adjusted",
-      "summary": "Blood Hunt pathing responsiveness improved and Q bite healing ratio smoothed.",
-      "statDeltas": [
+      "changes": [
         {
-          "property": "q_heal",
-          "label": "Q Healing Ratio",
-          "oldValue": "37.5/50/62.5/75/87.5%",
-          "newValue": "40/50/60/70/80%",
-          "deltaText": "Adjusted scaling",
-          "isPositive": true
+          "slot": "Stats",
+          "label": "Base Health",
+          "from": "630",
+          "to": "590",
+          "direction": "nerf"
+        },
+        {
+          "slot": "Stats",
+          "label": "Health per Level",
+          "from": "99",
+          "to": "107",
+          "direction": "buff"
+        },
+        {
+          "slot": "Stats",
+          "label": "Base Mana",
+          "from": "480",
+          "to": "455",
+          "direction": "nerf"
+        },
+        {
+          "slot": "Stats",
+          "label": "Mana per Level",
+          "from": "28",
+          "to": "38",
+          "direction": "buff"
+        },
+        {
+          "slot": "Stats",
+          "label": "Armor per Level",
+          "from": "5.2",
+          "to": "5.4",
+          "direction": "buff"
+        },
+        {
+          "slot": "Stats",
+          "label": "Base Attack Damage",
+          "from": "54",
+          "to": "52",
+          "direction": "nerf"
+        },
+        {
+          "slot": "Stats",
+          "label": "Attack Speed per Level",
+          "from": "2.5",
+          "to": "2.75",
+          "direction": "buff"
+        },
+        {
+          "slot": "Q",
+          "label": "Radiant Barrage cost",
+          "from": "70 / 75 / 80 / 85 / 90",
+          "to": "60 / 65 / 70 / 75 / 80",
+          "direction": "buff"
+        },
+        {
+          "slot": "W",
+          "label": "Rebuttal cooldown",
+          "from": "38 / 35 / 33 / 29 / 26s",
+          "to": "30 / 28.5 / 27 / 25.5 / 24s",
+          "direction": "buff"
+        },
+        {
+          "slot": "W",
+          "label": "Rebuttal cost",
+          "from": "80 / 60 / 40 / 20 / 0",
+          "to": "100 / 75 / 50 / 25 / 0",
+          "direction": "nerf"
+        },
+        {
+          "slot": "W",
+          "label": "Rebuttal range",
+          "from": "250",
+          "to": "400",
+          "direction": "buff"
+        },
+        {
+          "slot": "E",
+          "label": "Solar Snare cost",
+          "from": "50 / 60 / 70 / 80 / 90",
+          "to": "40 / 50 / 60 / 70 / 80",
+          "direction": "buff"
+        },
+        {
+          "slot": "R",
+          "label": "Golden Eclipse cooldown",
+          "from": "120 / 100 / 80s",
+          "to": "120 / 90 / 60s",
+          "direction": "buff"
         }
       ]
     },
-    "Ezreal": {
-      "id": "Ezreal",
-      "name": "Ezreal",
-      "type": "buff",
-      "summary": "Mystic Shot AD ratio increased to reward skillshot accuracy.",
-      "statDeltas": [
-        {
-          "property": "q_ratio",
-          "label": "Q Total AD Ratio",
-          "oldValue": "130%",
-          "newValue": "135%",
-          "deltaText": "+5% Total AD",
-          "isPositive": true
-        }
-      ]
-    },
-    "Aatrox": {
-      "id": "Aatrox",
-      "name": "Aatrox",
+    "Thresh": {
+      "id": "Thresh",
+      "name": "Thresh",
       "type": "nerf",
-      "summary": "World Ender bonus attack damage reduced to balance teamfight sustain resets.",
-      "statDeltas": [
+      "changes": [
         {
-          "property": "r_ad",
-          "label": "R Bonus AD %",
-          "oldValue": "20/32.5/45%",
-          "newValue": "20/30/40%",
-          "deltaText": "-2.5% to -5% AD",
-          "isPositive": false
+          "slot": "Stats",
+          "label": "Base Attack Damage",
+          "from": "56",
+          "to": "54",
+          "direction": "nerf"
+        }
+      ]
+    },
+    "Viktor": {
+      "id": "Viktor",
+      "name": "Viktor",
+      "type": "buff",
+      "changes": [
+        {
+          "slot": "Stats",
+          "label": "Health per Level",
+          "from": "100",
+          "to": "105",
+          "direction": "buff"
+        }
+      ]
+    },
+    "Zaahen": {
+      "id": "Zaahen",
+      "name": "Zaahen",
+      "type": "buff",
+      "changes": [
+        {
+          "slot": "Q",
+          "label": "The Darkin Glaive cooldown",
+          "from": "10 / 9 / 8 / 7 / 6s",
+          "to": "8 / 7.5 / 7 / 6.5 / 6s",
+          "direction": "buff"
         }
       ]
     }
@@ -154,15 +173,13 @@
       "id": "1086",
       "name": "Doran's Bow",
       "type": "nerf",
-      "summary": "PhysicalDamage changed to 7 (-1 PhysicalDamage)",
-      "deltas": [
+      "changes": [
         {
-          "property": "FlatPhysicalDamageMod",
-          "label": "PhysicalDamage",
-          "oldValue": 8,
-          "newValue": 7,
-          "deltaText": "-1 PhysicalDamage",
-          "isPositive": false
+          "slot": "Stats",
+          "label": "Attack Damage",
+          "from": "8",
+          "to": "7",
+          "direction": "nerf"
         }
       ]
     },
@@ -170,199 +187,13 @@
       "id": "2501",
       "name": "Overlord's Bloodmail",
       "type": "buff",
-      "summary": "PhysicalDamage changed to 40 (+10 PhysicalDamage)",
-      "deltas": [
+      "changes": [
         {
-          "property": "FlatPhysicalDamageMod",
-          "label": "PhysicalDamage",
-          "oldValue": 30,
-          "newValue": 40,
-          "deltaText": "+10 PhysicalDamage",
-          "isPositive": true
-        }
-      ]
-    },
-    "3008": {
-      "id": "3008",
-      "name": "Gluttonous Greaves",
-      "type": "nerf",
-      "summary": "Total Gold Cost changed to 1100 (+100g Cost)",
-      "deltas": [
-        {
-          "property": "cost",
-          "label": "Total Gold Cost",
-          "oldValue": 1000,
-          "newValue": 1100,
-          "deltaText": "+100g Cost",
-          "isPositive": false
-        }
-      ]
-    },
-    "3036": {
-      "id": "3036",
-      "name": "Lord Dominik's Regards",
-      "type": "nerf",
-      "summary": "Armor penetration reduced from 40% to 35% to curb excessive anti-tank burst on squishies.",
-      "deltas": [
-        {
-          "property": "armor_pen",
-          "label": "Armor Penetration",
-          "oldValue": "40%",
-          "newValue": "35%",
-          "deltaText": "40% → 35% (-5%)",
-          "isPositive": false
-        }
-      ]
-    },
-    "3068": {
-      "id": "3068",
-      "name": "Sunfire Aegis",
-      "type": "buff",
-      "summary": "Immolate ticking waveclear aura damage increased against lane minions.",
-      "deltas": [
-        {
-          "property": "immolate",
-          "label": "Minion Damage Amp",
-          "oldValue": "100%",
-          "newValue": "125%",
-          "deltaText": "+25% Minion Burn Dmg",
-          "isPositive": true
-        }
-      ]
-    },
-    "3071": {
-      "id": "3071",
-      "name": "Black Cleaver",
-      "type": "adjusted",
-      "summary": "Carve armor reduction max stacks reduced from 5 to 4 with faster stacking cadence.",
-      "deltas": [
-        {
-          "property": "carve",
-          "label": "Carve Max Shred",
-          "oldValue": "30% (6% x 5)",
-          "newValue": "28% (7% x 4)",
-          "deltaText": "Faster 4-hit stack (28%)",
-          "isPositive": true
-        }
-      ]
-    },
-    "3078": {
-      "id": "3078",
-      "name": "Trinity Force",
-      "type": "buff",
-      "summary": "Health bonus increased and total gold cost reduced by 100g.",
-      "deltas": [
-        {
-          "property": "cost",
-          "label": "Total Gold Cost",
-          "oldValue": 3333,
-          "newValue": 3233,
-          "deltaText": "-100g Total Cost",
-          "isPositive": true
-        },
-        {
-          "property": "hp",
-          "label": "Bonus Health",
-          "oldValue": 300,
-          "newValue": 333,
-          "deltaText": "+33 Health",
-          "isPositive": true
-        }
-      ]
-    },
-    "3095": {
-      "id": "3095",
-      "name": "Stormrazor",
-      "type": "buff",
-      "summary": "Total Gold Cost changed to 3200 (+200g Cost). PercentAttackSpeed changed to 0.25 (+0.04999999999999999 PercentAttackSpeed)",
-      "deltas": [
-        {
-          "property": "cost",
-          "label": "Total Gold Cost",
-          "oldValue": 3000,
-          "newValue": 3200,
-          "deltaText": "+200g Cost",
-          "isPositive": false
-        },
-        {
-          "property": "PercentAttackSpeedMod",
-          "label": "PercentAttackSpeed",
-          "oldValue": 0.2,
-          "newValue": 0.25,
-          "deltaText": "+0.04999999999999999 PercentAttackSpeed",
-          "isPositive": true
-        }
-      ]
-    },
-    "3168": {
-      "id": "3168",
-      "name": "Immortal Path",
-      "type": "nerf",
-      "summary": "Total Gold Cost changed to 1100 (+100g Cost)",
-      "deltas": [
-        {
-          "property": "cost",
-          "label": "Total Gold Cost",
-          "oldValue": 1000,
-          "newValue": 1100,
-          "deltaText": "+100g Cost",
-          "isPositive": false
-        }
-      ]
-    },
-    "6610": {
-      "id": "6610",
-      "name": "Sundered Sky",
-      "type": "nerf",
-      "summary": "HPPool changed to 400 (-50 HPPool). PhysicalDamage changed to 40 (-5 PhysicalDamage)",
-      "deltas": [
-        {
-          "property": "FlatHPPoolMod",
-          "label": "HPPool",
-          "oldValue": 450,
-          "newValue": 400,
-          "deltaText": "-50 HPPool",
-          "isPositive": false
-        },
-        {
-          "property": "FlatPhysicalDamageMod",
-          "label": "PhysicalDamage",
-          "oldValue": 45,
-          "newValue": 40,
-          "deltaText": "-5 PhysicalDamage",
-          "isPositive": false
-        }
-      ]
-    },
-    "6653": {
-      "id": "6653",
-      "name": "Liandry's Torment",
-      "type": "nerf",
-      "summary": "Maximum health burn damage per second trimmed on non-DoT abilities.",
-      "deltas": [
-        {
-          "property": "burn",
-          "label": "Torment Max HP Burn / sec",
-          "oldValue": "2.0%",
-          "newValue": "1.75%",
-          "deltaText": "-0.25% Max HP/sec",
-          "isPositive": false
-        }
-      ]
-    },
-    "6672": {
-      "id": "6672",
-      "name": "Kraken Slayer",
-      "type": "buff",
-      "summary": "Bring It Down third-hit base damage increased for sustained auto-attack marksmen.",
-      "deltas": [
-        {
-          "property": "proc_damage",
-          "label": "Bring It Down Base Damage",
-          "oldValue": "140-310",
-          "newValue": "150-325",
-          "deltaText": "+10-15 On-Hit Dmg",
-          "isPositive": true
+          "slot": "Stats",
+          "label": "Attack Damage",
+          "from": "30",
+          "to": "40",
+          "direction": "buff"
         }
       ]
     }

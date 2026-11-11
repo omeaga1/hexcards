@@ -1,3 +1,4 @@
+import { APP_VERSION, DESKTOP_DOWNLOAD_URL, DESKTOP_INSTALLER_NAME } from '../../appRelease';
 import React, { useState } from 'react';
 import { 
   Shield, 
@@ -38,7 +39,7 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }) => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const downloadUrl = 'https://github.com/omeaga1/hexcards/releases/download/v1.0.12/HexCards-Setup-1.0.12.exe';
+  const downloadUrl = DESKTOP_DOWNLOAD_URL;
 
   const faqs = [
     {
@@ -74,7 +75,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
       <div className="bg-slate-950 text-slate-300 px-4 py-1.5 text-xs text-center border-b border-slate-800 flex items-center justify-center gap-2 font-mono flex-wrap">
         <span className="inline-flex items-center gap-1 text-emerald-400 font-bold uppercase">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>v1.0.12 Live</span>
+          <span>v{APP_VERSION} Live</span>
         </span>
         <span className="text-slate-500">•</span>
         <span>Synced with Riot Data Dragon Patch {version}</span>
@@ -201,7 +202,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
                 rel="noopener noreferrer" 
                 className="text-slate-500 hover:text-emerald-600 underline decoration-slate-300"
               >
-                All Releases (v1.0.12)
+                All Releases (v{APP_VERSION})
               </a>
             </div>
             <p className="text-[11px] text-slate-400 max-w-md text-center leading-tight">
@@ -211,7 +212,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
 
           {/* Technical Specs Callout */}
           <div className="pt-2 flex items-center justify-center gap-4 text-xs text-slate-500 font-mono flex-wrap">
-            <span>Version: <strong>v1.0.12</strong></span>
+            <span>Version: <strong>v{APP_VERSION}</strong></span>
             <span>•</span>
             <span>OS: <strong>Windows 10 / 11 (64-bit)</strong></span>
             <span>•</span>
@@ -711,7 +712,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
                 Download HexCards
               </h3>
               <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                Download the lightweight <strong className="text-slate-800">HexCards-Setup-1.0.12.exe</strong> installer. It takes about 3 seconds to install silently. If Windows SmartScreen pops up, click <em>"More info" &rarr; "Run anyway"</em>.
+                Download the lightweight <strong className="text-slate-800">{DESKTOP_INSTALLER_NAME}</strong> installer. It takes about 3 seconds to install silently. If Windows SmartScreen pops up, click <em>"More info" &rarr; "Run anyway"</em>.
               </p>
             </div>
 
@@ -806,7 +807,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-white font-black uppercase tracking-wider text-base flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all cursor-pointer active:scale-95"
             >
               <Download className="w-5 h-5 text-emerald-400" />
-              <span>Download for Windows (v1.0.12)</span>
+              <span>Download for Windows (v{APP_VERSION})</span>
             </a>
 
             <button
@@ -832,7 +833,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ version, onLaunchWeb }
               HEX<span className="text-emerald-500">CARDS</span>
             </span>
             <span className="text-slate-600">•</span>
-            <span className="font-mono text-[11px] text-slate-500">v1.0.12</span>
+            <span className="font-mono text-[11px] text-slate-500">v{APP_VERSION}</span>
           </div>
 
           <p className="text-[11px] text-slate-500 text-center sm:text-left max-w-xl">

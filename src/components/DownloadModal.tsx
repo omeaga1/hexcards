@@ -1,3 +1,4 @@
+import { APP_VERSION, DESKTOP_DOWNLOAD_URL, DESKTOP_INSTALLER_NAME } from '../appRelease';
 import React, { useEffect } from 'react';
 import { X, Download, ShieldCheck, Zap, Laptop, CheckCircle2, Sparkles, Terminal } from 'lucide-react';
 
@@ -70,7 +71,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
           <div className="p-4 rounded-xl bg-[#163026] border border-[#2dd5b7]/40 flex flex-col gap-3">
             <div>
               <span className="text-xs font-black uppercase text-[#2dd5b7] font-['Barlow_Condensed'] tracking-wider block">
-                Official Release v1.0.12
+                Official Release v{APP_VERSION}
               </span>
               <p className="text-xs text-[#c1c497] mt-0.5 leading-relaxed">
                 Includes the embedded Riot LCU connector. No terminal commands, no Node.js required—just launch and play.
@@ -78,8 +79,8 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, v
             </div>
 
             <a
-              href="https://github.com/omeaga1/hexcards/releases/download/v1.0.12/HexCards-Setup-1.0.12.exe"
-              download="HexCards-Setup-1.0.12.exe"
+              href={DESKTOP_DOWNLOAD_URL}
+              download={DESKTOP_INSTALLER_NAME}
               className="py-3 px-4 rounded-xl bg-[#2dd5b7] hover:bg-[#26bba0] text-[#07120e] font-['Barlow_Condensed'] font-black uppercase text-sm sm:text-base tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#2dd5b7]/20 transition-all cursor-pointer active:scale-95"
             >
               <Download className="w-5 h-5" />

@@ -1,3 +1,4 @@
+import { DESKTOP_DOWNLOAD_URL, DESKTOP_INSTALLER_NAME } from '../../appRelease';
 import React, { useState, useEffect } from 'react';
 import { ChampionDetail, TacticalGuide, ItemData } from '../../types';
 import { 
@@ -277,8 +278,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   </p>
 
                   <a
-                    href="https://github.com/omeaga1/hexcards/releases/download/v1.0.0/HexCards-Setup-1.0.0.exe"
-                    download="HexCards-Setup-1.0.0.exe"
+                    href={DESKTOP_DOWNLOAD_URL}
+                    download={DESKTOP_INSTALLER_NAME}
                     className="py-3 px-4 rounded-xl bg-[#2dd5b7] hover:bg-[#26bba0] text-[#07120e] font-['Barlow_Condensed'] font-black uppercase text-sm tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer active:scale-95"
                   >
                     <Download className="w-4 h-4" />
